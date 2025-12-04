@@ -2078,7 +2078,7 @@ public final class UIEngine<T extends UIEngineAdapter> implements Disposable {
 
 
         { // Draw Composite Image
-            uiEngineState.frameBuffer_composite.begin();
+            uiEngineState.frameBuffer_composite.beginGlClear();
             this.uiAdapter.renderComposite(uiEngineState.camera_screen,
                     spriteRenderer,
                     uiEngineState.frameBuffer_app.getFlippedTextureRegion(),
@@ -2101,8 +2101,7 @@ public final class UIEngine<T extends UIEngineAdapter> implements Disposable {
 
             if (uiEngineState.viewportMode.upscale) {
                 // Upscale Composite
-                uiEngineState.frameBuffer_upScaled_screen.begin();
-                render_glClear();
+                uiEngineState.frameBuffer_upScaled_screen.beginGlClear();
                 spriteRenderer.draw(uiEngineState.frameBuffer_composite.getFlippedTextureRegion(), 0, 0, uiEngineState.resolutionWidth, uiEngineState.resolutionHeight);
                 spriteRenderer.flush();
                 uiEngineState.frameBuffer_upScaled_screen.end();
@@ -2128,21 +2127,20 @@ public final class UIEngine<T extends UIEngineAdapter> implements Disposable {
     private void render_applyColorBlindShaderToFrameBuffer(NestedFrameBuffer frameBuffer, COLORBLIND_MODE colorblindMode) {
         if (colorblindMode == COLORBLIND_MODE.NONE)
             return;
+
         final SpriteRenderer spriteRenderer = uiEngineState.spriteRenderer_ui;
-        uiEngineState.frameBuffer_colorBlind.begin();
-        spriteRenderer.begin();
+        uiEngineState.frameBuffer_colorBlind.beginGlClear();
         spriteRenderer.setShader(uiEngineState.colorBlindShader);
+        spriteRenderer.begin();
         uiEngineState.colorBlindShader.setUniformi("u_mode", colorblindMode.u_mode);
-        spriteRenderer.draw(frameBuffer.getFlippedTextureRegion(), 0, 0,
-                frameBuffer.getWidth(), frameBuffer.getHeight());
+        spriteRenderer.draw(frameBuffer.getFlippedTextureRegion(), 0, 0, frameBuffer.getWidth(), frameBuffer.getHeight());
         spriteRenderer.end();
         spriteRenderer.setShader(null);
         uiEngineState.frameBuffer_colorBlind.end();
 
-        frameBuffer.begin();
+        frameBuffer.beginGlClear();
         spriteRenderer.begin();
-        spriteRenderer.draw(uiEngineState.frameBuffer_colorBlind.getFlippedTextureRegion(), 0, 0,
-                frameBuffer.getWidth(), frameBuffer.getHeight());
+        spriteRenderer.draw(uiEngineState.frameBuffer_colorBlind.getFlippedTextureRegion(), 0, 0, frameBuffer.getWidth(), frameBuffer.getHeight());
         spriteRenderer.end();
         frameBuffer.end();
     }
