@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.GL32;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.MathUtils;
+import net.mslivo.pixelui.engine.constants.COLORBLIND_MODE;
 import net.mslivo.pixelui.media.MediaManager;
 import net.mslivo.pixelui.rendering.PrimitiveRenderer;
 import net.mslivo.pixelui.utils.Tools;
@@ -68,8 +69,7 @@ public class ExampleUIEngineAdapter implements UIEngineAdapter {
         this.animation_timer = 0;
         this.spriteRenderer = new SpriteRenderer(mediaManager, ShaderParser.parse(Tools.File.findResource("shaders/pixelui/hsl.sprite.glsl")), SpriteRenderer.MAX_VERTEXES_DEFAULT);
         this.spriteRenderer.setTweakResetValues(0.5f,0.5f,0.5f,0f);
-        this.primitiveRenderer = new PrimitiveRenderer( ShaderParser.parse(Tools.File.findResource("shaders/pixelui/hsl.primitive.glsl")), PrimitiveRenderer.MAX_VERTEXES_DEFAULT);
-
+        this.primitiveRenderer = new PrimitiveRenderer();
 
         api.config.window.defaultEnforceScreenBounds = false;
         // Example Wnd Button

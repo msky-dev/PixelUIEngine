@@ -15,12 +15,14 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import net.mslivo.pixelui.engine.constants.BUTTON_MODE;
+import net.mslivo.pixelui.engine.constants.COLORBLIND_MODE;
 import net.mslivo.pixelui.engine.constants.KeyCode;
 import net.mslivo.pixelui.engine.constants.VIEWPORT_MODE;
 import net.mslivo.pixelui.media.CMediaSprite;
 import net.mslivo.pixelui.media.MediaManager;
 import net.mslivo.pixelui.rendering.NestedFrameBuffer;
 import net.mslivo.pixelui.rendering.PixelPerfectViewport;
+import net.mslivo.pixelui.rendering.ShaderParser;
 import net.mslivo.pixelui.utils.Tools;
 
 import java.util.Arrays;
@@ -1121,6 +1123,20 @@ public class UICommonUtils {
         uiEngineState.itemInfo_listIndex = 0;
         uiEngineState.itemInfo_listValid = false;
         return;
+    }
+
+    public void colorBlind_changeColorBlindMode(COLORBLIND_MODE colorblindMode){
+        if(colorblindMode == null || colorblindMode == uiEngineState.colorblindMode)
+            return;
+
+        if(colorblindMode != COLORBLIND_MODE.NONE){
+            if(uiEngineState.colorBlindShader == null)
+                uiEngineState.colorBlindShader = ShaderParser.parse(Tools.File.findResource("shaders/pixelui/colorblind.sprite.glsl"));
+            if(uiEngineState.frameBuffer_colorBlind == null)
+                uiEngineState.frameBuffer_colorBlind = UICommonUtils.frameBuffer_createFrameBuffer(uiEngineState.resolutionWidth, uiEngineState.resolutionHeight);
+        }
+
+        uiEngineState.colorblindMode = colorblindMode;
     }
 
     public void grid_updateItemInfoAtMousePosition(Grid grid) {

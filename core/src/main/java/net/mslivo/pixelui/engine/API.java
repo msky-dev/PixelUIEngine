@@ -1,6 +1,7 @@
 package net.mslivo.pixelui.engine;
 
 import com.badlogic.gdx.utils.Array;
+import net.mslivo.pixelui.engine.constants.COLORBLIND_MODE;
 import net.mslivo.pixelui.engine.constants.TileSize;
 import net.mslivo.pixelui.media.CMediaSprite;
 import net.mslivo.pixelui.media.MediaManager;
@@ -409,6 +410,11 @@ public final class API {
     public void setViewportMode(VIEWPORT_MODE viewPortMode) {
         if (viewPortMode == null) return;
         uiCommonUtils.viewport_changeViewPortMode( viewPortMode);
+    }
+
+    public void setColorBlindMode(COLORBLIND_MODE colorblindMode) {
+        if (colorblindMode == null) return;
+        uiCommonUtils.colorBlind_changeColorBlindMode( colorblindMode);
     }
 
     public int resolutionWidth() {

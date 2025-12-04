@@ -4,7 +4,7 @@ public enum BUTTON_MODE {
     DEFAULT("Default"),
     TOGGLE("Toggle");
 
-    private final String text;
+    public final String text;
 
     BUTTON_MODE(String text) {
         this.text = text;
