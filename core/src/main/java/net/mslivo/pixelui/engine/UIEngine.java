@@ -92,7 +92,6 @@ public final class UIEngine<T extends UIEngineAdapter> implements Disposable {
         newUIEngineState.resolutionWidthHalf = MathUtils.round(resolutionWidth / 2f);
         newUIEngineState.resolutionHeightHalf = MathUtils.round(resolutionHeight / 2f);
         newUIEngineState.viewportMode = viewportMode != null ? viewportMode : VIEWPORT_MODE.PIXEL_PERFECT;
-        newUIEngineState.colorblindMode = COLORBLIND_MODE.NONE;
         newUIEngineState.gamePadSupport = gamePadSupport;
         newUIEngineState.theme = theme;
 
@@ -116,7 +115,6 @@ public final class UIEngine<T extends UIEngineAdapter> implements Disposable {
 
         // ----- Composite
         newUIEngineState.frameBuffer_composite = UICommonUtils.frameBuffer_createFrameBuffer(newUIEngineState.resolutionWidth, newUIEngineState.resolutionHeight);
-        newUIEngineState.frameBuffer_colorBlind = null;
         // ----- Screen
         newUIEngineState.camera_screen = UICommonUtils.camera_createCamera(newUIEngineState.resolutionWidth, newUIEngineState.resolutionHeight);
         newUIEngineState.viewport_screen = UICommonUtils.viewport_createViewport(newUIEngineState.viewportMode, newUIEngineState.camera_screen, newUIEngineState.resolutionWidth, newUIEngineState.resolutionHeight);
@@ -217,7 +215,6 @@ public final class UIEngine<T extends UIEngineAdapter> implements Disposable {
         newUIEngineState.itemInfo_listValid = false;
         newUIEngineState.itemInfo_tabBarValid = false;
         newUIEngineState.itemInfo_gridValid = false;
-        newUIEngineState.colorBlindShader = null;
         return newUIEngineState;
     }
 
@@ -2089,11 +2086,6 @@ public final class UIEngine<T extends UIEngineAdapter> implements Disposable {
             uiEngineState.frameBuffer_composite.end();
         }
 
-        // apply colorblind?
-        {
-            render_applyColorBlindShaderToFrameBuffer(uiEngineState.frameBuffer_composite, uiEngineState.colorblindMode);
-        }
-
         // Draw Composite Image to Screen
         if (drawToScreen) {
             spriteRenderer.setProjectionMatrix(uiEngineState.camera_ui.combined);
@@ -2122,27 +2114,6 @@ public final class UIEngine<T extends UIEngineAdapter> implements Disposable {
         }
 
 
-    }
-
-    private void render_applyColorBlindShaderToFrameBuffer(NestedFrameBuffer frameBuffer, COLORBLIND_MODE colorblindMode) {
-        if (colorblindMode == COLORBLIND_MODE.NONE)
-            return;
-
-        final SpriteRenderer spriteRenderer = uiEngineState.spriteRenderer_ui;
-        uiEngineState.frameBuffer_colorBlind.beginGlClear();
-        spriteRenderer.setShader(uiEngineState.colorBlindShader);
-        spriteRenderer.begin();
-        uiEngineState.colorBlindShader.setUniformi("u_mode", colorblindMode.u_mode);
-        spriteRenderer.draw(frameBuffer.getFlippedTextureRegion(), 0, 0, frameBuffer.getWidth(), frameBuffer.getHeight());
-        spriteRenderer.end();
-        spriteRenderer.setShader(null);
-        uiEngineState.frameBuffer_colorBlind.end();
-
-        frameBuffer.beginGlClear();
-        spriteRenderer.begin();
-        spriteRenderer.draw(uiEngineState.frameBuffer_colorBlind.getFlippedTextureRegion(), 0, 0, frameBuffer.getWidth(), frameBuffer.getHeight());
-        spriteRenderer.end();
-        frameBuffer.end();
     }
 
     private void render_glClear() {

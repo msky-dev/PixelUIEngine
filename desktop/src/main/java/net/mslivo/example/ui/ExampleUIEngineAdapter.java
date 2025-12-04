@@ -6,7 +6,6 @@ import com.badlogic.gdx.graphics.GL32;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.MathUtils;
-import net.mslivo.pixelui.engine.constants.COLORBLIND_MODE;
 import net.mslivo.pixelui.media.MediaManager;
 import net.mslivo.pixelui.rendering.PrimitiveRenderer;
 import net.mslivo.pixelui.utils.Tools;

@@ -8,7 +8,6 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Queue;
 import com.badlogic.gdx.utils.viewport.Viewport;
-import net.mslivo.pixelui.engine.constants.COLORBLIND_MODE;
 import net.mslivo.pixelui.media.CMediaSprite;
 import net.mslivo.pixelui.engine.constants.MOUSE_CONTROL_MODE;
 import net.mslivo.pixelui.engine.constants.VIEWPORT_MODE;
@@ -23,7 +22,6 @@ public final class UIEngineState {
     public int resolutionWidth, resolutionHeight;
     public int resolutionWidthHalf, resolutionHeightHalf;
     public VIEWPORT_MODE viewportMode;
-    public COLORBLIND_MODE colorblindMode;
     public boolean gamePadSupport;
     public UIEngineTheme theme;
 
@@ -43,7 +41,6 @@ public final class UIEngineState {
 
     /* #################### Graphics: Composite #################### */
     public NestedFrameBuffer frameBuffer_composite;
-    public NestedFrameBuffer frameBuffer_colorBlind;
 
     /* #################### Graphics: Screen #################### */
     public OrthographicCamera camera_screen;
@@ -147,7 +144,6 @@ public final class UIEngineState {
     public GridPoint2 itemInfo_gridPos;
     public int itemInfo_tabBarTabIndex;
     public boolean itemInfo_listValid, itemInfo_tabBarValid, itemInfo_gridValid;
-    public ShaderProgram colorBlindShader;
     UIEngineState() {
     }
 }
