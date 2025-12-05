@@ -8,28 +8,62 @@ import net.mslivo.pixelui.utils.particles.particles.*;
 public final class SpriteParticleSystem<T> extends ParticleSystem<T> {
 
     public interface RenderHook<T> {
-        default void renderBeforeParticle(Particle<T> particle, SpriteRenderer spriteRenderer){};
 
-        default void renderAfterParticle(Particle<T> particle, SpriteRenderer spriteRenderer){};
+        default void renderImageParticle(MediaManager mediaManager, SpriteRenderer spriteRenderer, ImageParticle<T> particle){
+            CMediaImage cMediaImage = (CMediaImage) particle.sprite;
+            spriteRenderer.setColor(particle.r, particle.g, particle.b, particle.a);
+            spriteRenderer.drawCMediaImage(cMediaImage, MathUtils.round(particle.x), MathUtils.round(particle.y), particle.origin_x, particle.origin_y,
+                    mediaManager.imageWidth(cMediaImage), mediaManager.imageHeight(cMediaImage),
+                    particle.scaleX, particle.scaleY, particle.rotation);
+            spriteRenderer.reset();
+        }
 
-        default boolean renderParticle(Particle<T> particle){
-            return true;
-        };
+        default void renderArrayParticle(MediaManager mediaManager, SpriteRenderer spriteRenderer, ArrayParticle<T> particle){
+            CMediaArray cMediaArray = (CMediaArray) particle.sprite;
+            spriteRenderer.setColor(particle.r, particle.g, particle.b, particle.a);
+            spriteRenderer.drawCMediaArray(cMediaArray, particle.arrayIndex, MathUtils.round(particle.x), MathUtils.round(particle.y), particle.origin_x, particle.origin_y,
+                    mediaManager.arrayWidth(cMediaArray), mediaManager.arrayHeight(cMediaArray),
+                    particle.scaleX, particle.scaleY, particle.rotation);
+            spriteRenderer.reset();
+        }
+        default void renderAnimationParticle(MediaManager mediaManager, SpriteRenderer spriteRenderer, AnimationParticle<T> particle, float animation_timer){
+            CMediaAnimation cMediaAnimation = (CMediaAnimation) particle.sprite;
+            spriteRenderer.setColor(particle.r, particle.g, particle.b, particle.a);
+            spriteRenderer.drawCMediaAnimation(cMediaAnimation, (animation_timer + particle.animationOffset), MathUtils.round(particle.x), MathUtils.round(particle.y), particle.origin_x, particle.origin_y,
+                    mediaManager.animationWidth(cMediaAnimation), mediaManager.animationHeight(cMediaAnimation),
+                    particle.scaleX, particle.scaleY, particle.rotation);
+            spriteRenderer.reset();
+        }
+
+        default void renderTextParticle(MediaManager mediaManager, SpriteRenderer spriteRenderer, TextParticle<T> particle){
+            spriteRenderer.setColor(particle.r, particle.g, particle.b, particle.a);
+            spriteRenderer.drawCMediaFont(particle.font, MathUtils.round(particle.x), MathUtils.round(particle.y), particle.text, 0, particle.text.length(), particle.centerX, particle.centerY);
+            spriteRenderer.reset();
+        }
+
+        default void renderEmptyParticle(MediaManager mediaManager, SpriteRenderer spriteRenderer, EmptyParticle<T> particle){
+            return;
+        }
+
+
     }
+
+    private static final RenderHook DEFAULT_RENDER_HOOK = new RenderHook() {
+    };
 
     private RenderHook renderHook;
 
     public SpriteParticleSystem(Class<T> dataClass, ParticleUpdater<T> particleUpdater) {
-        this(dataClass, particleUpdater, Integer.MAX_VALUE);
+        this(dataClass, particleUpdater, Integer.MAX_VALUE,DEFAULT_RENDER_HOOK);
     }
 
     public SpriteParticleSystem(Class<T> dataClass, ParticleUpdater<T> particleUpdater, int maxParticles) {
-        this(dataClass, particleUpdater, maxParticles, null);
+        this(dataClass, particleUpdater, maxParticles, DEFAULT_RENDER_HOOK);
     }
 
     public SpriteParticleSystem(Class<T> dataClass, ParticleUpdater<T> particleUpdater, int maxParticles, RenderHook<T> renderHook) {
         super(dataClass, particleUpdater, maxParticles);
-        this.renderHook = renderHook;
+        this.renderHook = renderHook != null ? renderHook : DEFAULT_RENDER_HOOK;
     }
 
 
@@ -43,47 +77,16 @@ public final class SpriteParticleSystem<T> extends ParticleSystem<T> {
         for (int i = 0; i < particles.size; i++) {
             Particle<T> particle = particles.get(i);
             if (!particle.visible) continue;
-            if (renderHook != null) {
-                if (!renderHook.renderParticle(particle))
-                    continue;
-                renderHook.renderBeforeParticle(particle, spriteRenderer);
-            }
-            final int x = MathUtils.round(particle.x);
-            final int y = MathUtils.round(particle.y);
 
             switch (particle) {
-                case ImageParticle<T> imageParticle -> {
-                    CMediaImage cMediaImage = (CMediaImage) imageParticle.sprite;
-                    spriteRenderer.setColor(imageParticle.r, imageParticle.g, imageParticle.b, imageParticle.a);
-                    spriteRenderer.drawCMediaImage(cMediaImage, x, y, imageParticle.origin_x, imageParticle.origin_y,
-                            mediaManager.imageWidth(cMediaImage), mediaManager.imageHeight(cMediaImage),
-                            imageParticle.scaleX, imageParticle.scaleY, imageParticle.rotation);
-                }
-                case ArrayParticle<T> arrayParticle -> {
-                    CMediaArray cMediaArray = (CMediaArray) arrayParticle.sprite;
-                    spriteRenderer.setColor(arrayParticle.r, arrayParticle.g, arrayParticle.b, arrayParticle.a);
-                    spriteRenderer.drawCMediaArray(cMediaArray, arrayParticle.arrayIndex, x, y, arrayParticle.origin_x, arrayParticle.origin_y,
-                            mediaManager.arrayWidth(cMediaArray), mediaManager.arrayHeight(cMediaArray),
-                            arrayParticle.scaleX, arrayParticle.scaleY, arrayParticle.rotation);
-                }
-                case AnimationParticle<T> animationParticle -> {
-                    CMediaAnimation cMediaAnimation = (CMediaAnimation) animationParticle.sprite;
-                    spriteRenderer.setColor(animationParticle.r, animationParticle.g, animationParticle.b, animationParticle.a);
-                    spriteRenderer.drawCMediaAnimation(cMediaAnimation, (animation_timer + animationParticle.animationOffset), x, y, animationParticle.origin_x, animationParticle.origin_y,
-                            mediaManager.animationWidth(cMediaAnimation), mediaManager.animationHeight(cMediaAnimation),
-                            animationParticle.scaleX, animationParticle.scaleY, animationParticle.rotation);
-                }
-                case TextParticle<T> textParticle -> {
-                    spriteRenderer.setColor(textParticle.r, textParticle.g, textParticle.b, textParticle.a);
-                    spriteRenderer.drawCMediaFont(textParticle.font, x, y, textParticle.text, 0, textParticle.text.length(), textParticle.centerX, textParticle.centerY);
-                }
-                case EmptyParticle _ -> {
-                }
+                case ImageParticle<T> imageParticle -> this.renderHook.renderImageParticle(mediaManager, spriteRenderer, imageParticle);
+                case ArrayParticle<T> arrayParticle -> this.renderHook.renderArrayParticle(mediaManager, spriteRenderer, arrayParticle);
+                case AnimationParticle<T> animationParticle -> this.renderHook.renderAnimationParticle(mediaManager, spriteRenderer, animationParticle, animation_timer);
+                case TextParticle<T> textParticle -> this.renderHook.renderTextParticle(mediaManager, spriteRenderer, textParticle);
+                case EmptyParticle emptyParticle -> this.renderHook.renderEmptyParticle(mediaManager, spriteRenderer, emptyParticle);
                 default ->
                         throw new IllegalStateException("Invalid particle type: " + particle.getClass().getSimpleName());
             }
-            if (renderHook != null)
-                renderHook.renderAfterParticle(particle, spriteRenderer);
         }
 
         spriteRenderer.loadState();

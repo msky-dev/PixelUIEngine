@@ -11,28 +11,48 @@ public final class PrimitiveParticleSystem<T> extends ParticleSystem<T> {
     private static final int PRIMITIVE_ADD_VERTEXES_MAX = 8;
 
     public interface RenderHook<T> {
-        default void renderBeforeParticle(Particle<T> particle, PrimitiveRenderer primitiveRenderer){};
 
-        default void renderAfterParticle(Particle<T> particle, PrimitiveRenderer primitiveRenderer){};
+        default void renderPrimitiveParticle(PrimitiveRenderer primitiveRenderer, PrimitiveParticle<T> particle) {
+            if (primitiveRenderer.getPrimitiveType() != particle.primitiveType) {
+                primitiveRenderer.end();
+                primitiveRenderer.begin(particle.primitiveType);
+            }
+            primitiveRenderer.setVertexColor(particle.r, particle.g, particle.b, particle.a);
+            primitiveRenderer.vertex(MathUtils.round(particle.x), MathUtils.round(particle.y));
+            // Additional Vertexes
+            for (int iv = 0; iv < particle.numAdditionalVertexes; iv++) {
+                final int x_add = MathUtils.round(particle.x + particle.vtx_x[iv]);
+                final int y_add = MathUtils.round(particle.y + particle.vtx_y[iv]);
 
-        default boolean renderParticle(Particle<T> particle){
-            return true;
-        };
+                primitiveRenderer.setVertexColor(particle.vtx_r[iv], particle.vtx_g[iv], particle.vtx_b[iv], particle.vtx_a[iv]);
+                primitiveRenderer.vertex(x_add, y_add);
+            }
+            primitiveRenderer.reset();
+        }
+
+        ;
+
+        default void renderEmptyParticle(PrimitiveRenderer primitiveRenderer, EmptyParticle particle) {
+            return;
+        }
     }
 
     private RenderHook renderHook;
 
+    private static final RenderHook DEFAULT_RENDER_HOOK = new RenderHook() {
+    };
+
     public PrimitiveParticleSystem(Class<T> dataClass, ParticleUpdater<T> particleUpdater) {
-        this(dataClass, particleUpdater, Integer.MAX_VALUE);
+        this(dataClass, particleUpdater, Integer.MAX_VALUE, DEFAULT_RENDER_HOOK);
     }
 
     public PrimitiveParticleSystem(Class<T> dataClass, ParticleUpdater<T> particleUpdater, int maxParticles) {
-        this(dataClass, particleUpdater, maxParticles, null);
+        this(dataClass, particleUpdater, maxParticles, DEFAULT_RENDER_HOOK);
     }
 
     public PrimitiveParticleSystem(Class<T> dataClass, ParticleUpdater<T> particleUpdater, int maxParticles, RenderHook<T> renderHook) {
         super(dataClass, particleUpdater, maxParticles);
-        this.renderHook = renderHook;
+        this.renderHook = renderHook != null ? renderHook : DEFAULT_RENDER_HOOK;
     }
 
     public void render(PrimitiveRenderer primitiveRenderer) {
@@ -41,43 +61,15 @@ public final class PrimitiveParticleSystem<T> extends ParticleSystem<T> {
         for (int i = 0; i < particles.size; i++) {
             Particle particle = particles.get(i);
             if (!particle.visible) continue;
-            if (renderHook != null) {
-                if (!renderHook.renderParticle(particle))
-                    continue;
-                renderHook.renderBeforeParticle(particle, primitiveRenderer);
-            }
+
             switch (particle) {
-                case PrimitiveParticle primitiveParticle -> {
-                    // check for correct type
-                    if (primitiveRenderer.getPrimitiveType() != primitiveParticle.primitiveType) {
-                        primitiveRenderer.end();
-                        primitiveRenderer.begin(primitiveParticle.primitiveType);
-                    }
-
-                    final int x = MathUtils.round(particle.x);
-                    final int y = MathUtils.round(particle.y);
-
-                    primitiveRenderer.setVertexColor(particle.r, particle.g, particle.b, particle.a);
-                    primitiveRenderer.vertex(x, y);
-
-                    // Additional Vertexes
-                    for (int iv = 0; iv < primitiveParticle.numAdditionalVertexes; iv++) {
-                        final int x_add = MathUtils.round(particle.x + primitiveParticle.vtx_x[iv]);
-                        final int y_add = MathUtils.round(particle.y + primitiveParticle.vtx_y[iv]);
-
-                        primitiveRenderer.setVertexColor(primitiveParticle.vtx_r[iv], primitiveParticle.vtx_g[iv], primitiveParticle.vtx_b[iv], primitiveParticle.vtx_a[iv]);
-                        primitiveRenderer.vertex(x_add, y_add);
-                    }
-                }
-                case EmptyParticle _ -> {
-                }
+                case PrimitiveParticle primitiveParticle ->
+                        renderHook.renderPrimitiveParticle(primitiveRenderer, primitiveParticle);
+                case EmptyParticle emptyParticle -> renderHook.renderEmptyParticle(primitiveRenderer, emptyParticle);
                 default ->
                         throw new IllegalStateException("Invalid particle type: " + particle.getClass().getSimpleName());
             }
 
-
-            if (renderHook != null)
-                renderHook.renderAfterParticle(particle, primitiveRenderer);
         }
         primitiveRenderer.loadState();
     }
