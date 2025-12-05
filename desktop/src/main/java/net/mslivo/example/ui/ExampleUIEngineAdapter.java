@@ -70,6 +70,9 @@ public class ExampleUIEngineAdapter implements UIEngineAdapter {
         this.spriteRenderer.setTweakResetValues(0.5f,0.5f,0.5f,0f);
         this.primitiveRenderer = new PrimitiveRenderer();
 
+
+        api.config.ui.font = ExampleBaseMedia.FONT_SMALL;
+
         api.config.window.defaultEnforceScreenBounds = false;
         // Example Wnd Button
         TextButton createExampleWindowButton = api.component.button.textButton.create(0, 0, 10, 2, "Example Wnd", new ButtonAction() {
