@@ -3389,6 +3389,7 @@ public final class UIEngine<T extends UIEngineAdapter> implements Disposable {
         spriteRenderer.saveState();
         spriteRenderer.setColor(Color.GRAY, alpha);
 
+        font.setColor(color.r, color.g, color.b, 1f);
         if (withIcon) maxWidth -= TS();
         spriteRenderer.drawCMediaFont(uiEngineState.config.ui.font, x + (withIcon ? TS() : 0) + textXOffset, y + textYOffset, text, textOffset, textLength, false, false, maxWidth);
 
