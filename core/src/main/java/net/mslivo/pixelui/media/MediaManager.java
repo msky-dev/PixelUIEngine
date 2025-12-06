@@ -701,6 +701,15 @@ public final class MediaManager implements Disposable {
         return medias_arrays.get(cMediaArray).length;
     }
 
+    public int arrayLastIndex(CMediaArray cMediaArray) {
+        return medias_arrays.get(cMediaArray).length-1;
+    }
+
+    public int arrayIndex(CMediaArray cMediaArray, float pct) {
+        final int lastIndex = medias_arrays.get(cMediaArray).length-1;
+        return MathUtils.floor(Math.clamp(pct,0f,1f)*lastIndex);
+    }
+
     public BitmapFont font(CMediaFont cMediaFont) {
         return medias_fonts.get(cMediaFont);
     }
