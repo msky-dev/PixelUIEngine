@@ -13,10 +13,7 @@ import com.badlogic.gdx.utils.Queue;
 import net.mslivo.pixelui.engine.actions.common.CommonActions;
 import net.mslivo.pixelui.engine.actions.common.UpdateAction;
 import net.mslivo.pixelui.engine.constants.*;
-import net.mslivo.pixelui.media.CMediaArray;
-import net.mslivo.pixelui.media.CMediaImage;
-import net.mslivo.pixelui.media.CMediaSprite;
-import net.mslivo.pixelui.media.MediaManager;
+import net.mslivo.pixelui.media.*;
 import net.mslivo.pixelui.rendering.NestedFrameBuffer;
 import net.mslivo.pixelui.rendering.ShaderParser;
 import net.mslivo.pixelui.rendering.SpriteRenderer;
@@ -1788,7 +1785,7 @@ public final class UIEngine<T extends UIEngineAdapter> implements Disposable {
     private void updateUI_toolTip() {
         // Anything dragged
 
-         boolean showComponentToolTip = uiCommonUtils.getDraggedUIReference(uiEngineState) == null && uiCommonUtils.getPressedUIReference(uiEngineState) == null;
+        boolean showComponentToolTip = uiCommonUtils.getDraggedUIReference(uiEngineState) == null && uiCommonUtils.getPressedUIReference(uiEngineState) == null;
 
         // hovering over a component ?
         if (showComponentToolTip) {
@@ -2269,7 +2266,7 @@ public final class UIEngine<T extends UIEngineAdapter> implements Disposable {
                 spriteRenderer.drawCMediaImage(specialCharacterSprite, x, y);
             }
             default -> {
-                render_drawFont(String.valueOf(c), x + 2, y + 2, colorFont, textInputAlpha, false);
+                render_drawFont(uiEngineState.openMouseTextInput, String.valueOf(c), x + 2, y + 2, colorFont, textInputAlpha, false);
             }
         }
 
@@ -2419,7 +2416,7 @@ public final class UIEngine<T extends UIEngineAdapter> implements Disposable {
                             spriteRenderer.drawCMediaArray(uiEngineState.theme.UI_COMBO_BOX_LIST, index, uiCommonUtils.component_getAbsoluteX(comboBox) + TS(ix), uiCommonUtils.component_getAbsoluteY(comboBox) - TS(iy) - TS());
 
                             // Cell Content
-                            render_drawFont(comboBoxItem.text, uiCommonUtils.component_getAbsoluteX(comboBox), uiCommonUtils.component_getAbsoluteY(comboBox) - TS(iy) - TS(), comboBoxItem.fontColor, componentAlpha, componentGrayScale, 2, 2, widthPx,
+                            render_drawFont(comboBoxItem, comboBoxItem.text, uiCommonUtils.component_getAbsoluteX(comboBox), uiCommonUtils.component_getAbsoluteY(comboBox) - TS(iy) - TS(), comboBoxItem.fontColor, componentAlpha, componentGrayScale, 2, 2, widthPx,
                                     comboBoxItem.comboBoxItemAction.icon(), comboBoxItem.comboBoxItemAction.iconIndex(), comboBoxItem.comboBoxItemAction.iconColor(),
                                     comboBoxItem.comboBoxItemAction.iconFlipX(), comboBoxItem.comboBoxItemAction.iconFlipY());
 
@@ -2469,7 +2466,7 @@ public final class UIEngine<T extends UIEngineAdapter> implements Disposable {
                     spriteRenderer.drawCMediaArray(uiEngineState.theme.UI_CONTEXT_MENU, index, contextMenu.x + TS(ix), contextMenu.y - TS(iy) - TS());
 
                     // Cell Content
-                    render_drawFont(contextMenuItem.text, contextMenu.x, contextMenu.y - TS(iy) - TS(), contextMenuItem.fontColor, contextMenuAlpha, false, 2, 2, TS(width),
+                    render_drawFont(contextMenuItem, contextMenuItem.text, contextMenu.x, contextMenu.y - TS(iy) - TS(), contextMenuItem.fontColor, contextMenuAlpha, false, 2, 2, TS(width),
                             contextMenuItem.contextMenuItemAction.icon(), contextMenuItem.contextMenuItemAction.iconIndex(), contextMenuItem.contextMenuItemAction.iconColor(),
                             contextMenuItem.contextMenuItemAction.iconFlipX(), contextMenuItem.contextMenuItemAction.iconFlipY());
 
@@ -2592,7 +2589,7 @@ public final class UIEngine<T extends UIEngineAdapter> implements Disposable {
                         case RIGHT -> TS(tooltip_width) - text_width - 3;
                     };
 
-                    render_drawFont(textSegment.text, text_x, text_y, textSegment.contentColor, contentAlpha, false, 1, 2);
+                    render_drawFont(textSegment, textSegment.text, text_x, text_y, textSegment.contentColor, contentAlpha, false, 1, 2);
                 }
                 case TooltipImageSegment imageSegment -> {
                     int image_width = mediaManager.spriteWidth(imageSegment.image);
@@ -2771,7 +2768,7 @@ public final class UIEngine<T extends UIEngineAdapter> implements Disposable {
             }
             spriteRenderer.loadState();
             int xOffset = (TS(width) / 2) - (render_textWidth(notification.text) / 2) - notification.scroll;
-            render_drawFont(notification.text, xOffset, (uiEngineState.resolutionHeight - TS() - TS(y)) + 1 + yOffsetSlideFade, notification.fontColor, notificationAlpha, false);
+            render_drawFont(notification, notification.text, xOffset, (uiEngineState.resolutionHeight - TS() - TS(y)) + 1 + yOffsetSlideFade, notification.fontColor, notificationAlpha, false);
             y = y + 1;
         }
 
@@ -2807,7 +2804,7 @@ public final class UIEngine<T extends UIEngineAdapter> implements Disposable {
 
 
         if (window.hasTitleBar) {
-            render_drawFont(window.title, window.x, window.y + TS(window.height) - TS(),
+            render_drawFont(window, window.title, window.x, window.y + TS(window.height) - TS(),
                     window.fontColor, windowAlpha, false, 1, 1, TS(window.width - 1),
                     window.windowAction.icon(), window.windowAction.iconIndex(), window.windowAction.iconColor(),
                     window.windowAction.iconFlipX(), window.windowAction.iconFlipY());
@@ -2873,7 +2870,7 @@ public final class UIEngine<T extends UIEngineAdapter> implements Disposable {
                 }
                 if (button instanceof TextButton textButton) {
                     if (textButton.text != null) {
-                        render_drawFont(textButton.text, uiCommonUtils.component_getAbsoluteX(textButton) + textButton.contentOffset_x, uiCommonUtils.component_getAbsoluteY(button) + textButton.contentOffset_y,
+                        render_drawFont(button, textButton.text, uiCommonUtils.component_getAbsoluteX(textButton) + textButton.contentOffset_x, uiCommonUtils.component_getAbsoluteY(button) + textButton.contentOffset_y,
                                 textButton.fontColor, componentAlpha, componentGrayScale, 1, 2, -1,
                                 textButton.buttonAction.icon(), textButton.buttonAction.iconIndex(), textButton.buttonAction.iconColor(),
                                 textButton.buttonAction.iconFlipX(), textButton.buttonAction.iconFlipY());
@@ -2918,7 +2915,7 @@ public final class UIEngine<T extends UIEngineAdapter> implements Disposable {
             }
             case Text text -> {
                 if (text.text != null && !text.text.isEmpty()) {
-                    render_drawFont(text.text, uiCommonUtils.component_getAbsoluteX(text), uiCommonUtils.component_getAbsoluteY(text),
+                    render_drawFont(text, text.text, uiCommonUtils.component_getAbsoluteX(text), uiCommonUtils.component_getAbsoluteY(text),
                             text.fontColor, componentAlpha, componentGrayScale,
                             1, 1, TS(text.width),
                             text.textAction.icon(), text.textAction.iconIndex(), text.textAction.iconColor(),
@@ -3003,7 +3000,7 @@ public final class UIEngine<T extends UIEngineAdapter> implements Disposable {
                     // Cell Content
                     if (item != null) {
                         String text = list.listAction.text(item);
-                        render_drawFont(text, uiCommonUtils.component_getAbsoluteX(list), uiCommonUtils.component_getAbsoluteY(list) + TS(itemOffsetY),
+                        render_drawFont(text, text, uiCommonUtils.component_getAbsoluteX(list), uiCommonUtils.component_getAbsoluteY(list) + TS(itemOffsetY),
                                 list.fontColor, componentAlpha, componentGrayScale, 1, 2, TS(list.width),
                                 list.listAction.icon(item), list.listAction.iconIndex(item), list.listAction.iconColor(item),
                                 list.listAction.iconFlipX(), list.listAction.iconFlipY());
@@ -3040,7 +3037,7 @@ public final class UIEngine<T extends UIEngineAdapter> implements Disposable {
                 spriteRenderer.loadState();
                 // Cell Content
                 if (comboBox.selectedItem != null) {
-                    render_drawFont(comboBox.selectedItem.text, uiCommonUtils.component_getAbsoluteX(comboBox), uiCommonUtils.component_getAbsoluteY(comboBox),
+                    render_drawFont(comboBox, comboBox.selectedItem.text, uiCommonUtils.component_getAbsoluteX(comboBox), uiCommonUtils.component_getAbsoluteY(comboBox),
                             comboBox.selectedItem.fontColor, componentAlpha, componentGrayScale, 1, 2, TS(comboBox.width - 1),
                             comboBox.selectedItem.comboBoxItemAction.icon(), comboBox.selectedItem.comboBoxItemAction.iconIndex(), comboBox.selectedItem.comboBoxItemAction.iconColor(),
                             comboBox.selectedItem.comboBoxItemAction.iconFlipX(), comboBox.selectedItem.comboBoxItemAction.iconFlipY());
@@ -3122,7 +3119,7 @@ public final class UIEngine<T extends UIEngineAdapter> implements Disposable {
 
 
                     // Text
-                    render_drawFont(textField.content, uiCommonUtils.component_getAbsoluteX(textField), uiCommonUtils.component_getAbsoluteY(textField),
+                    render_drawFont(textField, textField.content, uiCommonUtils.component_getAbsoluteX(textField), uiCommonUtils.component_getAbsoluteY(textField),
                             textField.fontColor, componentAlpha, componentGrayScale, 1, 2, TS(textField.width), null, 0, null, false, false, textField.offset, textField.content.length());
 
                     // Caret
@@ -3234,7 +3231,7 @@ public final class UIEngine<T extends UIEngineAdapter> implements Disposable {
                     }
 
                     if (!tabBar.bigIconMode) {
-                        render_drawFont(tab.title, uiCommonUtils.component_getAbsoluteX(tabBar) + TS(tabXOffset), uiCommonUtils.component_getAbsoluteY(tabBar),
+                        render_drawFont(tab, tab.title, uiCommonUtils.component_getAbsoluteX(tabBar) + TS(tabXOffset), uiCommonUtils.component_getAbsoluteY(tabBar),
                                 tab.fontColor, componentAlpha, tabGrayscale, 2, 1, TS(tabWidth),
                                 tab.tabAction.icon(), tab.tabAction.iconIndex(), tab.tabAction.iconColor(),
                                 tab.tabAction.iconFlipX(), tab.tabAction.iconFlipY());
@@ -3291,7 +3288,7 @@ public final class UIEngine<T extends UIEngineAdapter> implements Disposable {
                 if (progressBar.progressText) {
                     String percentTxt = progressBar.progressText2Decimal ? uiCommonUtils.progressBar_getProgressText2Decimal(progressBar.progress) : uiCommonUtils.progressBar_getProgressText(progressBar.progress);
                     int xOffset = (TS(progressBar.width) / 2) - (render_textWidth(percentTxt) / 2);
-                    render_drawFont(percentTxt, uiCommonUtils.component_getAbsoluteX(progressBar) + xOffset, uiCommonUtils.component_getAbsoluteY(progressBar), progressBar.fontColor, componentAlpha, componentGrayScale, 0, 2);
+                    render_drawFont(progressBar, percentTxt, uiCommonUtils.component_getAbsoluteX(progressBar) + xOffset, uiCommonUtils.component_getAbsoluteY(progressBar), progressBar.fontColor, componentAlpha, componentGrayScale, 0, 2);
                 }
             }
             case Checkbox checkBox -> {
@@ -3306,7 +3303,7 @@ public final class UIEngine<T extends UIEngineAdapter> implements Disposable {
 
                 spriteRenderer.drawCMediaArray(checkBoxGraphic, (checkBox.checked ? 1 : 0), uiCommonUtils.component_getAbsoluteX(checkBox), uiCommonUtils.component_getAbsoluteY(checkBox));
 
-                render_drawFont(checkBox.text, uiCommonUtils.component_getAbsoluteX(checkBox) + TS(), uiCommonUtils.component_getAbsoluteY(checkBox), checkBox.fontColor, componentAlpha, componentGrayScale, 1, 1);
+                render_drawFont(checkBox, checkBox.text, uiCommonUtils.component_getAbsoluteX(checkBox) + TS(), uiCommonUtils.component_getAbsoluteY(checkBox), checkBox.fontColor, componentAlpha, componentGrayScale, 1, 1);
             }
             case AppViewport appViewPort -> {
                 spriteRenderer.draw(appViewPort.textureRegion, uiCommonUtils.component_getAbsoluteX(appViewPort), uiCommonUtils.component_getAbsoluteY(appViewPort));
@@ -3340,7 +3337,7 @@ public final class UIEngine<T extends UIEngineAdapter> implements Disposable {
             final Object dragItem = uiEngineState.draggedListItem;
             final float dragAlpha = componentAlpha(dragList) * uiEngineState.config.component.listDragAlpha;
             String text = dragList.listAction.text(dragItem);
-            render_drawFont(text, uiEngineState.mouseUI.x - dragOffsetX, uiEngineState.mouseUI.y - dragOffsetY,
+            render_drawFont(dragList, text, uiEngineState.mouseUI.x - dragOffsetX, uiEngineState.mouseUI.y - dragOffsetY,
                     dragList.fontColor, dragAlpha, false, 2, 1,
                     TS(dragList.width), dragList.listAction.icon(dragItem), dragList.listAction.iconIndex(dragItem), dragList.listAction.iconColor(dragItem),
                     dragList.listAction.iconFlipX(), dragList.listAction.iconFlipY());
@@ -3359,40 +3356,46 @@ public final class UIEngine<T extends UIEngineAdapter> implements Disposable {
         return mediaManager.fontTextWidth(uiEngineState.config.ui.font, text, start, end);
     }
 
-    private void render_drawFont(String text, int x, int y, Color color, float alpha, boolean iconGrayScale) {
-        render_drawFont(text, x, y, color, alpha, iconGrayScale, 0, 0, FONT_MAX_WIDTH_NONE, null, 0, null, false, false, 0, text.length());
+    private void render_drawFont(Object uiObject, String text, int x, int y, Color color, float alpha, boolean iconGrayScale) {
+        render_drawFont(uiObject, text, x, y, color, alpha, iconGrayScale, 0, 0, FONT_MAX_WIDTH_NONE, null, 0, null, false, false, 0, text.length());
     }
 
-    private void render_drawFont(String text, int x, int y, Color color, float alpha, boolean iconGrayScale, int textXOffset, int textYOffset) {
-        render_drawFont(text, x, y, color, alpha, iconGrayScale, textXOffset, textYOffset, FONT_MAX_WIDTH_NONE, null, 0, null, false, false, 0, text.length());
+    private void render_drawFont(Object uiObject, String text, int x, int y, Color color, float alpha, boolean iconGrayScale, int textXOffset, int textYOffset) {
+        render_drawFont(uiObject, text, x, y, color, alpha, iconGrayScale, textXOffset, textYOffset, FONT_MAX_WIDTH_NONE, null, 0, null, false, false, 0, text.length());
     }
 
-    private void render_drawFont(String text, int x, int y, Color color, float alpha, boolean iconGrayScale, int textXOffset, int textYOffset, int maxWidth) {
-        render_drawFont(text, x, y, color, alpha, iconGrayScale, textXOffset, textYOffset, maxWidth, null, 0, null, false, false, 0, text.length());
+    private void render_drawFont(Object uiObject, String text, int x, int y, Color color, float alpha, boolean iconGrayScale, int textXOffset, int textYOffset, int maxWidth) {
+        render_drawFont(uiObject, text, x, y, color, alpha, iconGrayScale, textXOffset, textYOffset, maxWidth, null, 0, null, false, false, 0, text.length());
     }
 
-    private void render_drawFont(String text, int x, int y, float alpha, boolean iconGrayScale, Color color, int textXOffset, int textYOffset, int maxWidth) {
-        render_drawFont(text, x, y, color, alpha, iconGrayScale, textXOffset, textYOffset, maxWidth, null, 0, null, false, false, 0, text.length());
+    private void render_drawFont(Object uiObject, String text, int x, int y, float alpha, boolean iconGrayScale, Color color, int textXOffset, int textYOffset, int maxWidth) {
+        render_drawFont(uiObject, text, x, y, color, alpha, iconGrayScale, textXOffset, textYOffset, maxWidth, null, 0, null, false, false, 0, text.length());
     }
 
-    private void render_drawFont(String text, int x, int y, Color color, float alpha, boolean iconGrayScale, int textXOffset, int textYOffset, int maxWidth, CMediaSprite icon, int iconIndex, Color iconColor, boolean iconFlipX, boolean iconFlipY) {
-        render_drawFont(text, x, y, color, alpha, iconGrayScale, textXOffset, textYOffset, maxWidth, icon, iconIndex, iconColor, iconFlipX, iconFlipY, 0, text.length());
+    private void render_drawFont(Object uiObject, String text, int x, int y, Color color, float alpha, boolean iconGrayScale, int textXOffset, int textYOffset, int maxWidth, CMediaSprite icon, int iconIndex, Color iconColor, boolean iconFlipX, boolean iconFlipY) {
+        render_drawFont(uiObject, text, x, y, color, alpha, iconGrayScale, textXOffset, textYOffset, maxWidth, icon, iconIndex, iconColor, iconFlipX, iconFlipY, 0, text.length());
     }
 
-    private void render_drawFont(String text, int x, int y, Color color, float alpha, boolean iconGrayScale, int textXOffset, int textYOffset, int maxWidth, CMediaSprite icon, int iconIndex, Color iconColor, boolean iconFlipX, boolean iconFlipY, int textOffset, int textLength) {
-        final SpriteRenderer spriteRenderer = uiEngineState.spriteRenderer_ui;
-        final BitmapFont font = mediaManager.font(uiEngineState.config.ui.font);
+    private void render_drawFont(Object uiObject, String text, int x, int y, Color color, float alpha, boolean iconGrayScale, int textXOffset, int textYOffset, int maxWidth, CMediaSprite icon, int iconIndex, Color iconColor, boolean iconFlipX, boolean iconFlipY, int textOffset, int textLength) {
         final boolean withIcon = icon != null;
         if (withIcon) {
             render_drawIcon(icon, x, y, iconColor, alpha, iconGrayScale, iconIndex, false, iconFlipX, iconFlipY);
         }
 
+        final UIEngineConfig.TextRenderFunction textRenderFunction = uiEngineState.config.ui.textRenderFunction;
+        final SpriteRenderer spriteRenderer = uiEngineState.spriteRenderer_ui;
+
+        final CMediaFont cMediaFont = textRenderFunction.getFont(uiEngineState.theme.UI_FONT,uiObject);
+        final int font_x = x + (withIcon ? TS() : 0) + textXOffset;
+        final int font_y = y + textYOffset;
+        if (withIcon) maxWidth -= TS();
+
         spriteRenderer.saveState();
         spriteRenderer.setColor(Color.GRAY, alpha);
-
+        final BitmapFont font = mediaManager.font(cMediaFont);
         font.setColor(color.r, color.g, color.b, 1f);
-        if (withIcon) maxWidth -= TS();
-        spriteRenderer.drawCMediaFont(uiEngineState.config.ui.font, x + (withIcon ? TS() : 0) + textXOffset, y + textYOffset, text, textOffset, textLength, false, false, maxWidth);
+
+        textRenderFunction.renderText(uiObject, spriteRenderer, cMediaFont, font_x, font_y, text, textOffset, textLength, maxWidth);
 
         spriteRenderer.loadState();
     }

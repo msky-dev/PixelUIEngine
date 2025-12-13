@@ -4,6 +4,7 @@ import com.badlogic.gdx.graphics.Color;
 import net.mslivo.pixelui.engine.constants.KeyCode;
 import net.mslivo.pixelui.media.CMediaFont;
 import net.mslivo.pixelui.media.CMediaSprite;
+import net.mslivo.pixelui.rendering.SpriteRenderer;
 import net.mslivo.pixelui.theme.UIEngineTheme;
 
 public final class UIEngineConfig {
@@ -15,7 +16,6 @@ public final class UIEngineConfig {
     public static final int GAMEPAD_MOUSE_BUTTONS = 7;
     public static final int KEYBOARD_MOUSE_BUTTONS = 11;
 
-    private final UIEngineTheme theme;
     public final UIConfig ui;
     public final InputConfig input;
     public final WindowConfig window;
@@ -25,50 +25,85 @@ public final class UIEngineConfig {
     public final MouseTextInputConfig mouseTextInput;
 
     public UIEngineConfig(UIEngineTheme theme) {
-        this.theme = theme;
-        this.ui = new UIConfig();
-        this.input = new InputConfig();
-        this.window = new WindowConfig();
-        this.component = new ComponentConfig();
-        this.notification = new Notification();
-        this.tooltip = new TooltipConfig();
-        this.mouseTextInput = new MouseTextInputConfig();
+        this.ui = new UIConfig(theme);
+        this.input = new InputConfig(theme);
+        this.window = new WindowConfig(theme);
+        this.component = new ComponentConfig(theme);
+        this.notification = new Notification(theme);
+        this.tooltip = new TooltipConfig(theme);
+        this.mouseTextInput = new MouseTextInputConfig(theme);
     }
 
     public class InputConfig {
-        public boolean hardwareMouseEnabled = true;
+        public boolean hardwareMouseEnabled;
 
-        public boolean keyboardMouseEnabled = false;
-        public float keyboardMouseCursorSpeed = 3.0f;
-        public float keyboardMouseCursorSpeedUpFactor = 2.0f;
-        public float keyboardMouseCursorSmoothing = 0.25f;
-        public int[] keyboardMouseButtonsUp = {KeyCode.Key.UP};
-        public int[] keyboardMouseButtonsDown = {KeyCode.Key.DOWN};
-        public int[] keyboardMouseButtonsLeft = {KeyCode.Key.LEFT};
-        public int[] keyboardMouseButtonsRight = {KeyCode.Key.RIGHT};
-        public int[] keyboardMouseButtonsMouse1 = {KeyCode.Key.CONTROL_LEFT};
-        public int[] keyboardMouseButtonsMouse2 = {KeyCode.Key.ALT_LEFT};
-        public int[] keyboardMouseButtonsMouse3 = null;
-        public int[] keyboardMouseButtonsMouse4 = null;
-        public int[] keyboardMouseButtonsMouse5 = null;
-        public int[] keyboardMouseButtonsScrollUp = {KeyCode.Key.PAGE_UP};
-        public int[] keyboardMouseButtonsScrollDown = {KeyCode.Key.PAGE_DOWN};
-        public int[] keyboardMouseButtonsCursorSpeedUp = {KeyCode.Key.SHIFT_LEFT};
+        public boolean keyboardMouseEnabled;
+        public float keyboardMouseCursorSpeed;
+        public float keyboardMouseCursorSpeedUpFactor;
+        public float keyboardMouseCursorSmoothing;
+        public int[] keyboardMouseButtonsUp;
+        public int[] keyboardMouseButtonsDown;
+        public int[] keyboardMouseButtonsLeft;
+        public int[] keyboardMouseButtonsRight;
+        public int[] keyboardMouseButtonsMouse1;
+        public int[] keyboardMouseButtonsMouse2;
+        public int[] keyboardMouseButtonsMouse3;
+        public int[] keyboardMouseButtonsMouse4;
+        public int[] keyboardMouseButtonsMouse5;
+        public int[] keyboardMouseButtonsScrollUp;
+        public int[] keyboardMouseButtonsScrollDown;
+        public int[] keyboardMouseButtonsCursorSpeedUp;
 
-        public boolean gamePadMouseEnabled = false;
-        public float gamepadMouseCursorSpeed = 3.0f;
-        public float gamepadMouseCursorSpeedUpFactor = 2.0f;
-        public float gamePadMouseJoystickDeadZone = 0.3f;
-        public boolean gamePadMouseStickLeftEnabled = true;
-        public boolean gamePadMouseStickRightEnabled = true;
-        public int[] gamePadMouseButtonsMouse1 = {KeyCode.GamePad.A};
-        public int[] gamePadMouseButtonsMouse2 = {KeyCode.GamePad.B};
-        public int[] gamePadMouseButtonsMouse3 = null;
-        public int[] gamePadMouseButtonsMouse4 = null;
-        public int[] gamePadMouseButtonsMouse5 = null;
-        public int[] gamePadMouseButtonsScrollUp = {KeyCode.GamePad.DPAD_UP};
-        public int[] gamePadMouseButtonsScrollDown = {KeyCode.GamePad.DPAD_DOWN};
-        public int[] gamePadMouseButtonsCursorSpeedUp = {KeyCode.GamePad.X};
+        public boolean gamePadMouseEnabled;
+        public float gamepadMouseCursorSpeed;
+        public float gamepadMouseCursorSpeedUpFactor;
+        public float gamePadMouseJoystickDeadZone;
+        public boolean gamePadMouseStickLeftEnabled;
+        public boolean gamePadMouseStickRightEnabled;
+        public int[] gamePadMouseButtonsMouse1;
+        public int[] gamePadMouseButtonsMouse2;
+        public int[] gamePadMouseButtonsMouse3;
+        public int[] gamePadMouseButtonsMouse4;
+        public int[] gamePadMouseButtonsMouse5;
+        public int[] gamePadMouseButtonsScrollUp;
+        public int[] gamePadMouseButtonsScrollDown;
+        public int[] gamePadMouseButtonsCursorSpeedUp;
+
+        public InputConfig(UIEngineTheme theme) {
+
+            this.hardwareMouseEnabled = true;
+            this.keyboardMouseEnabled = false;
+            this.keyboardMouseCursorSpeed = 3.0f;
+            this.keyboardMouseCursorSpeedUpFactor = 2.0f;
+            this.keyboardMouseCursorSmoothing = 0.25f;
+            this.keyboardMouseButtonsUp = new int[]{KeyCode.Key.UP};
+            this.keyboardMouseButtonsDown = new int[]{KeyCode.Key.DOWN};
+            this.keyboardMouseButtonsLeft = new int[]{KeyCode.Key.LEFT};
+            this.keyboardMouseButtonsRight = new int[]{KeyCode.Key.RIGHT};
+            this.keyboardMouseButtonsMouse1 = new int[]{KeyCode.Key.CONTROL_LEFT};
+            this.keyboardMouseButtonsMouse2 = new int[]{KeyCode.Key.ALT_LEFT};
+            this.keyboardMouseButtonsMouse3 = null;
+            this.keyboardMouseButtonsMouse4 = null;
+            this.keyboardMouseButtonsMouse5 = null;
+            this.keyboardMouseButtonsScrollUp = new int[]{KeyCode.Key.PAGE_UP};
+            this.keyboardMouseButtonsScrollDown = new int[]{KeyCode.Key.PAGE_DOWN};
+            this.keyboardMouseButtonsCursorSpeedUp = new int[]{KeyCode.Key.SHIFT_LEFT};
+
+            this.gamePadMouseEnabled = false;
+            this.gamepadMouseCursorSpeed = 3.0f;
+            this.gamepadMouseCursorSpeedUpFactor = 2.0f;
+            this.gamePadMouseJoystickDeadZone = 0.3f;
+            this.gamePadMouseStickLeftEnabled = true;
+            this.gamePadMouseStickRightEnabled = true;
+            this.gamePadMouseButtonsMouse1 = new int[]{KeyCode.GamePad.A};
+            this.gamePadMouseButtonsMouse2 = new int[]{KeyCode.GamePad.B};
+            this.gamePadMouseButtonsMouse3 = null;
+            this.gamePadMouseButtonsMouse4 = null;
+            this.gamePadMouseButtonsMouse5 = null;
+            this.gamePadMouseButtonsScrollUp = new int[]{KeyCode.GamePad.DPAD_UP};
+            this.gamePadMouseButtonsScrollDown = new int[]{KeyCode.GamePad.DPAD_DOWN};
+            this.gamePadMouseButtonsCursorSpeedUp = new int[]{KeyCode.GamePad.X};
+        }
 
         public int[] gamepadMouseButtons(int index) {
             index = Math.clamp(index, 0, GAMEPAD_MOUSE_BUTTONS);
@@ -107,12 +142,24 @@ public final class UIEngineConfig {
     }
 
     public class UIConfig {
-        public CMediaFont font = theme.UI_FONT;
-        public Color fontDefaultColor = DEFAULT_COLOR_FONT.cpy();
-        public CMediaSprite cursor = theme.UI_CURSOR_ARROW;
-        public boolean keyInteractionsDisabled = false;
-        public boolean mouseInteractionsDisabled = false;
-        public boolean foldWindowsOnDoubleClick = true;
+        public CMediaFont font;
+        public Color fontDefaultColor;
+        public CMediaSprite cursor;
+        public boolean keyInteractionsDisabled;
+        public boolean mouseInteractionsDisabled;
+        public boolean foldWindowsOnDoubleClick;
+
+        public UIConfig(UIEngineTheme theme) {
+            this.font = theme.UI_FONT;
+            this.fontDefaultColor = DEFAULT_COLOR_FONT.cpy();
+            this.cursor = theme.UI_CURSOR_ARROW;
+            this.keyInteractionsDisabled = false;
+            this.mouseInteractionsDisabled = false;
+            this.foldWindowsOnDoubleClick = true;
+        }
+
+        public TextRenderFunction textRenderFunction = new TextRenderFunction() {
+        };
 
         public AnimationTimerFunction animationTimerFunction = new AnimationTimerFunction() {
             final float delta = 1 / 60f;
@@ -121,7 +168,6 @@ public final class UIEngineConfig {
             @Override
             public void updateAnimationTimer() {
                 animationTimer += delta;
-                return;
             }
 
             @Override
@@ -132,45 +178,103 @@ public final class UIEngineConfig {
     }
 
     public class WindowConfig {
-        public boolean defaultEnforceScreenBounds = true;
-        public Color defaultColor = DEFAULT_COlOR.cpy();
+        public boolean defaultEnforceScreenBounds;
+        public Color defaultColor;
+
+        public WindowConfig(UIEngineTheme theme) {
+            this.defaultEnforceScreenBounds = true;
+            this.defaultColor = DEFAULT_COlOR.cpy();
+        }
+
     }
 
     public class ComponentConfig {
-        public Color defaultColor = DEFAULT_COlOR.cpy();
-        public Color contextMenuDefaultColor = DEFAULT_COlOR_BRIGHT.cpy();
-        public int appViewportDefaultUpdateTime = 0;
-        public float listDragAlpha = 0.8f;
-        public float gridDragAlpha = 0.8f;
-        public float knobSensitivity = 1f;
-        public float scrollbarSensitivity = 1f;
-        public char[] textFieldDefaultAllowedCharacters = new char[]{'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', '!', '?', '.', '+', '-', '=', '&', '%', '*', '$', '/', ':', ';', ',', '"', '(', ')', '_', ' '};
-        public Color textFieldDefaultMarkerColor = Color.valueOf("8FD3FF");
+        public Color defaultColor;
+        public Color contextMenuDefaultColor;
+        public int appViewportDefaultUpdateTime;
+        public float listDragAlpha;
+        public float gridDragAlpha;
+        public float knobSensitivity;
+        public float scrollbarSensitivity;
+        public char[] textFieldDefaultAllowedCharacters;
+        public Color textFieldDefaultMarkerColor;
+
+        public ComponentConfig(UIEngineTheme theme) {
+            this.defaultColor = DEFAULT_COlOR.cpy();
+            this.contextMenuDefaultColor = DEFAULT_COlOR_BRIGHT.cpy();
+            this.appViewportDefaultUpdateTime = 0;
+            this.listDragAlpha = 0.8f;
+            this.gridDragAlpha = 0.8f;
+            this.knobSensitivity = 1f;
+            this.scrollbarSensitivity = 1f;
+            this.textFieldDefaultAllowedCharacters = new char[]{'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', '!', '?', '.', '+', '-', '=', '&', '%', '*', '$', '/', ':', ';', ',', '"', '(', ')', '_', ' '};
+            this.textFieldDefaultMarkerColor = Color.valueOf("8FD3FF");
+
+        }
+
     }
 
     public class Notification {
-        public int maxNotifications = 20;
-        public int defaultDisplayTime = 120;
-        public Color defaultColor = DEFAULT_COlOR.cpy();
-        public int foldTime = 12;
-        public int toolTipNotificationDefaultDisplayTime = 140;
-        public int toolTipNotificationFadeoutTime = 12;
+        public int maxNotifications;
+        public int defaultDisplayTime;
+        public Color defaultColor;
+        public int foldTime;
+        public int toolTipNotificationDefaultDisplayTime;
+        public int toolTipNotificationFadeoutTime;
+
+        public Notification(UIEngineTheme theme) {
+            this.maxNotifications = 20;
+            this.defaultDisplayTime = 120;
+            this.defaultColor = DEFAULT_COlOR.cpy();
+            this.foldTime = 12;
+            this.toolTipNotificationDefaultDisplayTime = 140;
+            this.toolTipNotificationFadeoutTime = 12;
+
+        }
+
     }
 
     public class TooltipConfig {
-        public Color defaultCellColor = DEFAULT_COlOR_BRIGHT.cpy();
-        public float fadeInSpeed = 0.2f;
-        public int fadeInDelay = 20;
-        public float fadeOutSpeed = 0.2f;
+        public Color defaultCellColor;
+        public float fadeInSpeed;
+        public int fadeInDelay;
+        public float fadeOutSpeed;
+
+        public TooltipConfig(UIEngineTheme theme) {
+            this.defaultCellColor = DEFAULT_COlOR_BRIGHT.cpy();
+            this.fadeInSpeed = 0.2f;
+            this.fadeInDelay = 20;
+            this.fadeOutSpeed = 0.2f;
+        }
+
     }
 
     public class MouseTextInputConfig {
-        public char[] defaultLowerCaseCharacters = {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', ' ', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9'};
-        public char[] defaultUpperCaseCharacters = {'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', ' ', '!', '?', '.', '+', '-', '=', '&', '%', '*', '$'};
-        public Color defaultColor = DEFAULT_COlOR.cpy();
-        public int charsPerRow = 8;
+        public char[] defaultLowerCaseCharacters;
+        public char[] defaultUpperCaseCharacters;
+        public Color defaultColor;
+        public int charsPerRow;
+
+        public MouseTextInputConfig(UIEngineTheme theme) {
+            this.defaultLowerCaseCharacters = new char[]{'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', ' ', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9'};
+            ;
+            this.defaultUpperCaseCharacters = new char[]{'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', ' ', '!', '?', '.', '+', '-', '=', '&', '%', '*', '$'};
+            this.defaultColor = DEFAULT_COlOR.cpy();
+            this.charsPerRow = 8;
+        }
     }
 
+    public interface TextRenderFunction {
+
+        default CMediaFont getFont(CMediaFont themeFont, Object uiObject) {
+            return themeFont;
+        }
+
+        default void renderText(Object uiObject, SpriteRenderer spriteRenderer, CMediaFont font, int x, int y, String text, int textOffset, int textLength, int maxWidth) {
+            spriteRenderer.drawCMediaFont(font, x, y, text, textOffset, textLength, false, false, maxWidth);
+        }
+
+    }
 
     public interface AnimationTimerFunction {
         void updateAnimationTimer();
