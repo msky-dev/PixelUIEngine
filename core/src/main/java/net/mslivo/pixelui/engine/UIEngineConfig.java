@@ -158,10 +158,10 @@ public final class UIEngineConfig {
             this.foldWindowsOnDoubleClick = true;
         }
 
-        public TextRenderFunction textRenderFunction = new TextRenderFunction() {
+        public TextRenderHook textRenderHook = new TextRenderHook() {
         };
 
-        public AnimationTimerFunction animationTimerFunction = new AnimationTimerFunction() {
+        public AnimationTimerHook animationTimerHook = new AnimationTimerHook() {
             final float delta = 1 / 60f;
             float animationTimer = 0;
 
@@ -264,10 +264,10 @@ public final class UIEngineConfig {
         }
     }
 
-    public interface TextRenderFunction {
+    public interface TextRenderHook {
 
-        default CMediaFont getFont(CMediaFont themeFont, Object uiObject) {
-            return themeFont;
+        default CMediaFont getFont(Object uiObject, CMediaFont configFont) {
+            return configFont;
         }
 
         default void renderText(Object uiObject, SpriteRenderer spriteRenderer, CMediaFont font, int x, int y, String text, int textOffset, int textLength, int maxWidth) {
@@ -276,8 +276,8 @@ public final class UIEngineConfig {
 
     }
 
-    public interface AnimationTimerFunction {
-        void updateAnimationTimer();
+    public interface AnimationTimerHook {
+        default void updateAnimationTimer(){};
 
         float getAnimationTimer();
     }

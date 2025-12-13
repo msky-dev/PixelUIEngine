@@ -1731,8 +1731,8 @@ public final class UIEngine<T extends UIEngineAdapter> implements Disposable {
     }
 
     private void updateUI_animationTimer() {
-        if (uiEngineState.config.ui.animationTimerFunction != null) {
-            uiEngineState.config.ui.animationTimerFunction.updateAnimationTimer();
+        if (uiEngineState.config.ui.animationTimerHook != null) {
+            uiEngineState.config.ui.animationTimerHook.updateAnimationTimer();
         }
     }
 
@@ -3382,10 +3382,10 @@ public final class UIEngine<T extends UIEngineAdapter> implements Disposable {
             render_drawIcon(icon, x, y, iconColor, alpha, iconGrayScale, iconIndex, false, iconFlipX, iconFlipY);
         }
 
-        final UIEngineConfig.TextRenderFunction textRenderFunction = uiEngineState.config.ui.textRenderFunction;
+        final UIEngineConfig.TextRenderHook textRenderHook = uiEngineState.config.ui.textRenderHook;
         final SpriteRenderer spriteRenderer = uiEngineState.spriteRenderer_ui;
 
-        final CMediaFont cMediaFont = textRenderFunction.getFont(uiEngineState.theme.UI_FONT,uiObject);
+        final CMediaFont cMediaFont = textRenderHook.getFont(uiObject, uiEngineState.config.ui.font);
         final int font_x = x + (withIcon ? TS() : 0) + textXOffset;
         final int font_y = y + textYOffset;
         if (withIcon) maxWidth -= TS();
@@ -3395,7 +3395,7 @@ public final class UIEngine<T extends UIEngineAdapter> implements Disposable {
         final BitmapFont font = mediaManager.font(cMediaFont);
         font.setColor(color.r, color.g, color.b, 1f);
 
-        textRenderFunction.renderText(uiObject, spriteRenderer, cMediaFont, font_x, font_y, text, textOffset, textLength, maxWidth);
+        textRenderHook.renderText(uiObject, spriteRenderer, cMediaFont, font_x, font_y, text, textOffset, textLength, maxWidth);
 
         spriteRenderer.loadState();
     }

@@ -21,7 +21,6 @@ import net.mslivo.pixelui.media.CMediaSprite;
 import net.mslivo.pixelui.media.MediaManager;
 import net.mslivo.pixelui.rendering.NestedFrameBuffer;
 import net.mslivo.pixelui.rendering.PixelPerfectViewport;
-import net.mslivo.pixelui.rendering.ShaderParser;
 import net.mslivo.pixelui.utils.Tools;
 
 import java.util.Arrays;
@@ -1439,8 +1438,8 @@ public class UICommonUtils {
     }
 
     static float ui_getAnimationTimer(UIEngineState state) {
-        if (state.config.ui.animationTimerFunction == null) return 0f;
-        return state.config.ui.animationTimerFunction.getAnimationTimer();
+        if (state.config.ui.animationTimerHook == null) return 0f;
+        return state.config.ui.animationTimerHook.getAnimationTimer();
     }
 
     public void window_resetReferences(Window window) {
