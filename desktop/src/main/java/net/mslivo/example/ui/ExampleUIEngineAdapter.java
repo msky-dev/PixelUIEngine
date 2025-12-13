@@ -71,7 +71,6 @@ public class ExampleUIEngineAdapter implements UIEngineAdapter {
         this.primitiveRenderer = new PrimitiveRenderer();
 
 
-        api.config.ui.font = ExampleBaseMedia.FONT_SMALL;
 
         api.config.window.defaultEnforceScreenBounds = false;
         // Example Wnd Button
@@ -135,7 +134,7 @@ public class ExampleUIEngineAdapter implements UIEngineAdapter {
             }
         };
 
-        //api.config.ui.font = UIEngineBaseMedia_8x8.UI_FONT_SMALL;
+
 
         this.spriteParticleSystem = new SpriteParticleSystem<>(ParticleDataInner.class, particleUpdater);
         this.primitiveParticleSystem = new PrimitiveParticleSystem<>(ParticleDataInner.class, particleUpdater);

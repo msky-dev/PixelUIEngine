@@ -1786,8 +1786,9 @@ public final class UIEngine<T extends UIEngineAdapter> implements Disposable {
     }
 
     private void updateUI_toolTip() {
-        // Anything dragged ?
-        boolean showComponentToolTip = uiEngineState.draggedList == null && uiEngineState.draggedGrid == null;
+        // Anything dragged
+
+         boolean showComponentToolTip = uiCommonUtils.getDraggedUIReference(uiEngineState) == null && uiCommonUtils.getPressedUIReference(uiEngineState) == null;
 
         // hovering over a component ?
         if (showComponentToolTip) {
