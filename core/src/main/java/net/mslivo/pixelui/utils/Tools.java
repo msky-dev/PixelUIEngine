@@ -751,11 +751,11 @@ public class Tools {
         }
 
         public static boolean randomChance(float probability) {
-            return MathUtils.random(0f, 1f) < probability;
+            return MathUtils.random(0f, 1f) <= probability;
         }
 
         public static boolean randomChance(double probability) {
-            return MathUtils.random(0f, 1f) < probability;
+            return MathUtils.random(0f, 1f) <= probability;
         }
 
         public static boolean randomChance(int oneIn) {
@@ -830,20 +830,6 @@ public class Tools {
         public static float exponentialDecay(float baseValue, float exp, int times) {
             return (baseValue * (float) Math.exp(-exp * (times - 1)));
         }
-
-        public static int randomCountHits(float baseChance) {
-            return randomCountHits(baseChance, 1f);
-        }
-
-        public static int randomCountHits(float baseChance, float chanceReduce) {
-            int hits = 0;
-            while (Tools.Calc.randomChance(baseChance)) {
-                hits++;
-                baseChance *= chanceReduce;
-            }
-            return hits;
-        }
-
 
         private static final IntMap<LongArray> doInRadiusCache = new IntMap<>();
 
