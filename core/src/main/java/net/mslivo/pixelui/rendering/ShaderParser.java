@@ -17,28 +17,26 @@ public class ShaderParser {
         public ShaderParseException(String message) {
             super(message);
         }
+
+        public ShaderParseException(Throwable cause) {
+            super(cause);
+        }
     }
 
     private static final SHADER_TEMPLATE[] SHADER_TEMPLATE_VALUES = SHADER_TEMPLATE.values();
 
     public static ShaderProgram parse(Path shaderFile) {
+        final String fileName = shaderFile.getFileName().toString();
         try {
-            final String fileName = shaderFile.getFileName().toString();
             return parse(fileName, findTemplate(fileName), Files.readString(shaderFile), false);
         } catch (Exception e) {
-            Tools.App.handleException(e);
+            throw new ShaderParseException(e);
         }
-        return null;
     }
 
     public static ShaderProgram parse(FileHandle fileHandle) {
-        try {
-            final String fileName = fileHandle.name();
-            return parse(fileName, findTemplate(fileName), fileHandle.readString(), false);
-        } catch (Exception e) {
-            Tools.App.handleException(e);
-        }
-        return null;
+        final String fileName = fileHandle.name();
+        return parse(fileName, findTemplate(fileName), fileHandle.readString(), false);
     }
 
     public static ShaderProgram parse(SHADER_TEMPLATE template, String source) {

@@ -224,9 +224,7 @@ public class Tools {
                     try {
                         new Lwjgl3Application(applicationAdapter, config);
                     } catch (Exception e) {
-                        e.printStackTrace();
-                        Tools.App.handleException(e);
-                        Tools.App.showExceptionDialog(e);
+                        throw new RuntimeException(e);
                     }
                 }
                 case GL32_VULKAN -> {
@@ -247,9 +245,7 @@ public class Tools {
                     try {
                         new Lwjgl3VulkanApplication(applicationAdapter, config);
                     } catch (Exception e) {
-                        e.printStackTrace();
-                        Tools.App.handleException(e);
-                        Tools.App.showExceptionDialog(e);
+                        throw new RuntimeException(e);
                     }
                 }
             }
