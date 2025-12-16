@@ -12,12 +12,19 @@ import java.util.List;
 
 public class ShaderParser {
 
+    public static class ShaderParseException extends RuntimeException{
+
+        public ShaderParseException(String message) {
+            super(message);
+        }
+    }
+
     private static final SHADER_TEMPLATE[] SHADER_TEMPLATE_VALUES = SHADER_TEMPLATE.values();
 
     public static ShaderProgram parse(Path shaderFile) {
         try {
             final String fileName = shaderFile.getFileName().toString();
-            return parse(fileName, findTemplate(fileName), Files.readString(shaderFile));
+            return parse(fileName, findTemplate(fileName), Files.readString(shaderFile), false);
         } catch (Exception e) {
             Tools.App.handleException(e);
         }
@@ -27,7 +34,7 @@ public class ShaderParser {
     public static ShaderProgram parse(FileHandle fileHandle) {
         try {
             final String fileName = fileHandle.name();
-            return parse(fileName, findTemplate(fileName), fileHandle.readString());
+            return parse(fileName, findTemplate(fileName), fileHandle.readString(), false);
         } catch (Exception e) {
             Tools.App.handleException(e);
         }
@@ -35,16 +42,19 @@ public class ShaderParser {
     }
 
     public static ShaderProgram parse(SHADER_TEMPLATE template, String source) {
-        return parse(null, template, source);
+        return parse(null, template, source, false);
     }
 
-    private static ShaderProgram parse(String fileName, SHADER_TEMPLATE template, String source) {
+    private static ShaderProgram parse(String fileName, SHADER_TEMPLATE template, String source, boolean ignoreErrors) {
 
         final ParseShaderResult parseResult = parseShaderSource(source);
         final String vertexShader = createVertexShader(template, parseResult.vertexDeclarations, parseResult.vertexMain);
         final String fragmentShader = createFragmentShader(template, parseResult.fragmentDeclarations, parseResult.fragmentMain);
 
-        return compileShader(fileName, vertexShader, fragmentShader);
+        ShaderProgram shaderProgram = compileShader(fileName, vertexShader, fragmentShader);
+        if(!ignoreErrors && !shaderProgram.isCompiled())
+            throw new ShaderParseException(shaderProgram.getLog());
+        return shaderProgram;
     }
 
     private static SHADER_TEMPLATE findTemplate(String fileName) {
@@ -53,7 +63,7 @@ public class ShaderParser {
                 return SHADER_TEMPLATE_VALUES[i];
             }
         }
-        throw new RuntimeException("No template found for extension \"" + fileName + "\"");
+        throw new ShaderParseException("No template found for extension \"" + fileName + "\"");
     }
 
     private static String createVertexShader(SHADER_TEMPLATE template, String vertexDeclarations, String vertexMain) {
@@ -105,7 +115,7 @@ public class ShaderParser {
                         errorLines.add(line);
                         line += lineErrors.get(errorIndex);
                         String error = (fileName != null ? "Error in " + shader + " \"" + fileName + "\"" : "Error in " + shader);
-                        throw new RuntimeException(error + ": " + line);
+                        throw new ShaderParseException(error + ": " + line);
                     }
 
 
