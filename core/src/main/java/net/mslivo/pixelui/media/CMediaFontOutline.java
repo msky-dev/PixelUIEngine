@@ -1,7 +1,7 @@
 package net.mslivo.pixelui.media;
 
 import com.badlogic.gdx.graphics.Color;
-import net.mslivo.pixelui.utils.misc.Copyable;
+import net.mslivo.pixelui.utils.helper.Copyable;
 
 import java.util.Objects;
 

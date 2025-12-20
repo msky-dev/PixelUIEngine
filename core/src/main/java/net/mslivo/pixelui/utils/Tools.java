@@ -9,10 +9,7 @@ import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.MathUtils;
-import com.badlogic.gdx.utils.Array;
-import com.badlogic.gdx.utils.BufferUtils;
-import com.badlogic.gdx.utils.IntMap;
-import com.badlogic.gdx.utils.LongArray;
+import com.badlogic.gdx.utils.*;
 import com.github.dgzt.gdx.lwjgl3.Lwjgl3VulkanApplication;
 import net.mslivo.pixelui.media.CMedia;
 import net.mslivo.pixelui.media.MediaManager;
@@ -193,7 +190,7 @@ public class Tools {
 
         public static void launch(ApplicationAdapter applicationAdapter, PixelUILaunchConfig launchConfig) {
             // Determine glEmulation
-            String osName = System.getProperty("os.name").toLowerCase();
+            String osName = System.getProperty("os.tableName").toLowerCase();
             PixelUILaunchConfig.GLEmulation glEmulation;
             if (osName.contains("win")) {
                 glEmulation = launchConfig.windowsGLEmulation;
@@ -255,8 +252,8 @@ public class Tools {
 
     public static class Graphics {
         public static NestedFrameBuffer frameBufferTrimRegionCopy(NestedFrameBuffer frameBuffer, SpriteRenderer batch,
-                                                int srcX, int srcY,
-                                                int trimW, int trimH) {
+                                                                  int srcX, int srcY,
+                                                                  int trimW, int trimH) {
 
             final Pixmap.Format format = frameBuffer.getColorBufferTexture().getTextureData().getFormat();
             final Texture.TextureFilter minFilter = frameBuffer.getColorBufferTexture().getMinFilter();
@@ -447,11 +444,11 @@ public class Tools {
 
         private static final String ZIP_ENTRY_NAME = "packed.data";
 
-        public static void writeFrameBuffer(String fileName) {
-            writeFrameBuffer(fileName, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        public static void captureFrameBuffer(String fileName) {
+            captureFrameBuffer(fileName, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         }
 
-        public static void writeFrameBuffer(String fileName, int width, int height) {
+        public static void captureFrameBuffer(String fileName, int width, int height) {
             Path path = Path.of(fileName);
             if (path.toFile().exists()) return;
             PixmapIO.writePNG(new FileHandle(path.toFile()), Pixmap.createFromFrameBuffer(0, 0, width, height));
@@ -470,30 +467,26 @@ public class Tools {
         }
 
         public static Path findNextValidFile(Path folder, String filename, String extension) {
-            if (makeSureDirectoryExists(folder)) {
-                filename = validFileName(filename);
-                extension = extension == null || extension.length() == 0 ? "" : "." + extension;
-                Path file;
-                int count = 1;
-                do {
-                    String countExt = count == 1 ? "" : "_" + count;
-                    file = Path.of(folder.toString(), filename + countExt + extension);
-                    count++;
-                } while (Files.exists(file));
-                return file;
-            } else {
-                return null;
-            }
+            filename = validFileName(filename);
+            extension = extension == null || extension.length() == 0 ? "" : "." + extension;
+            Path file;
+            int count = 1;
+            do {
+                String countExt = count == 1 ? "" : "_" + count;
+                file = Path.of(folder.toString(), filename + countExt + extension);
+                count++;
+            } while (Files.exists(file));
+            return file;
         }
 
-        public static boolean makeSureDirectoryExists(Path file) {
+        public static boolean forceDirectoryExists(Path file) {
             try {
-                if (Files.isRegularFile(file)) Files.delete(file);
+                if (Files.isRegularFile(file))
+                    Files.delete(file);
                 Files.createDirectories(file);
                 return true;
             } catch (IOException e) {
-                e.printStackTrace();
-                return false;
+                throw new GdxRuntimeException(e);
             }
         }
 
@@ -521,7 +514,7 @@ public class Tools {
                     }
                 }
             } catch (Exception e) {
-                throw new RuntimeException(e);
+                throw new GdxRuntimeException(e);
             }
 
         }
@@ -547,6 +540,8 @@ public class Tools {
                                 }
                                 return builder.toString();
                             }
+                        } else {
+                            throw new GdxRuntimeException("Zip entry not found");
                         }
                     }
                 } else {
@@ -563,10 +558,8 @@ public class Tools {
                     }
                 }
             } catch (Exception e) {
-                e.printStackTrace();
-                return null;
+                throw new GdxRuntimeException(e);
             }
-            return null;
         }
 
         public static FileHandle findResource(String path) {

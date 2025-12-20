@@ -1,6 +1,6 @@
 package net.mslivo.pixelui.media;
 
-import net.mslivo.pixelui.utils.misc.Copyable;
+import net.mslivo.pixelui.utils.helper.Copyable;
 
 public final class CMediaFontSymbolSingle extends CMediaFontSymbol implements Copyable<CMediaFontSymbolSingle> {
     public int id;

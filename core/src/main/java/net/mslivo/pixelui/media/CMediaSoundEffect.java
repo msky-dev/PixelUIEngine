@@ -1,6 +1,6 @@
 package net.mslivo.pixelui.media;
 
-import net.mslivo.pixelui.utils.misc.Copyable;
+import net.mslivo.pixelui.utils.helper.Copyable;
 
 public final class CMediaSoundEffect extends CMediaSound implements Copyable<CMediaSoundEffect> {
 

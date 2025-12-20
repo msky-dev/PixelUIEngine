@@ -421,7 +421,7 @@ public class KeyCode {
                 case PAUSE -> "Pause";
                 case PRINT_SCREEN -> "Print";
                 default ->
-                    // key name not found
+                    // key tableName not found
                         null;
             };
         }

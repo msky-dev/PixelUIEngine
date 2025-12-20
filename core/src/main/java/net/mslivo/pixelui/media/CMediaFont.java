@@ -1,6 +1,6 @@
 package net.mslivo.pixelui.media;
 
-import net.mslivo.pixelui.utils.misc.Copyable;
+import net.mslivo.pixelui.utils.helper.Copyable;
 
 import java.util.Arrays;
 import java.util.Objects;

@@ -1,7 +1,7 @@
 package net.mslivo.pixelui.media;
 
 import net.mslivo.pixelui.rendering.ExtendedAnimation;
-import net.mslivo.pixelui.utils.misc.Copyable;
+import net.mslivo.pixelui.utils.helper.Copyable;
 
 public final class CMediaAnimation extends CMediaSprite implements Copyable<CMediaAnimation> {
 
