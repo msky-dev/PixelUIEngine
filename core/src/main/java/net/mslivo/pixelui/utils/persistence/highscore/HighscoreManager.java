@@ -64,7 +64,7 @@ public class HighscoreManager {
         return highScoreTable.scores();
     }
 
-    public boolean checkScore(String table, long score, Supplier<String> nameEntry){
+    public CheckScoreResult checkScore(String table, long score, Supplier<String> nameEntry){
         HighScoreTable highScoreTable = findTable(table);
         if(highScoreTable == null) {
             highScoreTable = new HighScoreTable(table, new Array<>());
@@ -75,7 +75,7 @@ public class HighscoreManager {
 
         HighScoreEntry last = scores.peek();
         if (score <= last.score())
-            return false;
+            return new CheckScoreResult(false,0);
 
         String name = nameEntry.get();
         if (name == null)
@@ -94,7 +94,10 @@ public class HighscoreManager {
         scores.insert(insertIndex, entry);
 
         saveScores();
-        return true;
+        return new CheckScoreResult(true,(insertIndex+1));
+    }
+
+    public record CheckScoreResult(boolean isHighScore, int place){
     }
 
     private void loadScores() {
