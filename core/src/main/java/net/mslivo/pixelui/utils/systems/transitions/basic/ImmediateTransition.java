@@ -13,7 +13,7 @@ public class ImmediateTransition extends Transition {
     }
 
     @Override
-    public TRANSITION_RENDER_ORDER getRenderMode() {
+    public TRANSITION_RENDER_ORDER getRenderOrder() {
         return TRANSITION_RENDER_ORDER.FROM_FIRST;
     }
 

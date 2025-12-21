@@ -71,7 +71,7 @@ public class TransitionManager implements Disposable {
         this.captureUIEngineFrameBuffer(this.from, this.frameBuffer_from);
         this.captureUIEngineFrameBuffer(this.to, this.frameBuffer_to);
 
-        this.transitionRenderOrder = this.transition.getRenderMode();
+        this.transitionRenderOrder = this.transition.getRenderOrder();
         if (this.transitionRenderOrder == null)
             this.transitionRenderOrder = TRANSITION_RENDER_ORDER.FROM_FIRST;
         this.transition.init(this.spriteRenderer_screen, this.resolutionWidth, this.resolutionHeight);

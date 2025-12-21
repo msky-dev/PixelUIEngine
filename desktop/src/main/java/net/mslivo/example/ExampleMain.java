@@ -10,6 +10,7 @@ import net.mslivo.pixelui.utils.systems.transitions.basic.PixelateTransition;
 import net.mslivo.pixelui.engine.UIEngine;
 import net.mslivo.example.ui.ExampleUIEngineAdapter;
 import net.mslivo.example.ui.media.ExampleBaseMedia;
+import net.mslivo.pixelui.utils.systems.transitions.basic.ZoomInTransition;
 
 public class ExampleMain extends ApplicationAdapter {
     enum STATE {
@@ -82,7 +83,7 @@ public class ExampleMain extends ApplicationAdapter {
                             this.mediaManager, theme8x8, ExampleMainConstants.INTERNAL_RESOLUTION_WIDTH, ExampleMainConstants.INTERNAL_RESOLUTION_HEIGHT,
                             ExampleMainConstants.viewportMode);
                     this.uiEngine_transition.update();
-                    this.transitionManager = new TransitionManager(this.uiEngine, this.uiEngine_transition, new PixelateTransition());
+                    this.transitionManager = new TransitionManager(this.uiEngine, this.uiEngine_transition, new ZoomInTransition());
                     this.transitionManager.render();
                     state = STATE.TRANSITION;
                     return;

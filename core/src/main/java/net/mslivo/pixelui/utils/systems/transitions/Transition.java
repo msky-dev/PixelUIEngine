@@ -17,7 +17,7 @@ public abstract class Transition {
         this.transitionSpeed = transitionSpeed;
     }
 
-    public abstract TRANSITION_RENDER_ORDER getRenderMode();
+    public abstract TRANSITION_RENDER_ORDER getRenderOrder();
 
     public abstract void init(SpriteRenderer spriteRenderer, int screenWidth, int screenHeight);
 
