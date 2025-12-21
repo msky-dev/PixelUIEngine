@@ -1,4 +1,4 @@
-package net.mslivo.pixelui.utils.transitions;
+package net.mslivo.pixelui.utils.systems.transitions;
 
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import net.mslivo.pixelui.rendering.SpriteRenderer;
@@ -17,7 +17,7 @@ public abstract class Transition {
         this.transitionSpeed = transitionSpeed;
     }
 
-    public abstract TRANSITION_RENDER_MODE getRenderMode();
+    public abstract TRANSITION_RENDER_ORDER getRenderMode();
 
     public abstract void init(SpriteRenderer spriteRenderer, int screenWidth, int screenHeight);
 

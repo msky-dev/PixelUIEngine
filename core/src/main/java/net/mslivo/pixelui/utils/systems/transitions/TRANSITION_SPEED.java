@@ -1,4 +1,4 @@
-package net.mslivo.pixelui.utils.transitions;
+package net.mslivo.pixelui.utils.systems.transitions;
 
 public enum TRANSITION_SPEED {
     IMMEDIATE(0f),

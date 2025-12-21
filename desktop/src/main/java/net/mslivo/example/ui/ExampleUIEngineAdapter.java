@@ -9,10 +9,6 @@ import com.badlogic.gdx.math.MathUtils;
 import net.mslivo.pixelui.media.MediaManager;
 import net.mslivo.pixelui.rendering.PrimitiveRenderer;
 import net.mslivo.pixelui.utils.Tools;
-import net.mslivo.pixelui.utils.systems.sound.particles.ParticleUpdater;
-import net.mslivo.pixelui.utils.systems.sound.particles.PrimitiveParticleSystem;
-import net.mslivo.pixelui.utils.systems.sound.particles.SpriteParticleSystem;
-import net.mslivo.pixelui.utils.systems.sound.particles.particles.Particle;
 import net.mslivo.pixelui.engine.API;
 import net.mslivo.pixelui.engine.APIInput;
 import net.mslivo.pixelui.engine.UIEngineAdapter;
@@ -26,6 +22,10 @@ import net.mslivo.pixelui.engine.TextButton;
 import net.mslivo.pixelui.engine.AppViewport;
 import net.mslivo.example.ui.media.ExampleBaseMedia;
 import net.mslivo.example.ui.windows.ExampleWindowGeneratorP;
+import net.mslivo.pixelui.utils.systems.particles.ParticleUpdater;
+import net.mslivo.pixelui.utils.systems.particles.PrimitiveParticleSystem;
+import net.mslivo.pixelui.utils.systems.particles.SpriteParticleSystem;
+import net.mslivo.pixelui.utils.systems.particles.particles.Particle;
 
 
 public class ExampleUIEngineAdapter implements UIEngineAdapter {

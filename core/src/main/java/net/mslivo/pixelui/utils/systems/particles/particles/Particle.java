@@ -1,4 +1,4 @@
-package net.mslivo.pixelui.utils.particles.particles;
+package net.mslivo.pixelui.utils.systems.particles.particles;
 
 public abstract sealed class Particle<D> permits EmptyParticle, PrimitiveParticle, SpriteParticle {
     public float x, y;

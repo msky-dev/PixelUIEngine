@@ -1,4 +1,4 @@
-package net.mslivo.pixelui.utils.transitions;
+package net.mslivo.pixelui.utils.systems.transitions;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.*;
@@ -28,7 +28,7 @@ public class TransitionManager implements Disposable {
     private boolean finished;
     private int resolutionWidth, resolutionHeight;
     private VIEWPORT_MODE viewportMode;
-    private TRANSITION_RENDER_MODE transitionRenderMode;
+    private TRANSITION_RENDER_ORDER transitionRenderOrder;
     private UIEngine from;
     private UIEngine to;
 
@@ -71,9 +71,9 @@ public class TransitionManager implements Disposable {
         this.captureUIEngineFrameBuffer(this.from, this.frameBuffer_from);
         this.captureUIEngineFrameBuffer(this.to, this.frameBuffer_to);
 
-        this.transitionRenderMode = this.transition.getRenderMode();
-        if (this.transitionRenderMode == null)
-            this.transitionRenderMode = TRANSITION_RENDER_MODE.FROM_FIRST;
+        this.transitionRenderOrder = this.transition.getRenderMode();
+        if (this.transitionRenderOrder == null)
+            this.transitionRenderOrder = TRANSITION_RENDER_ORDER.FROM_FIRST;
         this.transition.init(this.spriteRenderer_screen, this.resolutionWidth, this.resolutionHeight);
         this.finished = false;
 
@@ -152,7 +152,7 @@ public class TransitionManager implements Disposable {
             viewport_screen.apply();
             spriteRenderer_screen.setProjectionMatrix(camera_screen.combined);
             spriteRenderer_screen.begin();
-            switch (transitionRenderMode) {
+            switch (transitionRenderOrder) {
                 case FROM_FIRST -> {
                     this.transition.renderFrom(spriteRenderer_screen, texture_from);
                     this.transition.renderTo(spriteRenderer_screen, texture_to);

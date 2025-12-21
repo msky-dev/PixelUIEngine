@@ -190,7 +190,7 @@ public class Tools {
 
         public static void launch(ApplicationAdapter applicationAdapter, PixelUILaunchConfig launchConfig) {
             // Determine glEmulation
-            String osName = System.getProperty("os.tableName").toLowerCase();
+            String osName = System.getProperty("os.name").toLowerCase();
             PixelUILaunchConfig.GLEmulation glEmulation;
             if (osName.contains("win")) {
                 glEmulation = launchConfig.windowsGLEmulation;

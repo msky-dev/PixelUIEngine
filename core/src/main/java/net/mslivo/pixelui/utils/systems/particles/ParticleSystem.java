@@ -1,12 +1,12 @@
-package net.mslivo.pixelui.utils.particles;
+package net.mslivo.pixelui.utils.systems.particles;
 
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.ObjectMap;
 import com.badlogic.gdx.utils.Queue;
 import net.mslivo.pixelui.utils.Tools;
-import net.mslivo.pixelui.utils.particles.particles.EmptyParticle;
-import net.mslivo.pixelui.utils.particles.particles.Particle;
+import net.mslivo.pixelui.utils.systems.particles.particles.EmptyParticle;
+import net.mslivo.pixelui.utils.systems.particles.particles.Particle;
 
 import java.lang.reflect.Modifier;
 import java.util.function.Consumer;

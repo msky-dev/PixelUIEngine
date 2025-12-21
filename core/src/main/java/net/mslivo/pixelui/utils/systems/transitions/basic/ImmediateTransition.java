@@ -1,9 +1,9 @@
-package net.mslivo.pixelui.utils.transitions.basic;
+package net.mslivo.pixelui.utils.systems.transitions.basic;
 
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import net.mslivo.pixelui.utils.transitions.TRANSITION_RENDER_MODE;
-import net.mslivo.pixelui.utils.transitions.TRANSITION_SPEED;
-import net.mslivo.pixelui.utils.transitions.Transition;
+import net.mslivo.pixelui.utils.systems.transitions.TRANSITION_RENDER_ORDER;
+import net.mslivo.pixelui.utils.systems.transitions.TRANSITION_SPEED;
+import net.mslivo.pixelui.utils.systems.transitions.Transition;
 import net.mslivo.pixelui.rendering.SpriteRenderer;
 
 public class ImmediateTransition extends Transition {
@@ -13,8 +13,8 @@ public class ImmediateTransition extends Transition {
     }
 
     @Override
-    public TRANSITION_RENDER_MODE getRenderMode() {
-        return TRANSITION_RENDER_MODE.FROM_FIRST;
+    public TRANSITION_RENDER_ORDER getRenderMode() {
+        return TRANSITION_RENDER_ORDER.FROM_FIRST;
     }
 
     @Override

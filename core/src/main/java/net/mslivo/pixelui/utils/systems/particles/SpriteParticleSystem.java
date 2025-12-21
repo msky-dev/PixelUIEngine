@@ -1,9 +1,10 @@
-package net.mslivo.pixelui.utils.particles;
+package net.mslivo.pixelui.utils.systems.particles;
 
 import com.badlogic.gdx.math.MathUtils;
 import net.mslivo.pixelui.media.*;
 import net.mslivo.pixelui.rendering.SpriteRenderer;
-import net.mslivo.pixelui.utils.particles.particles.*;
+import net.mslivo.pixelui.utils.systems.particles.particles.*;
+
 
 public final class SpriteParticleSystem<T> extends ParticleSystem<T> {
 

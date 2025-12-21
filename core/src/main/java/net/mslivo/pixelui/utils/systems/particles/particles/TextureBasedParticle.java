@@ -1,4 +1,4 @@
-package net.mslivo.pixelui.utils.particles.particles;
+package net.mslivo.pixelui.utils.systems.particles.particles;
 
 import net.mslivo.pixelui.media.CMediaSprite;
 

@@ -1,10 +1,10 @@
-package net.mslivo.pixelui.utils.particles;
+package net.mslivo.pixelui.utils.systems.particles;
 
 import com.badlogic.gdx.math.MathUtils;
 import net.mslivo.pixelui.rendering.PrimitiveRenderer;
-import net.mslivo.pixelui.utils.particles.particles.EmptyParticle;
-import net.mslivo.pixelui.utils.particles.particles.Particle;
-import net.mslivo.pixelui.utils.particles.particles.PrimitiveParticle;
+import net.mslivo.pixelui.utils.systems.particles.particles.EmptyParticle;
+import net.mslivo.pixelui.utils.systems.particles.particles.Particle;
+import net.mslivo.pixelui.utils.systems.particles.particles.PrimitiveParticle;
 
 public final class PrimitiveParticleSystem<T> extends ParticleSystem<T> {
 

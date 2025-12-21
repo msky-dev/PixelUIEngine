@@ -1,6 +1,7 @@
-package net.mslivo.pixelui.utils.particles;
+package net.mslivo.pixelui.utils.systems.particles;
 
-import net.mslivo.pixelui.utils.particles.particles.Particle;
+
+import net.mslivo.pixelui.utils.systems.particles.particles.Particle;
 
 public interface ParticleUpdater<T> {
     default boolean updateParticle(Particle<T> particle){

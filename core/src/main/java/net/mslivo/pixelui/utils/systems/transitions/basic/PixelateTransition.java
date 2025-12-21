@@ -1,11 +1,11 @@
-package net.mslivo.pixelui.utils.transitions.basic;
+package net.mslivo.pixelui.utils.systems.transitions.basic;
 
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import net.mslivo.pixelui.utils.Tools;
-import net.mslivo.pixelui.utils.transitions.TRANSITION_RENDER_MODE;
-import net.mslivo.pixelui.utils.transitions.TRANSITION_SPEED;
-import net.mslivo.pixelui.utils.transitions.Transition;
+import net.mslivo.pixelui.utils.systems.transitions.TRANSITION_RENDER_ORDER;
+import net.mslivo.pixelui.utils.systems.transitions.TRANSITION_SPEED;
+import net.mslivo.pixelui.utils.systems.transitions.Transition;
 import net.mslivo.pixelui.rendering.ShaderParser;
 import net.mslivo.pixelui.rendering.SpriteRenderer;
 
@@ -22,8 +22,8 @@ public class PixelateTransition extends Transition {
     }
 
     @Override
-    public TRANSITION_RENDER_MODE getRenderMode() {
-        return TRANSITION_RENDER_MODE.FROM_FIRST;
+    public TRANSITION_RENDER_ORDER getRenderMode() {
+        return TRANSITION_RENDER_ORDER.FROM_FIRST;
     }
 
     private ShaderProgram pixelationShader = ShaderParser.parse(Tools.File.findResource("shaders/pixelui/pixelation.sprite.glsl"));
