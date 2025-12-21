@@ -75,7 +75,7 @@ public class HighscoreManager {
 
         HighScoreEntry last = scores.peek();
         if (score <= last.score())
-            return new CheckScoreResult(false,0);
+            return new CheckScoreResult(false,score,0);
 
         String name = nameEntry.get();
         if (name == null)
@@ -94,7 +94,7 @@ public class HighscoreManager {
         scores.insert(insertIndex, entry);
 
         saveScores();
-        return new CheckScoreResult(true,(insertIndex+1));
+        return new CheckScoreResult(true, score,(insertIndex+1));
     }
 
 
