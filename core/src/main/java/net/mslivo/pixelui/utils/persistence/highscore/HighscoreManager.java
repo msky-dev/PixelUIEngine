@@ -97,8 +97,6 @@ public class HighscoreManager {
         return new CheckScoreResult(true,(insertIndex+1));
     }
 
-    public record CheckScoreResult(boolean isHighScore, int place){
-    }
 
     private void loadScores() {
         this.highscoreTables.clear();
