@@ -8,7 +8,6 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Base64;
-import java.util.function.Supplier;
 
 public class HighscoreManager {
 
@@ -50,37 +49,39 @@ public class HighscoreManager {
         }
     }
 
-    private HighScoreTable findTable(String name){
+    private HighScoreTable findOrCreateTable(String table){
         for(int i = 0; i<this.highscoreTables.size; i++)
-            if(this.highscoreTables.get(i).tableName.equals(name))
+            if(this.highscoreTables.get(i).tableName.equals(table))
                 return this.highscoreTables.get(i);
-        return null;
+        HighScoreTable highScoreTable = new HighScoreTable(table, new Array<>());
+        this.highscoreTables.add(highScoreTable);
+        return highScoreTable;
     }
 
     public Array<HighScoreEntry> getTableScores(String table){
-        HighScoreTable highScoreTable = findTable(table);
+        HighScoreTable highScoreTable = findOrCreateTable(table);
         if(table == null)
             return new Array<>();
         return highScoreTable.scores();
     }
 
-    public CheckScoreResult checkScore(String table, long score, Supplier<String> nameEntry){
-        HighScoreTable highScoreTable = findTable(table);
-        if(highScoreTable == null) {
-            highScoreTable = new HighScoreTable(table, new Array<>());
-            this.highscoreTables.add(highScoreTable);
-        }
-
+    public boolean isHighScore(String table, long score){
+        HighScoreTable highScoreTable = findOrCreateTable(table);
         Array<HighScoreEntry> scores = highScoreTable.scores();
-
         HighScoreEntry last = scores.peek();
         if (score <= last.score())
-            return new CheckScoreResult(false,score,0);
+            return false;
+        return true;
+    }
 
-        String name = nameEntry.get();
-        if (name == null)
-            name = "?";
+    public SaveScoreResult saveScore(String table, String name, long score){
+        name = name != null && !name.isBlank() ? name : "?";
+        if(!isHighScore(table, score))
+            return new SaveScoreResult(table,name, score,0,false);
 
+        HighScoreTable highScoreTable = findOrCreateTable(table);
+
+        Array<HighScoreEntry> scores = highScoreTable.scores();
         HighScoreEntry entry = new HighScoreEntry(name, score);
 
         // Insert sorted (descending by score)
@@ -94,7 +95,7 @@ public class HighscoreManager {
         scores.insert(insertIndex, entry);
 
         saveScores();
-        return new CheckScoreResult(true, score,(insertIndex+1));
+        return new SaveScoreResult(table, name, score,(insertIndex+1), true);
     }
 
 
