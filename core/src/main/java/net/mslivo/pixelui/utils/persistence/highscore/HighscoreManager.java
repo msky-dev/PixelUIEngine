@@ -2,12 +2,16 @@ package net.mslivo.pixelui.utils.persistence.highscore;
 
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Json;
+import com.badlogic.gdx.utils.JsonValue;
 import net.mslivo.pixelui.utils.Tools;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Base64;
+import java.util.Objects;
 
 public class HighscoreManager {
 
@@ -21,13 +25,50 @@ public class HighscoreManager {
         this(file, encryptionKey, 10);
     }
 
+    public static void main(String[] args) {
+        HighscoreManager highscoreManager = new HighscoreManager(Path.of("D:\\test"), "abc".getBytes(StandardCharsets.UTF_8), 10);
+
+        final String table = "table";
+        highscoreManager.getTableScores(table);
+        highscoreManager.isHighScore(table, 100);
+
+        highscoreManager.saveScore(table, "player1", 100);
+        highscoreManager.saveScore(table, "player2", 500);
+        highscoreManager.saveScore(table, "player3", 300);
+        highscoreManager.saveScore(table, "player4", 50);
+        highscoreManager.saveScore(table, "player5", 700);
+        highscoreManager.saveScore(table, "player6", 100);
+        highscoreManager.saveScore(table, "player7", 540);
+        highscoreManager.saveScore(table, "player8", 320);
+        highscoreManager.saveScore(table, "player9", 50);
+        highscoreManager.saveScore(table, "player10", 10);
+        highscoreManager.saveScore(table, "player11", 20);
+        highscoreManager.saveScore(table, "player12", 1000);
+
+
+        highscoreManager.getTableScores(table);
+
+    }
+
     public HighscoreManager(Path file, byte[] encryptionKey, int tableSizeMax) {
         this.file = file;
         this.encryptionKey = encryptionKey;
-        this.tableSizeMax = Math.max(tableSizeMax,0);
+        this.tableSizeMax = Math.max(tableSizeMax, 0);
         this.json = new Json();
         this.json.addClassTag("HighScoreEntry", HighScoreEntry.class);
         this.json.addClassTag("HighScoreTable", HighScoreTable.class);
+        this.json.setSerializer(BigInteger.class, new Json.Serializer<BigInteger>() {
+            public void write(Json json, BigInteger object, Class knownType) {
+                json.writeValue(object == null ? null : object.toString());
+            }
+
+            @Override
+            public BigInteger read(Json json, JsonValue jsonData, Class type) {
+                return jsonData == null || jsonData.isNull()
+                        ? null
+                        : new BigInteger(jsonData.asString());
+            }
+        });
         this.highscoreTables = new Array<>();
         this.loadScores();
     }
@@ -41,43 +82,50 @@ public class HighscoreManager {
         Tools.File.writeTextToFile(this.file, encoded, true);
     }
 
-    private void trimTables(){
-        for(int i = 0; i<this.highscoreTables.size; i++){
+    private void trimTables() {
+        for (int i = 0; i < this.highscoreTables.size; i++) {
             HighScoreTable table = this.highscoreTables.get(i);
             while (table.scores().size > this.tableSizeMax)
                 table.scores().removeIndex(table.scores().size - 1);
         }
     }
 
-    private HighScoreTable findOrCreateTable(String table){
-        for(int i = 0; i<this.highscoreTables.size; i++)
-            if(this.highscoreTables.get(i).tableName.equals(table))
+    private HighScoreTable findOrCreateTable(String table) {
+        for (int i = 0; i < this.highscoreTables.size; i++)
+            if (this.highscoreTables.get(i).tableName.equals(table))
                 return this.highscoreTables.get(i);
         HighScoreTable highScoreTable = new HighScoreTable(table, new Array<>());
         this.highscoreTables.add(highScoreTable);
         return highScoreTable;
     }
 
-    public Array<HighScoreEntry> getTableScores(String table){
+    public Array<HighScoreEntry> getTableScores(String table) {
         HighScoreTable highScoreTable = findOrCreateTable(table);
-        if(table == null)
+        if (table == null)
             return new Array<>();
         return highScoreTable.scores();
     }
 
-    public boolean isHighScore(String table, long score){
+    public boolean isHighScore(String table, long score) {
+        return isHighScore(table, BigInteger.valueOf(score));
+    }
+
+    public boolean isHighScore(String table, BigInteger score) {
         HighScoreTable highScoreTable = findOrCreateTable(table);
         Array<HighScoreEntry> scores = highScoreTable.scores();
-        HighScoreEntry last = scores.peek();
-        if (score <= last.score())
+        if (scores.size >= this.tableSizeMax && score.compareTo(scores.peek().score()) <= 0)
             return false;
         return true;
     }
 
-    public SaveScoreResult saveScore(String table, String name, long score){
+    public SaveScoreResult saveScore(String table, String name, long score) {
+        return saveScore(table,name, BigInteger.valueOf(score));
+    }
+
+    public SaveScoreResult saveScore(String table, String name, BigInteger score) {
         name = name != null && !name.isBlank() ? name : "?";
-        if(!isHighScore(table, score))
-            return new SaveScoreResult(table,name, score,0,false);
+        if (!isHighScore(table, score))
+            return new SaveScoreResult(table, name, score, 0, false);
 
         HighScoreTable highScoreTable = findOrCreateTable(table);
 
@@ -87,7 +135,7 @@ public class HighscoreManager {
         // Insert sorted (descending by score)
         int insertIndex = scores.size;
         for (int i = 0; i < scores.size; i++) {
-            if (score > scores.get(i).score()) {
+            if (score.compareTo(scores.get(i).score()) > 0) {
                 insertIndex = i;
                 break;
             }
@@ -95,18 +143,18 @@ public class HighscoreManager {
         scores.insert(insertIndex, entry);
 
         saveScores();
-        return new SaveScoreResult(table, name, score,(insertIndex+1), true);
+        return new SaveScoreResult(table, name, score, (insertIndex + 1), true);
     }
 
 
     private void loadScores() {
         this.highscoreTables.clear();
 
-        if(!Files.exists(this.file)){
+        if (!Files.exists(this.file)) {
             this.saveScores();
         }
 
-        String encoded = Tools.File.readTextFromFile(this.file,true);
+        String encoded = Tools.File.readTextFromFile(this.file, true);
         byte[] encrypted = Base64.getDecoder().decode(encoded);
         byte[] decrypted = xor(encrypted, this.encryptionKey);
 
@@ -122,10 +170,90 @@ public class HighscoreManager {
         return out;
     }
 
-    public record HighScoreTable(String tableName, Array<HighScoreEntry> scores) {
+    public static final class HighScoreTable {
+        private String tableName;
+        private Array<HighScoreEntry> scores;
+
+        public HighScoreTable(String tableName, Array<HighScoreEntry> scores) {
+            this.tableName = tableName;
+            this.scores = scores;
+        }
+
+        public HighScoreTable() {
+        }
+
+        public String tableName() {
+            return tableName;
+        }
+
+        public Array<HighScoreEntry> scores() {
+            return scores;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (obj == this) return true;
+            if (obj == null || obj.getClass() != this.getClass()) return false;
+            var that = (HighScoreTable) obj;
+            return Objects.equals(this.tableName, that.tableName) &&
+                    Objects.equals(this.scores, that.scores);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(tableName, scores);
+        }
+
+        @Override
+        public String toString() {
+            return "HighScoreTable[" +
+                    "tableName=" + tableName + ", " +
+                    "scores=" + scores + ']';
+        }
+
     }
 
-    public record HighScoreEntry(String name, long score) {
+    public static final class HighScoreEntry {
+        private String name;
+        private BigInteger score;
+
+        public HighScoreEntry(String name, BigInteger score) {
+            this.name = name;
+            this.score = score;
+        }
+
+        public HighScoreEntry() {
+        }
+
+        public String name() {
+            return name;
+        }
+
+        public BigInteger score() {
+            return score;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (obj == this) return true;
+            if (obj == null || obj.getClass() != this.getClass()) return false;
+            var that = (HighScoreEntry) obj;
+            return Objects.equals(this.name, that.name) &&
+                    this.score == that.score;
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(name, score);
+        }
+
+        @Override
+        public String toString() {
+            return "HighScoreEntry[" +
+                    "name=" + name + ", " +
+                    "score=" + score + ']';
+        }
+
     }
 
 }

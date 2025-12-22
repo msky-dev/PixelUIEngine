@@ -1,4 +1,6 @@
 package net.mslivo.pixelui.utils.persistence.highscore;
 
-public record SaveScoreResult(String table, String name, long score, int place, boolean isHighScore){
+import java.math.BigInteger;
+
+public record SaveScoreResult(String table, String name, BigInteger score, int place, boolean isHighScore){
 }
