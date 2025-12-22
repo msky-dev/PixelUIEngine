@@ -25,31 +25,6 @@ public class HighscoreManager {
         this(file, encryptionKey, 10);
     }
 
-    public static void main(String[] args) {
-        HighscoreManager highscoreManager = new HighscoreManager(Path.of("D:\\test"), "abc".getBytes(StandardCharsets.UTF_8), 10);
-
-        final String table = "table";
-        highscoreManager.getTableScores(table);
-        highscoreManager.isHighScore(table, 100);
-
-        highscoreManager.saveScore(table, "player1", 100);
-        highscoreManager.saveScore(table, "player2", 500);
-        highscoreManager.saveScore(table, "player3", 300);
-        highscoreManager.saveScore(table, "player4", 50);
-        highscoreManager.saveScore(table, "player5", 700);
-        highscoreManager.saveScore(table, "player6", 100);
-        highscoreManager.saveScore(table, "player7", 540);
-        highscoreManager.saveScore(table, "player8", 320);
-        highscoreManager.saveScore(table, "player9", 50);
-        highscoreManager.saveScore(table, "player10", 10);
-        highscoreManager.saveScore(table, "player11", 20);
-        highscoreManager.saveScore(table, "player12", 1000);
-
-
-        highscoreManager.getTableScores(table);
-
-    }
-
     public HighscoreManager(Path file, byte[] encryptionKey, int tableSizeMax) {
         this.file = file;
         this.encryptionKey = encryptionKey;
