@@ -471,16 +471,37 @@ public final class APIWidgets {
         APICompositeText() {
         }
 
-        public Text[][] createTable(int x, int y, String[] column1Text, int col1Width, int col2Width) {
-            Text[][] ret = new Text[2][column1Text.length];
+        public Text[][] createTwoColumnTextTable(
+                int startX,
+                int startY,
+                String[] firstColumnTexts,
+                int firstColumnWidth,
+                int secondColumnWidth
+        ) {
+            final int rowCount = firstColumnTexts.length;
+            final int columnCount = 2;
 
-            for (int iy = 0; iy < column1Text.length; iy++) {
-                Text text1 = api.component.text.create(x, y + ((column1Text.length - 1) - iy), col1Width, column1Text[iy]);
-                ret[0][iy] = text1;
-                Text text2 = api.component.text.create(x + col1Width, y + (column1Text.length - 1 - iy), col2Width, "");
-                ret[1][iy] = text2;
+            Text[][] table = new Text[columnCount][rowCount];
+
+            for (int row = 0; row < rowCount; row++) {
+                int yPosition = startY + (rowCount - 1 - row);
+
+                table[0][row] = api.component.text.create(
+                        startX,
+                        yPosition,
+                        firstColumnWidth,
+                        firstColumnTexts[row]
+                );
+
+                table[1][row] = api.component.text.create(
+                        startX + firstColumnWidth,
+                        yPosition,
+                        secondColumnWidth,
+                        ""
+                );
             }
-            return ret;
+
+            return table;
         }
 
         public Array<Component> createScrollAbleText(int x, int y, int width, int height, String[] text) {
