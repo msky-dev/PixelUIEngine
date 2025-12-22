@@ -1,7 +1,8 @@
-package net.mslivo.pixelui.utils.persistence.highscore.settings.validator;
+package net.mslivo.pixelui.utils.persistence.settings.validator;
 
-import net.mslivo.pixelui.utils.persistence.highscore.settings.SettingsManager;
-import net.mslivo.pixelui.utils.persistence.highscore.settings.ValueValidator;
+
+import net.mslivo.pixelui.utils.persistence.settings.SettingsManager;
+import net.mslivo.pixelui.utils.persistence.settings.ValueValidator;
 
 public class BooleanValueValidator implements ValueValidator {
     @Override

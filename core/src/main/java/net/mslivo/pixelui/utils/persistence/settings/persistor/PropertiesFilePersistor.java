@@ -1,8 +1,8 @@
-package net.mslivo.pixelui.utils.persistence.highscore.settings.persistor;
+package net.mslivo.pixelui.utils.persistence.settings.persistor;
 
 import com.badlogic.gdx.utils.GdxRuntimeException;
-import net.mslivo.pixelui.utils.persistence.highscore.settings.SettingsPersistor;
 import net.mslivo.pixelui.utils.Tools;
+import net.mslivo.pixelui.utils.persistence.settings.SettingsPersistor;
 
 import java.io.IOException;
 import java.nio.file.Files;

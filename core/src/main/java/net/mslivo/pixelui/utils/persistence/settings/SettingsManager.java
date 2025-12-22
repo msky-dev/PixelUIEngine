@@ -1,9 +1,9 @@
-package net.mslivo.pixelui.utils.persistence.highscore.settings;
+package net.mslivo.pixelui.utils.persistence.settings;
 
 import com.badlogic.gdx.utils.ObjectMap;
 import net.mslivo.pixelui.utils.Tools;
-import net.mslivo.pixelui.utils.persistence.highscore.settings.persistor.PropertiesFilePersistor;
-import net.mslivo.pixelui.utils.persistence.highscore.settings.validator.StringValueValidator;
+import net.mslivo.pixelui.utils.persistence.settings.persistor.PropertiesFilePersistor;
+import net.mslivo.pixelui.utils.persistence.settings.validator.StringValueValidator;
 
 import java.util.Properties;
 

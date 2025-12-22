@@ -1,8 +1,8 @@
-package net.mslivo.pixelui.utils.persistence.highscore.settings.validator;
+package net.mslivo.pixelui.utils.persistence.settings.validator;
 
 import com.badlogic.gdx.utils.ObjectSet;
-import net.mslivo.pixelui.utils.persistence.highscore.settings.SettingsManager;
-import net.mslivo.pixelui.utils.persistence.highscore.settings.ValueValidator;
+import net.mslivo.pixelui.utils.persistence.settings.SettingsManager;
+import net.mslivo.pixelui.utils.persistence.settings.ValueValidator;
 
 public class StringListValueValidator implements ValueValidator {
     private final ObjectSet<String> allowedValuesSet;

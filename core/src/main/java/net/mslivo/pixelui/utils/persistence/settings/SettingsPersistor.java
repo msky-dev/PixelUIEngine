@@ -1,4 +1,4 @@
-package net.mslivo.pixelui.utils.persistence.highscore.settings;
+package net.mslivo.pixelui.utils.persistence.settings;
 
 import java.util.Properties;
 
