@@ -450,7 +450,12 @@ public class Tools {
 
         public static void captureFrameBuffer(String fileName, int width, int height) {
             Path path = Path.of(fileName);
-            if (path.toFile().exists()) return;
+            if (path.toFile().exists()){
+                try {
+                    Files.delete(path);
+                } catch (IOException e) {
+                }
+            }
             PixmapIO.writePNG(new FileHandle(path.toFile()), Pixmap.createFromFrameBuffer(0, 0, width, height));
         }
 
