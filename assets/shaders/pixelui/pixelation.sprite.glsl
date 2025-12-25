@@ -17,7 +17,7 @@ void main(){
     texCoords = texCoords * u_textureSize;
     texCoords = mix(texCoords, floor((texCoords / pixelSize) + 0.5) * pixelSize, step(0.001, v_tweak.x));
     texCoords = texCoords / u_textureSize;
-    gl_FragColor = texture2D(u_texture, texCoords);
+    fragColor = texture(u_texture, texCoords);
 
 }
 

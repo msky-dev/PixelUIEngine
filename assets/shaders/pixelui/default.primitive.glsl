@@ -11,6 +11,6 @@ void main(){
 // BEGIN FRAGMENT
 
 void main(){
-    gl_FragColor = v_vertexColor;
+    fragColor = v_vertexColor;
 }
 // END FRAGMENT

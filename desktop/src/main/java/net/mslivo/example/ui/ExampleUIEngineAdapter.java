@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL32;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.g3d.Shader;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.MathUtils;
 import net.mslivo.pixelui.media.MediaManager;
@@ -27,6 +28,8 @@ import net.mslivo.pixelui.utils.systems.particles.PrimitiveParticleSystem;
 import net.mslivo.pixelui.utils.systems.particles.SpriteParticleSystem;
 import net.mslivo.pixelui.utils.systems.particles.particles.Particle;
 
+import java.nio.file.Path;
+
 
 public class ExampleUIEngineAdapter implements UIEngineAdapter {
     private static final boolean IM_PERFORMANCE_TEST = false; // ~ 1000ms
@@ -41,6 +44,7 @@ public class ExampleUIEngineAdapter implements UIEngineAdapter {
     private SpriteParticleSystem<ParticleDataInner> spriteParticleSystem;
     private PrimitiveParticleSystem<ParticleDataInner> primitiveParticleSystem;
 
+    private ShaderProgram shaderProgram = ShaderParser.parse(Tools.File.findResource("shaders/pixelui/hsl.sprite.glsl"));
 
     public static class ParticleDataInner {
         int randomData = 0;
@@ -347,7 +351,6 @@ public class ExampleUIEngineAdapter implements UIEngineAdapter {
 
     }
 
-    private ShaderProgram shaderProgram = ShaderParser.parse(Tools.File.findResource("shaders/pixelui/hsl.sprite.glsl"));
 
     @Override
     public void dispose() {

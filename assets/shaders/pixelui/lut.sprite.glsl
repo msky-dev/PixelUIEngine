@@ -27,8 +27,8 @@ vec3 lut(vec3 color, sampler2D lutTexture, vec2 lutTextureSize) {
     float s0 = xOffset + (zSlice0 * sliceSize);
     float s1 = xOffset + (zSlice1 * sliceSize);
 
-    vec3 slice0Color = texture2D(lutTexture, vec2(s0, yRange)).rgb;
-    vec3 slice1Color = texture2D(lutTexture, vec2(s1, yRange)).rgb;
+    vec3 slice0Color = texture(lutTexture, vec2(s0, yRange)).rgb;
+    vec3 slice1Color = texture(lutTexture, vec2(s1, yRange)).rgb;
 
     float zOffset = mod(color.z * width, 1.0);
 
@@ -39,10 +39,10 @@ vec3 lut(vec3 color, sampler2D lutTexture, vec2 lutTextureSize) {
 
 void main(){
 
-    vec4 color = texture2D(u_texture, v_texCoord);
+    vec4 color = texture(u_texture, v_texCoord);
     vec4 lutColor = vec4(lut(color.rgb, u_lut, u_lutSize), color.a);
 
-    gl_FragColor = mix(color, lutColor, v_tweak.x);
+    fragColor = mix(color, lutColor, v_tweak.x);
 
 }
 

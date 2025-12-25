@@ -219,15 +219,14 @@ public class ShaderParser {
     public enum SHADER_TEMPLATE {
         SPRITE(".sprite.glsl",
                 """
+                                in vec4 a_position;
+                                in vec4 a_color;
+                                in vec4 a_tweak;
+                                in vec2 a_texCoord;
                         
-                                attribute vec4 a_position;
-                                attribute vec4 a_color;
-                                attribute vec4 a_tweak;
-                                attribute vec2 a_texCoord;
-                        
-                                varying vec4 v_color;
-                                varying vec4 v_tweak;
-                                varying vec2 v_texCoord;
+                                out vec4 v_color;
+                                out vec4 v_tweak;
+                                out vec2 v_texCoord;
                         
                                 uniform mat4 u_projTrans;
                         
@@ -245,10 +244,11 @@ public class ShaderParser {
                                    #VERTEX_MAIN
                                 }
                         """,
-                """
-                        varying vec4 v_color;
-                        varying vec4 v_tweak;
-                        varying vec2 v_texCoord;
+                """                        
+                        in vec4 v_color;
+                        in vec4 v_tweak;
+                        in vec2 v_texCoord;
+                        out vec4 fragColor;
                         
                         uniform sampler2D u_texture;
                         uniform vec2 u_textureSize;
@@ -264,10 +264,10 @@ public class ShaderParser {
                         """),
         PRIMITIVE(".primitive.glsl", """
                 
-                        attribute vec4 a_position;
-                        attribute vec4 a_vertexColor;
+                        in vec4 a_position;
+                        in vec4 a_vertexColor;
                 
-                        varying vec4 v_vertexColor;
+                        out vec4 v_vertexColor;
                 
                         uniform mat4 u_projTrans;
                 
@@ -285,10 +285,10 @@ public class ShaderParser {
                             #VERTEX_MAIN
                         }
                 """,
-                """
-                        
-                            varying vec4 v_vertexColor;
-                        
+                """                            
+                            in vec4 v_vertexColor;
+                            out vec4 fragColor;
+                            
                             #FRAGMENT_DECLARATIONS
                         
                             void main() {
@@ -302,6 +302,8 @@ public class ShaderParser {
         ;
 
         private static final String COMMON_DECLARATIONS = """             
+                        #version 320 es
+
                         #ifdef GL_ES
                             precision highp float;
                             precision highp int;

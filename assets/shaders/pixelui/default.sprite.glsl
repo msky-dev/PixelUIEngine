@@ -17,7 +17,7 @@ vec4 colorTintAdd(vec4 color, vec4 modColor){
 }
 
 void main(){
-    gl_FragColor = colorTintAdd(texture2D(u_texture, v_texCoord), v_color);
+    fragColor = colorTintAdd(texture(u_texture, v_texCoord), v_color);
 }
 
 // END FRAGMENT
