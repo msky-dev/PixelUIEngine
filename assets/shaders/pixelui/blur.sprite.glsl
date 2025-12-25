@@ -10,17 +10,17 @@ void main(){
 
 // BEGIN FRAGMENT
 
-vec4 blur(vec2 texCoords, sampler2D texture, vec2 textureSize) {
+vec4 blur(vec2 texCoords, sampler2D textureSampler, vec2 textureSize) {
     vec2 texelSize = 1.0 / textureSize;
-    vec4 color = texture(texture, texCoords) * 4.0;// Center pixel
-    color += texture(texture, texCoords + vec2(texelSize.x, 0.0));
-    color += texture(texture, texCoords - vec2(texelSize.x, 0.0));
-    color += texture(texture, texCoords + vec2(0.0, texelSize.y));
-    color += texture(texture, texCoords - vec2(0.0, texelSize.y));
-    color += texture(texture, texCoords + vec2(texelSize.x, texelSize.y));
-    color += texture(texture, texCoords - vec2(texelSize.x, texelSize.y));
-    color += texture(texture, texCoords + vec2(texelSize.x, -texelSize.y));
-    color += texture(texture, texCoords - vec2(texelSize.x, -texelSize.y));
+    vec4 color = texture(textureSampler, texCoords) * 4.0;// Center pixel
+    color += texture(textureSampler, texCoords + vec2(texelSize.x, 0.0));
+    color += texture(textureSampler, texCoords - vec2(texelSize.x, 0.0));
+    color += texture(textureSampler, texCoords + vec2(0.0, texelSize.y));
+    color += texture(textureSampler, texCoords - vec2(0.0, texelSize.y));
+    color += texture(textureSampler, texCoords + vec2(texelSize.x, texelSize.y));
+    color += texture(textureSampler, texCoords - vec2(texelSize.x, texelSize.y));
+    color += texture(textureSampler, texCoords + vec2(texelSize.x, -texelSize.y));
+    color += texture(textureSampler, texCoords - vec2(texelSize.x, -texelSize.y));
     return color / 12.0;// Normalize
 }
 
