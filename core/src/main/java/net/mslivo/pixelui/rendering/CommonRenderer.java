@@ -21,8 +21,15 @@ abstract class CommonRenderer {
 
     protected static final int RGB_SRC = 0, RGB_DST = 1, ALPHA_SRC = 2, ALPHA_DST = 3;
 
-    private static final int[] BLEND_RESET =  new int[]{
+    private static final int[] BLEND_LAYER =  new int[]{
             GL32.GL_SRC_ALPHA,
+            GL32.GL_ONE_MINUS_SRC_ALPHA,
+            GL32.GL_ONE,
+            GL32.GL_ONE_MINUS_SRC_ALPHA
+    };
+
+    private static final int[] BLEND_COMPOSITE =  new int[]{
+            GL32.GL_ONE,
             GL32.GL_ONE_MINUS_SRC_ALPHA,
             GL32.GL_ONE,
             GL32.GL_ONE_MINUS_SRC_ALPHA
@@ -58,7 +65,7 @@ abstract class CommonRenderer {
 
         this.tempColor = new Color(Color.CLEAR);
 
-        this.blend = Arrays.copyOf(BLEND_RESET, BLEND_RESET.length);
+        this.blend = Arrays.copyOf(BLEND_LAYER, BLEND_LAYER.length);
         this.blend_save = Arrays.copyOf(this.blend, this.blend.length);
 
         this.defaultShader = defaultShader != null ? defaultShader : provideDefaultShader();
@@ -163,11 +170,25 @@ abstract class CommonRenderer {
     }
 
     public void setBlendFunctionComposite() {
-        this.setBlendFuncImpl(GL32.GL_ONE, GL32.GL_ONE_MINUS_SRC_ALPHA);
+        this.setBlendFunctionSeparate(
+                BLEND_COMPOSITE[0],
+                BLEND_COMPOSITE[1],
+                BLEND_COMPOSITE[2],
+                BLEND_COMPOSITE[3]
+        );
+    }
+
+    public void setBlendFunctionLayer() {
+        this.setBlendFunctionSeparate(
+                BLEND_LAYER[0],
+                BLEND_LAYER[1],
+                BLEND_LAYER[2],
+                BLEND_LAYER[3]
+        );
     }
 
     public void reset(){
-        System.arraycopy(BLEND_RESET,0,this.blend,0,this.blend.length);
+        System.arraycopy(BLEND_LAYER,0,this.blend,0,this.blend.length);
         this.resetImpl();
     }
 
