@@ -188,7 +188,7 @@ abstract class CommonRenderer {
     }
 
     public void reset(){
-        System.arraycopy(BLEND_LAYER,0,this.blend,0,this.blend.length);
+        this.setBlendFunctionSeparate(BLEND_LAYER[0],BLEND_LAYER[1],BLEND_LAYER[2],BLEND_LAYER[3]);
         this.resetImpl();
     }
 
