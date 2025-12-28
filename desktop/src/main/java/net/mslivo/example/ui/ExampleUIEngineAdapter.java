@@ -330,7 +330,7 @@ public class ExampleUIEngineAdapter implements UIEngineAdapter {
         //spriteRenderer.setShader(shaderProgram);
         spriteRenderer.setTweak(0.5f,0.5f, 0.5f, 0f);
 
-        spriteRenderer.drawCMediaImage(ExampleBaseMedia.EXAMPLE_TEST, 300, 100);
+        spriteRenderer.draw(mediaManager.texture(ExampleBaseMedia.EXAMPLE_TEST), 300, 100);
         spriteRenderer.setShader(null);
 
 

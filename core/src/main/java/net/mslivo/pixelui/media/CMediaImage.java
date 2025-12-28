@@ -9,11 +9,7 @@ public final class CMediaImage extends CMediaSprite implements Copyable<CMediaIm
     }
 
     public CMediaImage(String filename) {
-        this(filename, true);
-    }
-
-    public CMediaImage(String filename, boolean useAtlas) {
-        super(filename, useAtlas);
+        super(filename);
     }
 
     public CMediaImage copy() {

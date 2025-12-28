@@ -23,23 +23,19 @@ public final class CMediaAnimation extends CMediaSprite implements Copyable<CMed
     }
 
     public CMediaAnimation(String file, int frameWidth, int frameHeight) {
-        this(file, frameWidth, frameHeight, 0.1f, 0, Integer.MAX_VALUE, ExtendedAnimation.PlayMode.LOOP, true);
+        this(file, frameWidth, frameHeight, 0.1f, 0, Integer.MAX_VALUE, ExtendedAnimation.PlayMode.LOOP);
     }
 
     public CMediaAnimation(String file, int frameWidth, int frameHeight, float animationSpeed) {
-        this(file, frameWidth, frameHeight, animationSpeed, 0, Integer.MAX_VALUE, ExtendedAnimation.PlayMode.LOOP, true);
+        this(file, frameWidth, frameHeight, animationSpeed, 0, Integer.MAX_VALUE, ExtendedAnimation.PlayMode.LOOP);
     }
 
     public CMediaAnimation(String file, int frameWidth, int frameHeight, float animation_speed, int frameOffset, int frameLength) {
-        this(file, frameWidth, frameHeight, animation_speed, frameOffset, frameLength, ExtendedAnimation.PlayMode.LOOP, true);
+        this(file, frameWidth, frameHeight, animation_speed, frameOffset, frameLength, ExtendedAnimation.PlayMode.LOOP);
     }
 
     public CMediaAnimation(String filename, int frameWidth, int frameHeight, float animationSpeed, int frameOffset, int frameLength, ExtendedAnimation.PlayMode playMode) {
-        this(filename, frameWidth, frameHeight, animationSpeed, frameOffset, frameLength, playMode, true);
-    }
-
-    public CMediaAnimation(String filename, int frameWidth, int frameHeight, float animationSpeed, int frameOffset, int frameLength, ExtendedAnimation.PlayMode playMode, boolean useAtlas) {
-        super(filename, useAtlas);
+        super(filename);
         this.frameWidth = frameWidth;
         this.frameHeight = frameHeight;
         this.animationSpeed = animationSpeed;
@@ -47,7 +43,6 @@ public final class CMediaAnimation extends CMediaSprite implements Copyable<CMed
         this.frameLength = frameLength;
         this.playMode = playMode;
     }
-
 
     @Override
     public CMediaAnimation copy() {

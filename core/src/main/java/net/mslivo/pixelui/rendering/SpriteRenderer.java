@@ -799,14 +799,12 @@ public class SpriteRenderer extends CommonRenderer implements Disposable {
         this.nextSamplerTextureUnit = 1;
     }
 
-    public void bindCMediaImageToUniform(CMediaImage cMediaImage, String uniform) {
-        bindCMediaImageToUniform(cMediaImage, uniform, null);
+    public void bindCMediaTextureToUniform(CMediaTexture texture, String uniform) {
+        bindTextureToUniform(mediaManager.texture(texture), uniform);
     }
 
-    public void bindCMediaImageToUniform(CMediaImage cMediaImage, String uniform, String sizeUniform) {
-        if (cMediaImage.useAtlas)
-            throw new RuntimeException("Texures used as samplers should not be in a TextureAtlas");
-        bindTextureToUniform(mediaManager.image(cMediaImage).getTexture(), uniform, sizeUniform);
+    public void bindCMediaTextureToUniform(CMediaTexture texture, String uniform, String sizeUniform) {
+        bindTextureToUniform(mediaManager.texture(texture), uniform, sizeUniform);
     }
 
     public void bindTextureToUniform(Texture texture, String uniform) {
@@ -878,7 +876,7 @@ public class SpriteRenderer extends CommonRenderer implements Disposable {
         this.draw(region, width, height, transform);
     }
 
-    // ----- CMediaimage -----
+    // ----- CMediaImage -----
 
     public void drawCMediaImage(final CMediaImage cMediaImage, final float x, final float y) {
         final TextureRegion region = mediaManager.image(cMediaImage);

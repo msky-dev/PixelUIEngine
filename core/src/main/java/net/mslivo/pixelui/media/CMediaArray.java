@@ -17,15 +17,11 @@ public final class CMediaArray extends CMediaSprite implements Copyable<CMediaAr
     }
 
     public CMediaArray(String file, int frameWidth, int frameHeight) {
-        this(file, frameWidth, frameHeight, 0, Integer.MAX_VALUE, true);
+        this(file, frameWidth, frameHeight, 0, Integer.MAX_VALUE);
     }
 
     public CMediaArray(String file, int frameWidth, int frameHeight, int frameOffset, int frameLength) {
-        this(file, frameWidth, frameHeight, frameOffset, frameLength, true);
-    }
-
-    public CMediaArray(String file, int frameWidth, int frameHeight, int frameOffset, int frameLength, boolean useAtlas) {
-        super(file, useAtlas);
+        super(file);
         this.frameWidth = frameWidth;
         this.frameHeight = frameHeight;
         this.frameOffset = frameOffset;
@@ -47,7 +43,6 @@ public final class CMediaArray extends CMediaSprite implements Copyable<CMediaAr
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
-
         CMediaArray that = (CMediaArray) o;
         return frameWidth == that.frameWidth && frameHeight == that.frameHeight && frameOffset == that.frameOffset && frameLength == that.frameLength;
     }

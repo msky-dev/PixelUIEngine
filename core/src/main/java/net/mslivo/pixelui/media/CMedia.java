@@ -2,7 +2,7 @@ package net.mslivo.pixelui.media;
 
 import java.util.Objects;
 
-public abstract sealed class CMedia permits CMediaFont, CMediaSound, CMediaSprite {
+public abstract sealed class CMedia permits CMediaFont, CMediaSound, CMediaSprite, CMediaTexture {
 
     public String file;
 
@@ -25,6 +25,7 @@ public abstract sealed class CMedia permits CMediaFont, CMediaSound, CMediaSprit
             case CMediaFont cMediaFont -> cMediaFont.copy();
             case CMediaSound cMediaSound -> cMediaSound.copy();
             case CMediaSprite cMediaSprite -> cMediaSprite.copy();
+            case CMediaTexture cMediaTexture -> cMediaTexture.copy();
         };
         return copy;
     }

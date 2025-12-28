@@ -47,6 +47,7 @@ public final class MediaManager implements Disposable {
     private ObjectMap<CMediaImage, TextureRegion> medias_images = null;
     private ObjectMap<CMediaFont, BitmapFont> medias_fonts = null;
     private ObjectMap<CMediaArray, TextureRegion[]> medias_arrays = null;
+    private ObjectMap<CMediaTexture, Texture> medias_textures = null;
     private ObjectMap<CMediaAnimation, ExtendedAnimation> medias_animations = null;
     private final Queue<CMedia> loadMediaList = new Queue<>();
     private Array<CMedia> loadedMediaList = new Array<>();
@@ -60,8 +61,7 @@ public final class MediaManager implements Disposable {
 
     public boolean prepareCMedia(CMedia cMedia) {
         if (loaded) return false;
-        if (cMedia == null)
-            return false;
+        if (cMedia == null) return false;
         loadMediaList.addLast(cMedia);
         return true;
     }
@@ -101,8 +101,7 @@ public final class MediaManager implements Disposable {
 
 
     private Pixmap modifyPixmapAddOutline(Pixmap pixmap, CMediaFontOutline outline, int symbolAreaY) {
-        if (outline == null)
-            return pixmap;
+        if (outline == null) return pixmap;
         pixmap.setBlending(Pixmap.Blending.None);
 
 
@@ -117,11 +116,9 @@ public final class MediaManager implements Disposable {
                 int pixel = pixmap.getPixel(ix, iy);
                 float a = getPixelAlpha(pixel);
 
-                if (a == 0f)
-                    continue;
+                if (a == 0f) continue;
 
-                if (outline.outlineOnly)
-                    removePoints.addLast(new GridPoint2(ix, iy));
+                if (outline.outlineOnly) removePoints.addLast(new GridPoint2(ix, iy));
 
                 if (!outline.outlineSymbols && iy > symbolAreaY) {
                     continue;
@@ -287,12 +284,7 @@ public final class MediaManager implements Disposable {
                     case CMediaFontSymbolArray arraySymbol -> arraySymbol.ids[i2];
                 };
 
-                fntFileData.append(String.format(FONT_FILE_DATA, FONT_CUSTOM_SYMBOL_OFFSET + symbolId,
-                        xCurrent, yCurrent, symbolPixmap.getWidth(),
-                        symbolPixmap.getHeight(), -1,
-                        ((bitMapFontInformation.lineHeight - 1) - symbolPixmap.getHeight()) - symbols[i].y_offset,
-                        (symbolPixmap.getWidth() - 1) + symbols[i].x_advance
-                ));
+                fntFileData.append(String.format(FONT_FILE_DATA, FONT_CUSTOM_SYMBOL_OFFSET + symbolId, xCurrent, yCurrent, symbolPixmap.getWidth(), symbolPixmap.getHeight(), -1, ((bitMapFontInformation.lineHeight - 1) - symbolPixmap.getHeight()) - symbols[i].y_offset, (symbolPixmap.getWidth() - 1) + symbols[i].x_advance));
 
                 symbolHeightMax = Math.max(symbolHeightMax, symbolPixmap.getHeight());
                 xCurrent += symbolPixmap.getWidth();
@@ -331,9 +323,11 @@ public final class MediaManager implements Disposable {
         Array<CMediaFont> fontCMediaLoadStack = new Array<>();
         Array<CMediaSprite> spriteCMediaLoadStack = new Array<>();
         Array<CMediaSound> soundCMediaLoadStack = new Array<>();
+        Array<CMediaTexture> textureCMediaLoadStack = new Array<>();
         ObjectMap<CMediaFont, String> createFontFontFile = new ObjectMap<>();
         ObjectMap<CMediaFont, String> createFontAtlasPackedName = new ObjectMap<>();
         ObjectMap<CMediaFont, Texture> createFontFontTexture = new ObjectMap<>();
+        ObjectMap<CMediaTexture, Texture> offAtlasTextures = new ObjectMap();
         int step = 0;
         int stepsMax = 0;
 
@@ -349,12 +343,14 @@ public final class MediaManager implements Disposable {
                 case CMediaSprite cMediaSprite -> spriteCMediaLoadStack.add(cMediaSprite);
                 case CMediaSound cMediaSound -> soundCMediaLoadStack.add(cMediaSound);
                 case CMediaFont cMediaFont -> fontCMediaLoadStack.add(cMediaFont);
+                case CMediaTexture cMediaTexture -> textureCMediaLoadStack.add(cMediaTexture);
             }
 
             stepsMax++;
         }
         medias_images = new ObjectMap<>();
         medias_arrays = new ObjectMap<>();
+        medias_textures = new ObjectMap<>();
         medias_animations = new ObjectMap<>();
         medias_fonts = new ObjectMap<>();
         medias_sounds = new ObjectMap<>();
@@ -363,17 +359,13 @@ public final class MediaManager implements Disposable {
         // Load Sprite Data Into Pixmap Packer
         for (int i = 0; i < spriteCMediaLoadStack.size; i++) {
             CMediaSprite cMediaSprite = spriteCMediaLoadStack.get(i);
-
-            if (cMediaSprite.useAtlas) {
-                FileHandle textureFileHandle = Tools.File.findResource(cMediaSprite.file);
-                String packedTextureName = cMediaSprite.file;
-                if (pixmapPacker.getRect(packedTextureName) == null) {
-                    Pixmap pixmap = createTexturePixmap(textureFileHandle);
-                    pixmapPacker.pack(packedTextureName, pixmap);
-                    pixmap.dispose();
-                }
+            FileHandle fileHandle = Tools.File.findResource(cMediaSprite.file);
+            String packedTextureName = cMediaSprite.file;
+            if (pixmapPacker.getRect(packedTextureName) == null) {
+                Pixmap pixmap = createTexturePixmap(fileHandle);
+                pixmapPacker.pack(packedTextureName, pixmap);
+                pixmap.dispose();
             }
-
             step++;
             if (loadProgress != null) loadProgress.onLoadStep(cMediaSprite.file, step, stepsMax);
         }
@@ -387,17 +379,11 @@ public final class MediaManager implements Disposable {
             String packedFontTextureName = String.format(PACKED_FONT_NAME, cMediaFont.file, fontCount);
             CreateFontResult fontResult = createFont(textureFileHandle, cMediaFont.symbols, cMediaFont.outline);
 
-
             createFontFontFile.put(cMediaFont, fontResult.fontFileData);
 
-            if (cMediaFont.useAtlas) {
-                // pack
-                pixmapPacker.pack(packedFontTextureName, fontResult.pixmap);
-                createFontAtlasPackedName.put(cMediaFont, packedFontTextureName);
-            } else {
-                // load
-                createFontFontTexture.put(cMediaFont, new Texture(fontResult.pixmap));
-            }
+            // pack
+            pixmapPacker.pack(packedFontTextureName, fontResult.pixmap);
+            createFontAtlasPackedName.put(cMediaFont, packedFontTextureName);
 
             fontResult.pixmap.dispose();
             fontCount++;
@@ -405,46 +391,31 @@ public final class MediaManager implements Disposable {
             if (loadProgress != null) loadProgress.onLoadStep(cMediaFont.file, step, stepsMax);
         }
 
+        // Load Off-Atlas Textures into memory
+        for (int i = 0; i < textureCMediaLoadStack.size; i++) {
+            CMediaTexture cMediaTexture = textureCMediaLoadStack.get(i);
+            FileHandle fileHandle = Tools.File.findResource(cMediaTexture.file);
+            Texture texture = new Texture(fileHandle, cMediaTexture.format, false);
+            texture.setFilter(cMediaTexture.filter,cMediaTexture.filter);
+            texture.setWrap(cMediaTexture.uWrap,cMediaTexture.vWrap);
+            offAtlasTextures.put(cMediaTexture, texture);
+        }
+
         // Create TextureAtlas
         this.textureAtlas = new TextureAtlas();
         pixmapPacker.updateTextureAtlas(textureAtlas, textureFilter, textureFilter, false);
         pixmapPacker.dispose();
 
-        // Fill Sprite CMedia Arrays with TextureAtlas Data
+        // Fill medias_images, medias_arrays, medias_animations
         for (int i = 0; i < spriteCMediaLoadStack.size; i++) {
-            CMediaSprite cMediaSprite = spriteCMediaLoadStack.get(i);
-
+            final CMediaSprite cMediaSprite = spriteCMediaLoadStack.get(i);
+            final TextureRegion textureRegion = textureAtlas.findRegion(cMediaSprite.file);
             switch (cMediaSprite) {
-                case CMediaImage cMediaImage -> {
-                    if (cMediaImage.useAtlas) {
-                        medias_images.put(cMediaImage, new TextureRegion(textureAtlas.findRegion(cMediaImage.file)));
-
-                    } else {
-                        medias_images.put(cMediaImage, new TextureRegion(new Texture(Tools.File.findResource(cMediaImage.file))));
-                    }
-                }
-                case CMediaArray cMediaArray -> {
-                    if (cMediaArray.useAtlas) {
-                        medias_arrays.put(cMediaArray, splitFrames(cMediaArray, textureAtlas.findRegion(cMediaArray.file), cMediaArray.frameWidth, cMediaArray.frameHeight,
-                                cMediaArray.frameOffset, cMediaArray.frameLength).toArray(TextureRegion[]::new));
-                    } else {
-                        medias_arrays.put(cMediaArray, splitFrames(cMediaArray, new TextureRegion(new Texture(Tools.File.findResource(cMediaArray.file))), cMediaArray.frameWidth, cMediaArray.frameHeight,
-                                cMediaArray.frameOffset, cMediaArray.frameLength).toArray(TextureRegion[]::new));
-                    }
-                }
+                case CMediaImage cMediaImage -> medias_images.put(cMediaImage, textureRegion);
+                case CMediaArray cMediaArray ->
+                        medias_arrays.put(cMediaArray, splitFrames(cMediaArray, textureRegion, cMediaArray.frameWidth, cMediaArray.frameHeight, cMediaArray.frameOffset, cMediaArray.frameLength).toArray(TextureRegion[]::new));
                 case CMediaAnimation cMediaAnimation -> {
-                    ExtendedAnimation extendedAnimation;
-                    if (cMediaAnimation.useAtlas) {
-                        extendedAnimation = new ExtendedAnimation(cMediaAnimation.animationSpeed,
-                                splitFrames(cMediaAnimation, textureAtlas.findRegion(cMediaAnimation.file), cMediaAnimation.frameWidth, cMediaAnimation.frameHeight, cMediaAnimation.frameOffset, cMediaAnimation.frameLength),
-                                cMediaAnimation.playMode
-                        );
-                    } else {
-                        extendedAnimation = new ExtendedAnimation(cMediaAnimation.animationSpeed,
-                                splitFrames(cMediaAnimation, new TextureRegion(new Texture(Tools.File.findResource(cMediaAnimation.file))), cMediaAnimation.frameWidth, cMediaAnimation.frameHeight, cMediaAnimation.frameOffset, cMediaAnimation.frameLength),
-                                cMediaAnimation.playMode
-                        );
-                    }
+                    ExtendedAnimation extendedAnimation = new ExtendedAnimation(cMediaAnimation.animationSpeed, splitFrames(cMediaAnimation, textureRegion, cMediaAnimation.frameWidth, cMediaAnimation.frameHeight, cMediaAnimation.frameOffset, cMediaAnimation.frameLength), cMediaAnimation.playMode);
                     try {
                         extendedAnimation.getKeyFrame(0);
                     } catch (ArithmeticException e) {
@@ -456,35 +427,31 @@ public final class MediaManager implements Disposable {
             loadedMediaList.add(cMediaSprite);
         }
 
-        // Fill Font CMedia Arrays with TextureAtlas Data
+        // Fill medias_fonts
         for (int i = 0; i < fontCMediaLoadStack.size; i++) {
             CMediaFont cMediaFont = fontCMediaLoadStack.get(i);
-            TextureRegion fontTextureRegion;
-            if (cMediaFont.useAtlas) {
-                fontTextureRegion = new TextureRegion(textureAtlas.findRegion(createFontAtlasPackedName.get(cMediaFont)));
-            } else {
-                fontTextureRegion = new TextureRegion(createFontFontTexture.get(cMediaFont));
-            }
+            TextureRegion fontTextureRegion = new TextureRegion(textureAtlas.findRegion(createFontAtlasPackedName.get(cMediaFont)));
 
-            BitmapFont bitmapFont = new BitmapFont(
-                    new FontFileHandle(Tools.File.findResource(cMediaFont.file), createFontFontFile.get(cMediaFont)),
-                    fontTextureRegion);
+            BitmapFont bitmapFont = new BitmapFont(new FontFileHandle(Tools.File.findResource(cMediaFont.file), createFontFontFile.get(cMediaFont)), fontTextureRegion);
 
             bitmapFont.setColor(Color.GRAY);
             bitmapFont.getData().markupEnabled = cMediaFont.markupEnabled;
             medias_fonts.put(cMediaFont, bitmapFont);
         }
+        // Fill medias_textures
+        for (int i = 0; i < textureCMediaLoadStack.size; i++) {
+            CMediaTexture cMediaTexture = textureCMediaLoadStack.get(i);
+            medias_textures.put(cMediaTexture, offAtlasTextures.get(cMediaTexture));
+        }
 
-        // 6. Fill CMedia Arrays with Sound Data
+        // Fill medias_sounds, medias_music
         for (int i = 0; i < soundCMediaLoadStack.size; i++) {
             CMediaSound soundMedia = soundCMediaLoadStack.get(i);
             switch (soundMedia) {
-                case CMediaSoundEffect cMediaSoundEffect -> {
-                    medias_sounds.put(cMediaSoundEffect, Gdx.audio.newSound(Tools.File.findResource(cMediaSoundEffect.file)));
-                }
-                case CMediaMusic cMediaMusic -> {
-                    medias_music.put(cMediaMusic, Gdx.audio.newMusic(Tools.File.findResource(soundMedia.file)));
-                }
+                case CMediaSoundEffect cMediaSoundEffect ->
+                        medias_sounds.put(cMediaSoundEffect, Gdx.audio.newSound(Tools.File.findResource(cMediaSoundEffect.file)));
+                case CMediaMusic cMediaMusic ->
+                        medias_music.put(cMediaMusic, Gdx.audio.newMusic(Tools.File.findResource(soundMedia.file)));
             }
             loadedMediaList.add(soundMedia);
             step++;
@@ -528,16 +495,13 @@ public final class MediaManager implements Disposable {
             throw new RuntimeException(ERROR_READ_FONT, e);
         }
 
-        if (!fileFound)
-            throw new RuntimeException(ERROR_READ_FONT_FILE_DESCRIPTOR);
-        if (!baseFound)
-            throw new RuntimeException(ERROR_READ_FONT_BASE_DECRIPTOR);
+        if (!fileFound) throw new RuntimeException(ERROR_READ_FONT_FILE_DESCRIPTOR);
+        if (!baseFound) throw new RuntimeException(ERROR_READ_FONT_BASE_DECRIPTOR);
 
         return new BitMapFontInformation(textureHandle, lineHeight);
     }
 
-    private Array<TextureRegion> splitFrames(CMediaSprite cMediaSprite, TextureRegion textureRegion, int tile_width, int tile_height, int frameOffset,
-                                             int frameLength) {
+    private Array<TextureRegion> splitFrames(CMediaSprite cMediaSprite, TextureRegion textureRegion, int tile_width, int tile_height, int frameOffset, int frameLength) {
         int width = (textureRegion.getRegionWidth() / tile_width);
         int height = (textureRegion.getRegionHeight() / tile_height);
         int maxFrames = Math.clamp(width * height, 0, frameLength);
@@ -574,10 +538,12 @@ public final class MediaManager implements Disposable {
         textureAtlas = null;
 
         // Dispose and null
+        medias_textures.values().forEach(texture -> texture.dispose());
         medias_sounds.values().forEach(sound -> sound.dispose());
         medias_music.values().forEach(music -> music.dispose());
         medias_fonts.values().forEach(bitmapFont -> bitmapFont.dispose());
 
+        this.medias_textures = null;
         this.medias_images = null;
         this.medias_arrays = null;
         this.medias_animations = null;
@@ -598,6 +564,10 @@ public final class MediaManager implements Disposable {
             case CMediaAnimation cMediaAnimation -> medias_animations.get(cMediaAnimation).getKeyFrame(animationTimer);
             case CMediaArray cMediaArray -> medias_arrays.get(cMediaArray)[arrayIndex];
         };
+    }
+
+    public Texture texture(CMediaTexture cMediaTexture) {
+        return medias_textures.get(cMediaTexture);
     }
 
     public TextureRegion image(CMediaImage cMediaImage) {
@@ -621,8 +591,6 @@ public final class MediaManager implements Disposable {
     }
 
     public int spriteWidth(CMediaSprite cMediaSprite) {
-
-
         return switch (cMediaSprite) {
             case CMediaImage cMediaImage -> medias_images.get(cMediaImage).getRegionWidth();
             case CMediaArray cMediaArray -> cMediaArray.frameWidth;
@@ -630,6 +598,15 @@ public final class MediaManager implements Disposable {
             default -> throw new IllegalStateException("Unexpected value: " + cMediaSprite);
         };
     }
+
+    public int textureWidth(CMediaTexture cMediaTexture) {
+        return medias_textures.get(cMediaTexture).getWidth();
+    }
+
+    public int textureHeight(CMediaTexture cMediaTexture) {
+        return medias_textures.get(cMediaTexture).getWidth();
+    }
+
 
 
     public int imageWidth(CMediaImage cMediaImage) {
@@ -665,49 +642,56 @@ public final class MediaManager implements Disposable {
     }
 
     public int spriteWidthHalf(CMediaSprite cMediaSprite) {
-        return MathUtils.round(spriteWidth(cMediaSprite) / 2f);
+        return MathUtils.floor(spriteWidth(cMediaSprite) / 2f);
     }
 
     public int spriteHeightHalf(CMediaSprite cMediaSprite) {
-        return MathUtils.round(spriteHeight(cMediaSprite) / 2f);
+        return MathUtils.floor(spriteHeight(cMediaSprite) / 2f);
     }
 
     public int arrayWidthHalf(CMediaArray cMediaArray) {
-        return MathUtils.round(arrayWidth(cMediaArray) / 2f);
+        return MathUtils.floor(arrayWidth(cMediaArray) / 2f);
     }
 
     public int arrayHeightHalf(CMediaArray cMediaArray) {
-        return MathUtils.round(arrayHeight(cMediaArray) / 2f);
+        return MathUtils.floor(arrayHeight(cMediaArray) / 2f);
     }
 
     public int imageWidthHalf(CMediaImage cMediaImage) {
-        return MathUtils.round(imageWidth(cMediaImage) / 2f);
+        return MathUtils.floor(imageWidth(cMediaImage) / 2f);
     }
 
     public int imageHeightHalf(CMediaImage cMediaImage) {
-        return MathUtils.round(imageHeight(cMediaImage) / 2f);
+        return MathUtils.floor(imageHeight(cMediaImage) / 2f);
     }
 
     public int animationWidthHalf(CMediaAnimation cMediaAnimation) {
-        return MathUtils.round(animationWidth(cMediaAnimation) / 2f);
+        return MathUtils.floor(animationWidth(cMediaAnimation) / 2f);
     }
 
     public int animationHeightHalf(CMediaAnimation cMediaAnimation) {
-        return MathUtils.round(animationHeight(cMediaAnimation) / 2f);
+        return MathUtils.floor(animationHeight(cMediaAnimation) / 2f);
     }
 
+    public int textureWidthHalf(CMediaTexture cMediaTexture) {
+        return MathUtils.floor(textureWidth(cMediaTexture) / 2f);
+    }
+
+    public int textureHeightHalf(CMediaTexture cMediaTexture) {
+        return MathUtils.floor(textureWidth(cMediaTexture) / 2f);
+    }
 
     public int arraySize(CMediaArray cMediaArray) {
         return medias_arrays.get(cMediaArray).length;
     }
 
     public int arrayLastIndex(CMediaArray cMediaArray) {
-        return medias_arrays.get(cMediaArray).length-1;
+        return medias_arrays.get(cMediaArray).length - 1;
     }
 
     public int arrayIndex(CMediaArray cMediaArray, float pct) {
-        final int lastIndex = medias_arrays.get(cMediaArray).length-1;
-        return MathUtils.floor(Math.clamp(pct,0f,1f)*lastIndex);
+        final int lastIndex = medias_arrays.get(cMediaArray).length - 1;
+        return MathUtils.floor(Math.clamp(pct, 0f, 1f) * lastIndex);
     }
 
     public BitmapFont font(CMediaFont cMediaFont) {
