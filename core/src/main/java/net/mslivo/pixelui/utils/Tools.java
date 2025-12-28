@@ -575,6 +575,10 @@ public class Tools {
 
     public static class Calc {
 
+        public static float fract(float x){
+            return x - MathUtils.floor(x);
+        }
+
         public static float maxOfValues(float... values) {
             float sum = 0;
             for (float f : values) if (f > sum) sum = f;
