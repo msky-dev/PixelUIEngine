@@ -388,10 +388,10 @@ public class UICommonUtils {
         for (int i = 0; i < contextMenu.items.size; i++) {
             ContextMenuItem contextMenuItem = contextMenu.items.get(i);
             int w = mediaManager.fontTextWidth(uiEngineState.config.ui.font, contextMenuItem.text);
-            if (contextMenuItem.contextMenuItemAction.icon() != null) w = w + uiEngineState.theme.ts.TS;
-            if (w > textwidth) textwidth = w;
+            if (contextMenuItem.contextMenuItemAction.icon() != null) w += uiEngineState.theme.ts.TS;
+            textwidth = Math.max(textwidth, w);
         }
-        uiEngineState.displayedContextMenuWidth = (textwidth + uiEngineState.theme.ts.TS) / uiEngineState.theme.ts.TS;
+        uiEngineState.displayedContextMenuWidth = MathUtils.ceil((textwidth+3) / (float)uiEngineState.theme.ts.TS);
         uiEngineState.openContextMenu = contextMenu;
         uiEngineState.openContextMenu.contextMenuAction.onDisplay();
         return true;
