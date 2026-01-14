@@ -113,11 +113,15 @@ public class Tools {
                 int end = Math.min(start + chunkSize, size);
                 IntArrayTask task = intTasks[i];
                 task.setup(array, start, end, consumer);
-                ForkJoinPool.commonPool().execute(task);
+                ForkJoinPool.commonPool().submit(task);
             }
 
-            for (int i = 0; i < taskCount; i++)
-                intTasks[i].join();
+            try {
+                for (int i = 0; i < taskCount; i++)
+                    intTasks[i].get();
+            } catch (Exception e) {
+                handleException(e);
+            }
         }
 
         public static <T> void runParallel(final Array<T> array, final Consumer<T> consumer) {
@@ -136,12 +140,15 @@ public class Tools {
                 int end = Math.min(start + chunkSize, size);
                 ArrayTask<T> task = (ArrayTask<T>) ARRAY_TASKS[i];
                 task.setup(array, start, end, consumer);
-                ForkJoinPool.commonPool().execute(task);
+                ForkJoinPool.commonPool().submit(task);
             }
 
-            for (int i = 0; i < taskCount; i++)
-                ARRAY_TASKS[i].join();
-
+            try {
+                for (int i = 0; i < taskCount; i++)
+                    ARRAY_TASKS[i].get();
+            } catch (Exception e) {
+                handleException(e);
+            }
         }
 
         public static void handleException(Exception e) {
@@ -450,7 +457,7 @@ public class Tools {
 
         public static void captureFrameBuffer(String fileName, int width, int height) {
             Path path = Path.of(fileName);
-            if (path.toFile().exists()){
+            if (path.toFile().exists()) {
                 try {
                     Files.delete(path);
                 } catch (IOException e) {
@@ -575,7 +582,7 @@ public class Tools {
 
     public static class Calc {
 
-        public static float fract(float x){
+        public static float fract(float x) {
             return x - MathUtils.floor(x);
         }
 
