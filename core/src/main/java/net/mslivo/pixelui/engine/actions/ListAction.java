@@ -9,7 +9,7 @@ import net.mslivo.pixelui.engine.actions.common.ItemIcons;
 
 public interface ListAction<T> extends CommonActions, ItemIcons<T>, ItemCellColor<T> {
 
-    default Tooltip toolTip(T listItem) {
+    default Tooltip onShowToolTip(T listItem) {
         return null;
     }
 

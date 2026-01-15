@@ -917,12 +917,24 @@ public class Tools {
             return false;
         }
 
+
+
         public static int distance(int x1, int y1, int x2, int y2) {
             return MathUtils.floor((float) (Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2))));
         }
 
         public static float distance(float x1, float y1, float x2, float y2) {
             return (float) Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
+        }
+
+        public static boolean isWithinDistanceRects(int x1, int y1, int x2, int y2, int distance) {
+            return Math.abs(x1 - x2) <= distance &&
+                    Math.abs(y1-y2) <= distance;
+        }
+
+        public static boolean isWithinDistanceRects(float x1, float y1, float x2, float y2, float distance) {
+            return Math.abs(x1 - x2) <= distance &&
+                    Math.abs(y1-y2) <= distance;
         }
 
         public static boolean isWithinDistance(int x1, int y1, int x2, int y2, int distance) {

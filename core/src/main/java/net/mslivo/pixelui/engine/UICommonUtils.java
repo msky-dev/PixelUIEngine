@@ -242,8 +242,10 @@ public class UICommonUtils {
 
         // Combobox Open Menu collision
         if (uiEngineState.openComboBox != null) {
-            if (Tools.Calc.pointRectsCollide(x, y, component_getAbsoluteX(uiEngineState.openComboBox), component_getAbsoluteY(uiEngineState.openComboBox) - (uiEngineState.theme.ts.abs(uiEngineState.openComboBox.items.size)), uiEngineState.theme.ts.abs(uiEngineState.openComboBox.width), uiEngineState.theme.ts.abs(uiEngineState.openComboBox.items.size))) {
-                return uiEngineState.openComboBox;
+            for(int i=0;i<uiEngineState.openComboBox.items.size;i++){
+                if (Tools.Calc.pointRectsCollide(x, y, component_getAbsoluteX(uiEngineState.openComboBox), component_getAbsoluteY(uiEngineState.openComboBox) - uiEngineState.theme.ts.TS - (uiEngineState.theme.ts.abs(i)), uiEngineState.theme.ts.abs(uiEngineState.openComboBox.width), uiEngineState.theme.ts.TS)) {
+                    return uiEngineState.openComboBox.items.get(i);
+                }
             }
         }
 
@@ -391,7 +393,7 @@ public class UICommonUtils {
             if (contextMenuItem.contextMenuItemAction.icon() != null) w += uiEngineState.theme.ts.TS;
             textwidth = Math.max(textwidth, w);
         }
-        uiEngineState.displayedContextMenuWidth = MathUtils.ceil((textwidth+3) / (float)uiEngineState.theme.ts.TS);
+        uiEngineState.displayedContextMenuWidth = MathUtils.ceil((textwidth + 3) / (float) uiEngineState.theme.ts.TS);
         uiEngineState.openContextMenu = contextMenu;
         uiEngineState.openContextMenu.contextMenuAction.onDisplay();
         return true;
@@ -874,12 +876,15 @@ public class UICommonUtils {
         contextMenu_close(ContextMenu);
     }
 
-    public void comboBox_selectItem(ComboBoxItem comboBoxItem) {
-        if (comboBoxItem.addedToComboBox == null) return;
-        ComboBox comboBox = comboBoxItem.addedToComboBox;
-        comboBox.selectedItem = comboBoxItem;
-        comboBoxItem.comboBoxItemAction.onSelect();
-        comboBox.comboBoxAction.onItemSelected(comboBoxItem);
+    public void comboBox_selectItem(ComboBox comboBox, ComboBoxItem comboBoxItem) {
+        if (comboBoxItem != null) {
+            if (comboBoxItem.addedToComboBox == null || comboBoxItem.addedToComboBox != comboBox) return;
+            comboBox.selectedItem = comboBoxItem;
+            comboBoxItem.comboBoxItemAction.onSelect();
+        } else {
+            comboBox.selectedItem = null;
+            comboBox.comboBoxAction.onItemSelected(null);
+        }
         comboBox_close(comboBox);
     }
 
@@ -1402,14 +1407,14 @@ public class UICommonUtils {
     }
 
 
-    static OrthographicCamera camera_createCamera(int viewportWidth, int viewportHeight){
+    static OrthographicCamera camera_createCamera(int viewportWidth, int viewportHeight) {
         OrthographicCamera camera = new OrthographicCamera();
         camera.setToOrtho(false, viewportWidth, viewportHeight);
         camera.update();
         return camera;
     }
 
-    static NestedFrameBuffer frameBuffer_createFrameBuffer(int width, int height){
+    static NestedFrameBuffer frameBuffer_createFrameBuffer(int width, int height) {
         NestedFrameBuffer frameBuffer = new NestedFrameBuffer(Pixmap.Format.RGBA8888, width, height, false);
         frameBuffer.getColorBufferTexture().setFilter(Texture.TextureFilter.Nearest, Texture.TextureFilter.Nearest);
         return frameBuffer;

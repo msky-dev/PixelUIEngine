@@ -2,25 +2,20 @@ package net.mslivo.pixelui.engine;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.IntSet;
-import com.badlogic.gdx.utils.ObjectSet;
 import net.mslivo.pixelui.engine.actions.*;
 import net.mslivo.pixelui.engine.actions.common.UpdateAction;
 import net.mslivo.pixelui.engine.constants.BUTTON_MODE;
 import net.mslivo.pixelui.engine.constants.CHECKBOX_STYLE;
-import net.mslivo.pixelui.engine.constants.SHAPE_ROTATION;
-import net.mslivo.pixelui.engine.constants.SHAPE_TYPE;
 import net.mslivo.pixelui.media.CMediaSprite;
 import net.mslivo.pixelui.media.MediaManager;
 import net.mslivo.pixelui.rendering.NestedFrameBuffer;
 import net.mslivo.pixelui.utils.Tools;
 
-import java.util.HashSet;
 import java.util.function.Predicate;
 
 public final class APIComponent {
@@ -97,7 +92,7 @@ public final class APIComponent {
             AppViewport appViewPort = new AppViewport();
             appViewPort.updateTimer = 0;
             setComponentCommonInitValuesInternal(appViewPort, x, y, width, height, Color.GRAY, Color.GRAY);
-            int viewportWidth =  uiEngineState.theme.ts.abs(appViewPort.width);
+            int viewportWidth = uiEngineState.theme.ts.abs(appViewPort.width);
             int viewportHeight = uiEngineState.theme.ts.abs(appViewPort.height);
             appViewPort.frameBuffer = uiCommonUtils.frameBuffer_createFrameBuffer(viewportWidth, viewportHeight);
             Texture texture = appViewPort.frameBuffer.getColorBufferTexture();
@@ -810,7 +805,7 @@ public final class APIComponent {
             setComponentCommonInitValuesInternal(grid, x, y, width, height, uiEngineConfig.component.defaultColor, uiCommonUtils.color_brigther(uiEngineConfig.component.defaultColor));
             grid.selectedItem = null;
             grid.selectedItems = new Array();
-            grid.items = items != null ?  new Object[items.length][items[0].length] : new Object[][]{};
+            grid.items = items != null ? new Object[items.length][items[0].length] : new Object[][]{};
             for (int ix = 0; ix < grid.items.length; ix++)
                 for (int iy = 0; iy < grid.items[0].length; iy++)
                     grid.items[ix][iy] = items[ix][iy];
@@ -1254,9 +1249,8 @@ public final class APIComponent {
             return comboBox.selectedItem != null;
         }
 
-        public void setSelectedItem(ComboBoxItem selectItem) {
-            if (selectItem == null) return;
-            uiCommonUtils.comboBox_selectItem(selectItem);
+        public void setSelectedItem(ComboBox comboBox, ComboBoxItem selectItem) {
+            uiCommonUtils.comboBox_selectItem(comboBox, selectItem);
         }
 
         public void open(ComboBox comboBox) {
@@ -1277,7 +1271,7 @@ public final class APIComponent {
             if (comboBox == null || text == null) return;
             for (int i = 0; i < comboBox.items.size; i++) {
                 if (comboBox.items.get(i).text.equals(text)) {
-                    uiCommonUtils.comboBox_selectItem(comboBox.items.get(i));
+                    uiCommonUtils.comboBox_selectItem(comboBox, comboBox.items.get(i));
                     return;
                 }
             }
@@ -1541,7 +1535,7 @@ public final class APIComponent {
 
     public void setPositionGrid(Component component, int x, int y) {
         if (component == null) return;
-        setPosition(component, uiEngineState.theme.ts.abs(x) ,  uiEngineState.theme.ts.abs(y) );
+        setPosition(component, uiEngineState.theme.ts.abs(x), uiEngineState.theme.ts.abs(y));
     }
 
     public void moveX(Component[] components, int x) {

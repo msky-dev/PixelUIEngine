@@ -401,7 +401,7 @@ public final class APIWidgets {
                 } else if (list.listAction.text(item).trim().toLowerCase().contains(searchText.trim().toLowerCase())) {
                     resultList.add(item);
                 } else if (searchTooltips) {
-                    Tooltip tooltip = list.listAction.toolTip(item);
+                    Tooltip tooltip = list.listAction.onShowToolTip(item);
                     if (tooltip != null) {
                         linesLoop:
                         for (int i2 = 0; i2 < tooltip.segments.size; i2++) {

@@ -657,7 +657,7 @@ public class ExampleWindowGeneratorP implements WindowGenerator.P1<MediaManager>
             }
 
             @Override
-            public Tooltip toolTip(ExampleItem listItem) {
+            public Tooltip onShowToolTip(ExampleItem listItem) {
                 if (listItem == null) return null;
                 return api.toolTip.create(new TooltipSegment[]{
                         api.toolTip.segment.text.create(listItem.text)
@@ -715,7 +715,7 @@ public class ExampleWindowGeneratorP implements WindowGenerator.P1<MediaManager>
             }
 
             @Override
-            public Tooltip toolTip(ExampleItem listItem) {
+            public Tooltip onShowToolTip(ExampleItem listItem) {
                 if (listItem == null) return null;
                 return api.toolTip.create(new TooltipSegment[]{
                         api.toolTip.segment.text.create(listItem.text)

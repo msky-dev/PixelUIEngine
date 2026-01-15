@@ -1230,29 +1230,15 @@ public final class UIEngine<T extends UIEngineAdapter> implements Disposable {
                                     uiCommonUtils.scrollBar_calculateScrolled(scrollBarHorizontal, uiEngineState.mouseUI.x, uiEngineState.mouseUI.y));
                             uiEngineState.pressedScrollBarHorizontal = scrollBarHorizontal;
                         }
+                        case ComboBoxItem comboBoxItem -> {
+                            System.out.println("x");
+                            uiEngineState.pressedComboBoxItem = comboBoxItem;
+                        }
                         case ComboBox comboBox -> {
+                            // Clicked on Combobox itself -> close
                             if (uiCommonUtils.comboBox_isOpen(comboBox)) {
-                                if (Tools.Calc.pointRectsCollide(uiEngineState.mouseUI.x, uiEngineState.mouseUI.y,
-                                        uiCommonUtils.component_getAbsoluteX(comboBox), uiCommonUtils.component_getAbsoluteY(comboBox),
-                                        TS(comboBox.width), TS())) {
-                                    // Clicked on Combobox itself -> close
-                                    uiCommonUtils.comboBox_close(comboBox);
-                                } else {
-                                    // Clicked on Item
-                                    for (int i = 0; i < comboBox.items.size; i++) {
-                                        if (Tools.Calc.pointRectsCollide(uiEngineState.mouseUI.x, uiEngineState.mouseUI.y,
-                                                uiCommonUtils.component_getAbsoluteX(comboBox),
-                                                uiCommonUtils.component_getAbsoluteY(comboBox) - TS(i) - TS(),
-                                                TS(comboBox.width),
-                                                TS())) {
-                                            uiEngineState.pressedComboBoxItem = comboBox.items.get(i);
-                                        }
-                                    }
-                                }
-
-
-                            } else {
-                                // Open this combobox
+                                uiCommonUtils.comboBox_close(comboBox);
+                            }else{
                                 uiCommonUtils.comboBox_open(comboBox);
                             }
                         }
@@ -1354,7 +1340,7 @@ public final class UIEngine<T extends UIEngineAdapter> implements Disposable {
                 }
 
                 // Close opened ComboBoxes
-                if (uiEngineState.openComboBox != null && lastUIMouseHover != uiEngineState.openComboBox) {
+                if (uiEngineState.openComboBox != null && lastUIMouseHover != uiEngineState.openComboBox && !(lastUIMouseHover instanceof ComboBoxItem comboBoxItem && comboBoxItem.addedToComboBox == uiEngineState.openComboBox)) {
                     uiCommonUtils.comboBox_close(uiEngineState.openComboBox);
                 }
 
@@ -1394,7 +1380,7 @@ public final class UIEngine<T extends UIEngineAdapter> implements Disposable {
                         uiCommonUtils.contextMenu_close(contextMenuItem.addedToContextMenu);
                     }
                     case ComboBoxItem comboBoxItem -> {
-                        uiCommonUtils.comboBox_selectItem(comboBoxItem);
+                        uiCommonUtils.comboBox_selectItem(comboBoxItem.addedToComboBox, comboBoxItem);
                         if (uiEngineState.currentControlMode.emulated && comboBoxItem.addedToComboBox != null) {
                             // emulated: move mouse back to combobox on item select
                             uiCommonUtils.emulatedMouse_setPosition(uiEngineState.emulatedMousePosition.x, uiCommonUtils.component_getAbsoluteY(comboBoxItem.addedToComboBox) + TS_HALF());
@@ -1834,7 +1820,7 @@ public final class UIEngine<T extends UIEngineAdapter> implements Disposable {
                 if (hoverComponent instanceof List list) {
                     // check for list item tooltips
                     if (toolTipSubItem != null) {
-                        uiEngineState.tooltip = list.listAction.toolTip(toolTipSubItem);
+                        uiEngineState.tooltip = list.listAction.onShowToolTip(toolTipSubItem);
                     } else {
                         uiEngineState.tooltip = null;
                     }
