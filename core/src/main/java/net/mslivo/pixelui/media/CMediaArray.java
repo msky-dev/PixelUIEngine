@@ -39,21 +39,4 @@ public final class CMediaArray extends CMediaSprite implements Copyable<CMediaAr
         return copy;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (o == null || getClass() != o.getClass()) return false;
-        if (!super.equals(o)) return false;
-        CMediaArray that = (CMediaArray) o;
-        return frameWidth == that.frameWidth && frameHeight == that.frameHeight && frameOffset == that.frameOffset && frameLength == that.frameLength;
-    }
-
-    @Override
-    public int hashCode() {
-        int result = super.hashCode();
-        result = 31 * result + frameWidth;
-        result = 31 * result + frameHeight;
-        result = 31 * result + frameOffset;
-        result = 31 * result + frameLength;
-        return result;
-    }
 }

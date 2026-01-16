@@ -57,24 +57,4 @@ public final class CMediaAnimation extends CMediaSprite implements Copyable<CMed
         return copy;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (o == null || getClass() != o.getClass()) return false;
-        if (!super.equals(o)) return false;
-
-        CMediaAnimation that = (CMediaAnimation) o;
-        return frameWidth == that.frameWidth && frameHeight == that.frameHeight && Float.compare(animationSpeed, that.animationSpeed) == 0 && frameOffset == that.frameOffset && frameLength == that.frameLength && playMode == that.playMode;
-    }
-
-    @Override
-    public int hashCode() {
-        int result = super.hashCode();
-        result = 31 * result + frameWidth;
-        result = 31 * result + frameHeight;
-        result = 31 * result + Float.hashCode(animationSpeed);
-        result = 31 * result + frameOffset;
-        result = 31 * result + frameLength;
-        result = 31 * result + playMode.hashCode();
-        return result;
-    }
 }

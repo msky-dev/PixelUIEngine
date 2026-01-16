@@ -56,16 +56,4 @@ public final class CMediaTexture extends CMedia implements Copyable<CMediaTextur
         return copy;
     }
 
-    @Override
-    public boolean equals(Object object) {
-        if (object == null || getClass() != object.getClass()) return false;
-        if (!super.equals(object)) return false;
-        CMediaTexture that = (CMediaTexture) object;
-        return format == that.format && filter == that.filter && uWrap == that.uWrap && vWrap == that.vWrap;
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(super.hashCode(), format, filter, uWrap, vWrap);
-    }
 }

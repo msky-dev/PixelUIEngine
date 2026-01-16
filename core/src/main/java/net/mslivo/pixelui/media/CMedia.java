@@ -33,7 +33,6 @@ public abstract sealed class CMedia permits CMediaFont, CMediaSound, CMediaSprit
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
-
         CMedia cMedia = (CMedia) o;
         return Objects.equals(file, cMedia.file);
     }

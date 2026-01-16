@@ -36,16 +36,12 @@ public sealed abstract class CMediaFontSymbol permits CMediaFontSymbolArray, CMe
     @Override
     public boolean equals(Object object) {
         if (object == null || getClass() != object.getClass()) return false;
-
         CMediaFontSymbol that = (CMediaFontSymbol) object;
-        return y_offset == that.y_offset && x_advance == that.x_advance && Objects.equals(file, that.file);
+        return Objects.equals(file, that.file);
     }
 
     @Override
     public int hashCode() {
-        int result = Objects.hashCode(file);
-        result = 31 * result + y_offset;
-        result = 31 * result + x_advance;
-        return result;
+        return super.hashCode();
     }
 }

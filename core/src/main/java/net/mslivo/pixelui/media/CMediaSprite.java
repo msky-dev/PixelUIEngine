@@ -24,16 +24,4 @@ public sealed abstract class CMediaSprite extends CMedia permits CMediaAnimation
         super.copyFields(copyFrom);
     }
 
-    @Override
-    public boolean equals(Object object) {
-        if (object == null || getClass() != object.getClass()) return false;
-        return super.equals(object);
-    }
-
-    @Override
-    public int hashCode() {
-        int result = super.hashCode();
-        return result;
-    }
-
 }

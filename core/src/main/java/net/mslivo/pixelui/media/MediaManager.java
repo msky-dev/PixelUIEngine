@@ -100,7 +100,7 @@ public final class MediaManager implements Disposable {
     }
 
 
-    private Pixmap modifyPixmapAddOutline(Pixmap pixmap, CMediaFontOutline outline, int symbolAreaY) {
+    private Pixmap modifyPixmapAddOutline(Pixmap pixmap, CMediaFont.FontOutline outline, int symbolAreaY) {
         if (outline == null) return pixmap;
         pixmap.setBlending(Pixmap.Blending.None);
 
@@ -108,7 +108,7 @@ public final class MediaManager implements Disposable {
         // detect outline
         final Queue<GridPoint2> outLinePoints = new Queue<>();
         final Queue<GridPoint2> removePoints = new Queue<>();
-        final int outlineColorRGBA8888 = Color.rgba8888(outline.color);
+        final int outlineColorRGBA8888 = Color.rgba8888(outline.color());
         final int clearColorRGBA8888 = Color.rgba8888(Color.CLEAR);
 
         for (int ix = 0; ix < pixmap.getWidth(); ix++) {
@@ -118,29 +118,29 @@ public final class MediaManager implements Disposable {
 
                 if (a == 0f) continue;
 
-                if (outline.outlineOnly) removePoints.addLast(new GridPoint2(ix, iy));
+                if (outline.outlineOnly()) removePoints.addLast(new GridPoint2(ix, iy));
 
-                if (!outline.outlineSymbols && iy > symbolAreaY) {
+                if (!outline.outlineSymbols() && iy > symbolAreaY) {
                     continue;
                 }
 
                 // UP/DOWN/LEFT_RIGHT
-                if ((iy + 1) < pixmap.getHeight() && getPixelAlpha(pixmap.getPixel(ix, iy + 1)) == 0f && ((outline.directions & OUTLINE.DOWN) != 0))
+                if ((iy + 1) < pixmap.getHeight() && getPixelAlpha(pixmap.getPixel(ix, iy + 1)) == 0f && ((outline.directions() & OUTLINE.DOWN) != 0))
                     outLinePoints.addLast(new GridPoint2(ix, iy + 1));
-                if ((iy - 1) >= 0 && getPixelAlpha(pixmap.getPixel(ix, iy - 1)) == 0f && ((outline.directions & OUTLINE.UP) != 0))
+                if ((iy - 1) >= 0 && getPixelAlpha(pixmap.getPixel(ix, iy - 1)) == 0f && ((outline.directions() & OUTLINE.UP) != 0))
                     outLinePoints.addLast(new GridPoint2(ix, iy - 1));
-                if ((ix - 1) >= 0 && getPixelAlpha(pixmap.getPixel(ix - 1, iy)) == 0f && ((outline.directions & OUTLINE.LEFT) != 0))
+                if ((ix - 1) >= 0 && getPixelAlpha(pixmap.getPixel(ix - 1, iy)) == 0f && ((outline.directions() & OUTLINE.LEFT) != 0))
                     outLinePoints.addLast(new GridPoint2(ix - 1, iy));
-                if ((ix + 1) < pixmap.getWidth() && getPixelAlpha(pixmap.getPixel(ix + 1, iy)) == 0f && ((outline.directions & OUTLINE.RIGHT) != 0))
+                if ((ix + 1) < pixmap.getWidth() && getPixelAlpha(pixmap.getPixel(ix + 1, iy)) == 0f && ((outline.directions() & OUTLINE.RIGHT) != 0))
                     outLinePoints.addLast(new GridPoint2(ix + 1, iy));
                 // CORNERS
-                if ((ix - 1) >= 0 && (iy + 1) < pixmap.getHeight() && getPixelAlpha(pixmap.getPixel(ix - 1, iy + 1)) == 0f && ((outline.directions & OUTLINE.LEFT_DOWN) != 0))
+                if ((ix - 1) >= 0 && (iy + 1) < pixmap.getHeight() && getPixelAlpha(pixmap.getPixel(ix - 1, iy + 1)) == 0f && ((outline.directions() & OUTLINE.LEFT_DOWN) != 0))
                     outLinePoints.addLast(new GridPoint2(ix - 1, iy + 1));
-                if ((ix + 1) < pixmap.getWidth() && (iy + 1) < pixmap.getHeight() && getPixelAlpha(pixmap.getPixel(ix + 1, iy + 1)) == 0f && ((outline.directions & OUTLINE.RIGHT_DOWN) != 0))
+                if ((ix + 1) < pixmap.getWidth() && (iy + 1) < pixmap.getHeight() && getPixelAlpha(pixmap.getPixel(ix + 1, iy + 1)) == 0f && ((outline.directions() & OUTLINE.RIGHT_DOWN) != 0))
                     outLinePoints.addLast(new GridPoint2(ix + 1, iy + 1));
-                if ((ix + 1) < pixmap.getWidth() && (iy - 1) >= 0 && getPixelAlpha(pixmap.getPixel(ix + 1, iy - 1)) == 0f && ((outline.directions & OUTLINE.RIGHT_UP) != 0))
+                if ((ix + 1) < pixmap.getWidth() && (iy - 1) >= 0 && getPixelAlpha(pixmap.getPixel(ix + 1, iy - 1)) == 0f && ((outline.directions() & OUTLINE.RIGHT_UP) != 0))
                     outLinePoints.addLast(new GridPoint2(ix + 1, iy - 1));
-                if ((ix - 1) >= 0 && (iy - 1) >= 0 && getPixelAlpha(pixmap.getPixel(ix - 1, iy - 1)) == 0f && ((outline.directions & OUTLINE.LEFT_UP) != 0))
+                if ((ix - 1) >= 0 && (iy - 1) >= 0 && getPixelAlpha(pixmap.getPixel(ix - 1, iy - 1)) == 0f && ((outline.directions() & OUTLINE.LEFT_UP) != 0))
                     outLinePoints.addLast(new GridPoint2(ix - 1, iy - 1));
 
             }
@@ -171,7 +171,7 @@ public final class MediaManager implements Disposable {
         return result;
     }
 
-    private CreateFontResult createFont(BitMapFontInformation bitMapFontInformation, CMediaFontSymbol[] symbols, CMediaFontOutline outline) {
+    private CreateFontResult createFont(BitMapFontInformation bitMapFontInformation, CMediaFontSymbol[] symbols, CMediaFont.FontOutline outline) {
 
 
         // Load Original Texture

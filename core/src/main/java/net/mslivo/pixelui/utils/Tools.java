@@ -836,6 +836,13 @@ public class Tools {
             return (baseValue * (float) Math.exp(-exp * (times - 1)));
         }
 
+        public static int exponentialSmooth(int base, float exp, int times){
+            float x = times - 1;
+            float factor = (float) Math.pow(x, exp);
+            int addValue = MathUtils.floor(base * factor);
+            return MathUtils.floor(base + addValue);
+        }
+
         private static final IntMap<LongArray> doInRadiusCache = new IntMap<>();
 
         public interface DoInRadiusFunction<O> {

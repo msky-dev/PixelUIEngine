@@ -42,8 +42,6 @@ public final class CMediaFontSymbolSingle extends CMediaFontSymbol implements Co
 
     @Override
     public int hashCode() {
-        int result = super.hashCode();
-        result = 31 * result + id;
-        return result;
+        return super.hashCode();
     }
 }

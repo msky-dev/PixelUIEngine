@@ -51,23 +51,4 @@ public final class CMediaFontSymbolArray extends CMediaFontSymbol implements Cop
         return copy;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (o == null || getClass() != o.getClass()) return false;
-        if (!super.equals(o)) return false;
-
-        CMediaFontSymbolArray that = (CMediaFontSymbolArray) o;
-        return regionWidth == that.regionWidth && regionHeight == that.regionHeight && frameOffset == that.frameOffset && frameLength == that.frameLength && Arrays.equals(ids, that.ids);
-    }
-
-    @Override
-    public int hashCode() {
-        int result = super.hashCode();
-        result = 31 * result + Arrays.hashCode(ids);
-        result = 31 * result + regionWidth;
-        result = 31 * result + regionHeight;
-        result = 31 * result + frameOffset;
-        result = 31 * result + frameLength;
-        return result;
-    }
 }
