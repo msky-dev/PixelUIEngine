@@ -5,19 +5,22 @@ import java.util.Objects;
 public abstract sealed class CMedia permits CMediaFont, CMediaSound, CMediaSprite, CMediaTexture {
 
     public String file;
+    public int fileID;
 
     public CMedia() {
         super();
         this.file = "";
     }
 
-    CMedia(String file) {
+    CMedia(String file, int fileID) {
         this.file = file;
+        this.fileID = fileID;
     }
 
 
     protected void copyFields(CMedia copyFrom) {
         this.file = copyFrom.file;
+        this.fileID = copyFrom.fileID;
     }
 
     public CMedia copy() {
@@ -31,14 +34,14 @@ public abstract sealed class CMedia permits CMediaFont, CMediaSound, CMediaSprit
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (o == null || getClass() != o.getClass()) return false;
-        CMedia cMedia = (CMedia) o;
-        return Objects.equals(file, cMedia.file);
+    public boolean equals(Object object) {
+        if (object == null || getClass() != object.getClass()) return false;
+        CMedia cMedia = (CMedia) object;
+        return fileID == cMedia.fileID && Objects.equals(file, cMedia.file);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(file);
+        return Objects.hash(file, fileID);
     }
 }

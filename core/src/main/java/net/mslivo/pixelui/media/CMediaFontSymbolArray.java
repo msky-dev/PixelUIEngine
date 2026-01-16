@@ -20,12 +20,12 @@ public final class CMediaFontSymbolArray extends CMediaFontSymbol implements Cop
         this.frameLength = 0;
     }
 
-    public CMediaFontSymbolArray(int[] ids, String file, int y_offset, int x_advance, int regionWidth, int regionHeight) {
-        this(ids, file, y_offset, x_advance,regionWidth,regionHeight, 0, Integer.MAX_VALUE);
+    public CMediaFontSymbolArray(int[] ids, String file, int fileID, int y_offset, int x_advance, int regionWidth, int regionHeight) {
+        this(ids, file,fileID, y_offset, x_advance,regionWidth,regionHeight, 0, Integer.MAX_VALUE);
     }
 
-    public CMediaFontSymbolArray(int[] ids, String file, int y_offset, int x_advance, int regionWidth, int regionHeight, int frameOffset, int frameLength) {
-        super(file, y_offset, x_advance);
+    public CMediaFontSymbolArray(int[] ids, String file, int fileID, int y_offset, int x_advance, int regionWidth, int regionHeight, int frameOffset, int frameLength) {
+        super(file,fileID, y_offset, x_advance);
         if(ids != null){
             this.ids = new int[ids.length];
             System.arraycopy(ids,0,this.ids,0,ids.length);

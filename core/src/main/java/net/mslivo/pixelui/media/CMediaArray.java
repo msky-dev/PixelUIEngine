@@ -16,12 +16,12 @@ public final class CMediaArray extends CMediaSprite implements Copyable<CMediaAr
         this.frameLength = Integer.MAX_VALUE;
     }
 
-    public CMediaArray(String file, int frameWidth, int frameHeight) {
-        this(file, frameWidth, frameHeight, 0, Integer.MAX_VALUE);
+    public CMediaArray(String file,int fileID, int frameWidth, int frameHeight) {
+        this(file,fileID, frameWidth, frameHeight, 0, Integer.MAX_VALUE);
     }
 
-    public CMediaArray(String file, int frameWidth, int frameHeight, int frameOffset, int frameLength) {
-        super(file);
+    public CMediaArray(String file, int fileID, int frameWidth, int frameHeight, int frameOffset, int frameLength) {
+        super(file,fileID);
         this.frameWidth = frameWidth;
         this.frameHeight = frameHeight;
         this.frameOffset = frameOffset;

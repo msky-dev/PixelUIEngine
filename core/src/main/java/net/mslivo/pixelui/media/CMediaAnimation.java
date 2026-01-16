@@ -22,20 +22,20 @@ public final class CMediaAnimation extends CMediaSprite implements Copyable<CMed
         this.playMode = ExtendedAnimation.PlayMode.LOOP;
     }
 
-    public CMediaAnimation(String file, int frameWidth, int frameHeight) {
-        this(file, frameWidth, frameHeight, 0.1f, 0, Integer.MAX_VALUE, ExtendedAnimation.PlayMode.LOOP);
+    public CMediaAnimation(String file,int fileID, int frameWidth, int frameHeight) {
+        this(file,fileID, frameWidth, frameHeight, 0.1f, 0, Integer.MAX_VALUE, ExtendedAnimation.PlayMode.LOOP);
     }
 
-    public CMediaAnimation(String file, int frameWidth, int frameHeight, float animationSpeed) {
-        this(file, frameWidth, frameHeight, animationSpeed, 0, Integer.MAX_VALUE, ExtendedAnimation.PlayMode.LOOP);
+    public CMediaAnimation(String file,int fileID, int frameWidth, int frameHeight, float animationSpeed) {
+        this(file,fileID, frameWidth, frameHeight, animationSpeed, 0, Integer.MAX_VALUE, ExtendedAnimation.PlayMode.LOOP);
     }
 
-    public CMediaAnimation(String file, int frameWidth, int frameHeight, float animation_speed, int frameOffset, int frameLength) {
-        this(file, frameWidth, frameHeight, animation_speed, frameOffset, frameLength, ExtendedAnimation.PlayMode.LOOP);
+    public CMediaAnimation(String file,int fileID, int frameWidth, int frameHeight, float animation_speed, int frameOffset, int frameLength) {
+        this(file,fileID, frameWidth, frameHeight, animation_speed, frameOffset, frameLength, ExtendedAnimation.PlayMode.LOOP);
     }
 
-    public CMediaAnimation(String filename, int frameWidth, int frameHeight, float animationSpeed, int frameOffset, int frameLength, ExtendedAnimation.PlayMode playMode) {
-        super(filename);
+    public CMediaAnimation(String file, int fileID, int frameWidth, int frameHeight, float animationSpeed, int frameOffset, int frameLength, ExtendedAnimation.PlayMode playMode) {
+        super(file,fileID);
         this.frameWidth = frameWidth;
         this.frameHeight = frameHeight;
         this.animationSpeed = animationSpeed;

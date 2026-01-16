@@ -7,8 +7,8 @@ public sealed abstract class CMediaSprite extends CMedia permits CMediaAnimation
         super();
     }
 
-    public CMediaSprite(String filename) {
-        super(filename);
+    public CMediaSprite(String filename, int fileID) {
+        super(filename, fileID);
     }
 
     public CMediaSprite copy() {

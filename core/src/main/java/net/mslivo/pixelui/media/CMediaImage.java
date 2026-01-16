@@ -8,8 +8,8 @@ public final class CMediaImage extends CMediaSprite implements Copyable<CMediaIm
         super();
     }
 
-    public CMediaImage(String filename) {
-        super(filename);
+    public CMediaImage(String filename, int fileID) {
+        super(filename,fileID);
     }
 
     public CMediaImage copy() {
