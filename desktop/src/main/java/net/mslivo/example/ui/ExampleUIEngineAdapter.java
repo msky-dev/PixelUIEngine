@@ -158,8 +158,8 @@ public class ExampleUIEngineAdapter implements UIEngineAdapter {
             );
         }
 
-        spriteParticleSystem.updateParallel();
-        primitiveParticleSystem.updateParallel();
+        spriteParticleSystem.update();
+        primitiveParticleSystem.update();
     }
 
 
@@ -353,6 +353,7 @@ public class ExampleUIEngineAdapter implements UIEngineAdapter {
 
     @Override
     public void dispose() {
+        parallelExecutor.dispose();
         spriteRenderer.dispose();
     }
 
