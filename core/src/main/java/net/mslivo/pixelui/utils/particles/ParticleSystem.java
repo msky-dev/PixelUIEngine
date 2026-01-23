@@ -44,27 +44,21 @@ public sealed abstract class ParticleSystem<T> implements Disposable permits Pri
 
     public void update() {
         if (this.numParticles == 0) return;
-        // Update
-        for (int i = 0; i < this.particles.size; i++) {
-            Particle<T> particle = particles.get(i);
-            if (!particleUpdater.updateParticle(particle))
-                deleteQueue.addLast(particle);
-        }
-        // Clear DeleteQueue
-        deleteQueuedParticles();
-    }
 
-    public void updateParallel() {
-        if (this.numParticles == 0) return;
         if(this.parallelExecutor != null){
+            // Thread update
             this.parallelExecutor.runParallel(this.particles, this.parallelConsumer);
         }else{
-            // Loop fallback
-            for(int i=0;i<this.particles.size;i++){
-                this.particleUpdater.updateParticle(this.particles.get(i));
+            // Loop update
+            for (int i = 0; i < this.particles.size; i++) {
+                Particle<T> particle = particles.get(i);
+                if (!particleUpdater.updateParticle(particle))
+                    deleteQueue.addLast(particle);
             }
         }
 
+
+        // Clear DeleteQueue
         deleteQueuedParticles();
     }
 
