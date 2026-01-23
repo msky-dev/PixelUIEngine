@@ -57,7 +57,6 @@ public sealed abstract class ParticleSystem<T> implements Disposable permits Pri
             }
         }
 
-
         // Clear DeleteQueue
         deleteQueuedParticles();
     }
