@@ -28,7 +28,6 @@ public final class MediaManager implements Disposable {
     public static final int FONT_CUSTOM_SYMBOL_OFFSET = 512;
     private static final String ERROR_FILE_NOT_FOUND = "CMedia File \"%s\": Does not exist";
     private static final String ERROR_ANIMATION_INVALID = "CMedia File \"%s\": Animation dimensions invalid";
-    private static final String ERROR_SPLIT_FRAMES = "Error splitting frames for: \"%s\": Negative frameCount = %d";
     private static final String ERROR_READ_FONT = "Error reading font file \"%s\"";
     private static final String ERROR_READ_FONT_FILE_DESCRIPTOR = "Error reading font file \"%s\": file= descriptor not found";
     private static final String ERROR_READ_FONT_BASE_DECRIPTOR = "Error reading font file \"%s\": base= descriptor not found";
@@ -504,26 +503,21 @@ public final class MediaManager implements Disposable {
     private Array<TextureRegion> splitFrames(CMediaSprite cMediaSprite, TextureRegion textureRegion, int tile_width, int tile_height, int frameOffset, int frameLength) {
         int width = (textureRegion.getRegionWidth() / tile_width);
         int height = (textureRegion.getRegionHeight() / tile_height);
-        int maxFrames = Math.clamp(width * height, 0, frameLength);
-
-        int frameCount = maxFrames - frameOffset;
-        if (frameCount == 0) return new Array<>();
-        if (frameCount < 0)
-            throw new RuntimeException(String.format(ERROR_SPLIT_FRAMES, cMediaSprite.file, frameCount));
-
+        int maxFrames = width * height;
+        int toFrame = Math.min(frameOffset+frameLength,maxFrames-1);
 
         TextureRegion[][] tmp = textureRegion.split(tile_width, tile_height);
         Array<TextureRegion> result = new Array<>();
-        int allCounter = 0;
+        int frameCounter = 0;
         framesLoop:
-
         for (int ix = 0; ix < tmp.length; ix++) {
             for (int iy = 0; iy < tmp[0].length; iy++) {
-                allCounter++;
-                if (allCounter > frameOffset) {
+                frameCounter++;
+                if (frameCounter > frameOffset) {
                     result.add(tmp[ix][iy]);
+                    if(result.size >= frameLength)
+                        break framesLoop;
                 }
-                if (allCounter >= frameLength) break framesLoop;
             }
         }
         return result;

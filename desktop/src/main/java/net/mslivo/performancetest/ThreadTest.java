@@ -2,7 +2,7 @@ package net.mslivo.performancetest;
 
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.Array;
-import net.mslivo.pixelui.utils.Tools;
+import net.mslivo.pixelui.utils.concurrency.ParallelExecutor;
 
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
@@ -15,6 +15,7 @@ public class ThreadTest {
     private TestConsumer testConsumer = new TestConsumer();
     private int expected;
     private String test;
+    private ParallelExecutor parallelExecutor = new ParallelExecutor();
 
     class TestConsumer implements Consumer<Integer> {
 
@@ -63,7 +64,7 @@ public class ThreadTest {
     }
 
     public void runTestParallelRunner(){
-        Tools.App.runParallel(this.list, this.testConsumer);
+        parallelExecutor.runParallel(this.list, this.testConsumer);
     }
 
 

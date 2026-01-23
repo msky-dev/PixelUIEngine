@@ -28,8 +28,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collection;
 import java.util.Locale;
-import java.util.concurrent.ForkJoinPool;
-import java.util.concurrent.RecursiveAction;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.function.Consumer;
 import java.util.function.IntConsumer;
 import java.util.zip.ZipEntry;
@@ -43,113 +43,6 @@ public class Tools {
 
     public static class App {
         private static final Path ERROR_LOG_FILE = Path.of("error.log");
-
-        private static final int MAX_TASKS = Runtime.getRuntime().availableProcessors();
-        private static final IntArrayTask[] intTasks = new IntArrayTask[MAX_TASKS];
-        @SuppressWarnings("rawtypes")
-        private static final ArrayTask[] ARRAY_TASKS = new ArrayTask[MAX_TASKS];
-
-        static {
-            for (int i = 0; i < MAX_TASKS; i++) {
-                intTasks[i] = new IntArrayTask();
-                ARRAY_TASKS[i] = new ArrayTask<>();
-            }
-        }
-
-        private static final class IntArrayTask extends RecursiveAction {
-            int[] array;
-            int start, end;
-            IntConsumer consumer;
-
-            void setup(int[] array, int start, int end, IntConsumer consumer) {
-                this.array = array;
-                this.start = start;
-                this.end = end;
-                this.consumer = consumer;
-                this.reinitialize(); // allow reuse after join()
-            }
-
-            @Override
-            protected void compute() {
-                for (int i = start; i < end; i++) {
-                    consumer.accept(array[i]);
-                }
-            }
-        }
-
-        private static final class ArrayTask<T> extends RecursiveAction {
-            Array<T> list;
-            int start, end;
-            Consumer<T> consumer;
-
-            void setup(final Array<T> list, final int start, final int end, final Consumer<T> consumer) {
-                this.list = list;
-                this.start = start;
-                this.end = end;
-                this.consumer = consumer;
-                this.reinitialize(); // allow reuse after join()
-            }
-
-            @Override
-            protected void compute() {
-                for (int i = start; i < end; i++) {
-                    consumer.accept(list.get(i));
-                }
-            }
-        }
-
-        public static void runParallel(final int[] array, final IntConsumer consumer) {
-            runParallel(array, consumer, array.length);
-        }
-
-        public static void runParallel(final int[] array, final IntConsumer consumer, final int size) {
-            if (size == 0) return;
-
-            final int taskCount = Math.min(MAX_TASKS, size);
-            final int chunkSize = (size + taskCount - 1) / taskCount;
-
-            for (int i = 0; i < taskCount; i++) {
-                int start = i * chunkSize;
-                int end = Math.min(start + chunkSize, size);
-                IntArrayTask task = intTasks[i];
-                task.setup(array, start, end, consumer);
-                ForkJoinPool.commonPool().submit(task);
-            }
-
-            try {
-                for (int i = 0; i < taskCount; i++)
-                    intTasks[i].get();
-            } catch (Exception e) {
-                handleException(e);
-            }
-        }
-
-        public static <T> void runParallel(final Array<T> array, final Consumer<T> consumer) {
-            runParallel(array, consumer, array.size);
-        }
-
-        @SuppressWarnings("unchecked")
-        public static <T> void runParallel(final Array<T> array, final Consumer<T> consumer, final int size) {
-            if (size == 0) return;
-
-            final int taskCount = Math.min(MAX_TASKS, size);
-            final int chunkSize = (size + taskCount - 1) / taskCount;
-
-            for (int i = 0; i < taskCount; i++) {
-                int start = i * chunkSize;
-                int end = Math.min(start + chunkSize, size);
-                ArrayTask<T> task = (ArrayTask<T>) ARRAY_TASKS[i];
-                task.setup(array, start, end, consumer);
-                ForkJoinPool.commonPool().submit(task);
-            }
-
-            try {
-                for (int i = 0; i < taskCount; i++)
-                    ARRAY_TASKS[i].get();
-            } catch (Exception e) {
-                handleException(e);
-            }
-        }
 
         public static void handleException(Exception e) {
             try (PrintWriter pw = new PrintWriter(new FileWriter(ERROR_LOG_FILE.toString(), true))) {

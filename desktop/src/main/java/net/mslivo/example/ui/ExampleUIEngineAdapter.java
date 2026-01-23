@@ -4,7 +4,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL32;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.g3d.Shader;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.MathUtils;
 import net.mslivo.pixelui.media.MediaManager;
@@ -23,12 +22,11 @@ import net.mslivo.pixelui.engine.TextButton;
 import net.mslivo.pixelui.engine.AppViewport;
 import net.mslivo.example.ui.media.ExampleBaseMedia;
 import net.mslivo.example.ui.windows.ExampleWindowGeneratorP;
-import net.mslivo.pixelui.utils.systems.particles.ParticleUpdater;
-import net.mslivo.pixelui.utils.systems.particles.PrimitiveParticleSystem;
-import net.mslivo.pixelui.utils.systems.particles.SpriteParticleSystem;
-import net.mslivo.pixelui.utils.systems.particles.particles.Particle;
-
-import java.nio.file.Path;
+import net.mslivo.pixelui.utils.concurrency.ParallelExecutor;
+import net.mslivo.pixelui.utils.particles.ParticleUpdater;
+import net.mslivo.pixelui.utils.particles.PrimitiveParticleSystem;
+import net.mslivo.pixelui.utils.particles.SpriteParticleSystem;
+import net.mslivo.pixelui.utils.particles.particles.Particle;
 
 
 public class ExampleUIEngineAdapter implements UIEngineAdapter {
@@ -40,6 +38,7 @@ public class ExampleUIEngineAdapter implements UIEngineAdapter {
     private boolean resetPressed;
     private SpriteRenderer spriteRenderer;
     private PrimitiveRenderer primitiveRenderer;
+    private ParallelExecutor parallelExecutor = new ParallelExecutor();
 
     private SpriteParticleSystem<ParticleDataInner> spriteParticleSystem;
     private PrimitiveParticleSystem<ParticleDataInner> primitiveParticleSystem;
@@ -140,8 +139,8 @@ public class ExampleUIEngineAdapter implements UIEngineAdapter {
 
 
 
-        this.spriteParticleSystem = new SpriteParticleSystem<>(ParticleDataInner.class, particleUpdater);
-        this.primitiveParticleSystem = new PrimitiveParticleSystem<>(ParticleDataInner.class, particleUpdater);
+        this.spriteParticleSystem = new SpriteParticleSystem<>(ParticleDataInner.class,parallelExecutor, particleUpdater);
+        this.primitiveParticleSystem = new PrimitiveParticleSystem<>(ParticleDataInner.class,parallelExecutor, particleUpdater);
     }
 
     @Override
