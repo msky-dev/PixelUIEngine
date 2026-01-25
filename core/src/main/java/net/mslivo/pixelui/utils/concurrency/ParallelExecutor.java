@@ -142,6 +142,6 @@ public class ParallelExecutor implements Disposable {
 
     @Override
     public void dispose() {
-        this.executor.shutdownNow();
+        this.executor.shutdown();
     }
 }
