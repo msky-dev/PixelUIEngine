@@ -1,24 +1,26 @@
 package net.mslivo.pixelui.utils.appengine;
 
-public class AppEngineIO {
+import net.mslivo.pixelui.utils.helper.Copyable;
+
+public class AppEngineIO implements Copyable<AppEngineIO> {
 
     public static final int PARAMETERS_MAX = 16;
     private static final String ERROR_PUSH = String.format("Push exceeds maximum parameter limit of %s", PARAMETERS_MAX);
     private static final String ERROR_OBJECT_LOCKED = "IO Object is locked";
-    private static final String ERROR_POLL = String.format("Poll exceeds the parameter count of %s",PARAMETERS_MAX);
+    private static final String ERROR_POLL = String.format("Poll exceeds the parameter count of %s", PARAMETERS_MAX);
 
     boolean locked;
     int type;
     int readIndex, writeIndex;
-    final Object[] objectStack;
-    final int[] intStack;
-    final long[] longStack;
-    final double[] doubleStack;
-    final float[] floatStack;
-    final boolean[] booleanStack;
+    Copyable[] objectStack;
+    int[] intStack;
+    long[] longStack;
+    double[] doubleStack;
+    float[] floatStack;
+    boolean[] booleanStack;
 
     AppEngineIO() {
-        this.objectStack = new Object[PARAMETERS_MAX];
+        this.objectStack = new Copyable[PARAMETERS_MAX];
         this.intStack = new int[PARAMETERS_MAX];
         this.longStack = new long[PARAMETERS_MAX];
         this.floatStack = new float[PARAMETERS_MAX];
@@ -27,24 +29,24 @@ public class AppEngineIO {
         this.locked = false;
     }
 
-    public AppEngineIO push(Object parameter) {
+    public AppEngineIO push(Copyable parameter) {
         checkWrite();
         objectStack[writeIndex] = parameter;
         writeIndex++;
         return this;
     }
 
-    public AppEngineIO push(Object parameter1, Object parameter2) {
+    public AppEngineIO push(Copyable parameter1, Copyable parameter2) {
         push(parameter1).push(parameter2);
         return this;
     }
 
-    public AppEngineIO push(Object parameter1, Object parameter2, Object parameter3) {
+    public AppEngineIO push(Copyable parameter1, Copyable parameter2, Copyable parameter3) {
         push(parameter1).push(parameter2).push(parameter3);
         return this;
     }
 
-    public AppEngineIO push(Object parameter1, Object parameter2, Object parameter3, Object parameter4) {
+    public AppEngineIO push(Copyable parameter1, Copyable parameter2, Copyable parameter3, Copyable parameter4) {
         push(parameter1).push(parameter2).push(parameter3).push(parameter4);
         return this;
     }
@@ -257,4 +259,33 @@ public class AppEngineIO {
             throw new RuntimeException(ERROR_PUSH);
     }
 
+    @Override
+    public AppEngineIO copy() {
+        AppEngineIO copy = new AppEngineIO();
+
+        copy.locked = this.locked;
+        copy.type = this.type;
+        copy.readIndex = this.readIndex;
+        copy.writeIndex = this.writeIndex;
+        copy.objectStack = new Copyable[this.objectStack.length];
+        for (int i = 0; i < this.objectStack.length; i++)
+            copy.objectStack[i] = (Copyable) this.objectStack[i].copy();
+
+        copy.intStack = new int[this.intStack.length];
+        System.arraycopy(this.intStack,0,copy.intStack,0,this.intStack.length);
+
+        copy.longStack = new long[this.longStack.length];
+        System.arraycopy(this.longStack,0,copy.longStack,0,this.longStack.length);
+
+        copy.doubleStack = new double[this.doubleStack.length];
+        System.arraycopy(this.doubleStack,0,copy.doubleStack,0,this.doubleStack.length);
+
+        copy.floatStack = new float[this.floatStack.length];
+        System.arraycopy(this.floatStack,0,copy.floatStack,0,this.floatStack.length);
+
+        copy.booleanStack = new boolean[this.booleanStack.length];
+        System.arraycopy(this.booleanStack,0,copy.booleanStack,0,this.booleanStack.length);
+
+        return copy;
+    }
 }

@@ -28,10 +28,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collection;
 import java.util.Locale;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.function.Consumer;
-import java.util.function.IntConsumer;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
@@ -110,12 +106,16 @@ public class Tools {
                     config.setDecorated(launchConfig.decorated);
                     config.setMaximized(launchConfig.maximized);
                     config.setWindowPosition(-1, -1);
-                    config.setWindowedMode(launchConfig.resolutionWidth, launchConfig.resolutionHeight);
                     config.setWindowSizeLimits(launchConfig.resolutionWidth, launchConfig.resolutionHeight, -1, -1);
                     config.setTitle(launchConfig.appTile);
                     config.setForegroundFPS(launchConfig.fps);
                     config.setIdleFPS(launchConfig.idleFPS);
                     config.useVsync(launchConfig.vSync);
+                    if (launchConfig.fullScreen) {
+                        config.setFullscreenMode(Lwjgl3ApplicationConfiguration.getDisplayMode());
+                    }else{
+                        config.setWindowedMode(launchConfig.resolutionWidth, launchConfig.resolutionHeight);
+                    }
                     config.setBackBufferConfig(launchConfig.r, launchConfig.g, launchConfig.b, launchConfig.a, launchConfig.depth, launchConfig.stencil, launchConfig.samples);
                     if (launchConfig.iconPath != null) config.setWindowIcon(launchConfig.iconPath);
                     try {
@@ -131,12 +131,16 @@ public class Tools {
                     config.setDecorated(launchConfig.decorated);
                     config.setMaximized(launchConfig.maximized);
                     config.setWindowPosition(-1, -1);
-                    config.setWindowedMode(launchConfig.resolutionWidth, launchConfig.resolutionHeight);
                     config.setWindowSizeLimits(launchConfig.resolutionWidth, launchConfig.resolutionHeight, -1, -1);
                     config.setTitle(launchConfig.appTile);
                     config.setForegroundFPS(launchConfig.fps);
                     config.setIdleFPS(launchConfig.idleFPS);
                     config.useVsync(launchConfig.vSync);
+                    if (launchConfig.fullScreen) {
+                        config.setFullscreenMode(com.github.dgzt.gdx.lwjgl3.Lwjgl3ApplicationConfiguration.getDisplayMode());
+                    }else{
+                        config.setWindowedMode(launchConfig.resolutionWidth, launchConfig.resolutionHeight);
+                    }
                     config.setBackBufferConfig(launchConfig.r, launchConfig.g, launchConfig.b, launchConfig.a, launchConfig.depth, launchConfig.stencil, launchConfig.samples);
                     if (launchConfig.iconPath != null) config.setWindowIcon(launchConfig.iconPath);
                     try {
@@ -729,7 +733,7 @@ public class Tools {
             return (baseValue * (float) Math.exp(-exp * (times - 1)));
         }
 
-        public static int exponentialSmooth(int base, float exp, int times){
+        public static int exponentialSmooth(int base, float exp, int times) {
             float x = times - 1;
             float factor = (float) Math.pow(x, exp);
             int addValue = MathUtils.floor(base * factor);
@@ -818,7 +822,6 @@ public class Tools {
         }
 
 
-
         public static int distance(int x1, int y1, int x2, int y2) {
             return MathUtils.floor((float) (Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2))));
         }
@@ -829,12 +832,12 @@ public class Tools {
 
         public static boolean isWithinDistanceRects(int x1, int y1, int x2, int y2, int distance) {
             return Math.abs(x1 - x2) <= distance &&
-                    Math.abs(y1-y2) <= distance;
+                    Math.abs(y1 - y2) <= distance;
         }
 
         public static boolean isWithinDistanceRects(float x1, float y1, float x2, float y2, float distance) {
             return Math.abs(x1 - x2) <= distance &&
-                    Math.abs(y1-y2) <= distance;
+                    Math.abs(y1 - y2) <= distance;
         }
 
         public static boolean isWithinDistance(int x1, int y1, int x2, int y2, int distance) {
