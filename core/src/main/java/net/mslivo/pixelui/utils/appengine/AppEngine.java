@@ -76,7 +76,7 @@ public class AppEngine<A extends AppEngineAdapter<D>, D extends Object> implemen
         appEngineIO.type = type;
         appEngineIO.readIndex = 0;
         appEngineIO.writeIndex = 0;
-        System.arraycopy(RESET_OBJECT, 0, appEngineIO.objectStack, 0, AppEngineIO.PARAMETERS_MAX);
+        System.arraycopy(RESET_OBJECT, 0, appEngineIO.referenceStack, 0, AppEngineIO.PARAMETERS_MAX);
         System.arraycopy(RESET_INT, 0, appEngineIO.intStack, 0, AppEngineIO.PARAMETERS_MAX);
         System.arraycopy(RESET_FLOAT, 0, appEngineIO.floatStack, 0, AppEngineIO.PARAMETERS_MAX);
         return appEngineIO;

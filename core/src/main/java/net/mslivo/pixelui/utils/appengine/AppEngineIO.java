@@ -12,7 +12,7 @@ public class AppEngineIO implements Copyable<AppEngineIO> {
     boolean locked;
     int type;
     int readIndex, writeIndex;
-    Copyable[] objectStack;
+    Object[] referenceStack;
     int[] intStack;
     long[] longStack;
     double[] doubleStack;
@@ -20,7 +20,7 @@ public class AppEngineIO implements Copyable<AppEngineIO> {
     boolean[] booleanStack;
 
     AppEngineIO() {
-        this.objectStack = new Copyable[PARAMETERS_MAX];
+        this.referenceStack = new Object[PARAMETERS_MAX];
         this.intStack = new int[PARAMETERS_MAX];
         this.longStack = new long[PARAMETERS_MAX];
         this.floatStack = new float[PARAMETERS_MAX];
@@ -29,24 +29,24 @@ public class AppEngineIO implements Copyable<AppEngineIO> {
         this.locked = false;
     }
 
-    public AppEngineIO push(Copyable parameter) {
+    public AppEngineIO push(Object parameter) {
         checkWrite();
-        objectStack[writeIndex] = parameter;
+        referenceStack[writeIndex] = parameter;
         writeIndex++;
         return this;
     }
 
-    public AppEngineIO push(Copyable parameter1, Copyable parameter2) {
+    public AppEngineIO push(Object parameter1, Object parameter2) {
         push(parameter1).push(parameter2);
         return this;
     }
 
-    public AppEngineIO push(Copyable parameter1, Copyable parameter2, Copyable parameter3) {
+    public AppEngineIO push(Object parameter1, Object parameter2, Object parameter3) {
         push(parameter1).push(parameter2).push(parameter3);
         return this;
     }
 
-    public AppEngineIO push(Copyable parameter1, Copyable parameter2, Copyable parameter3, Copyable parameter4) {
+    public AppEngineIO push(Object parameter1, Object parameter2, Object parameter3, Object parameter4) {
         push(parameter1).push(parameter2).push(parameter3).push(parameter4);
         return this;
     }
@@ -198,7 +198,7 @@ public class AppEngineIO implements Copyable<AppEngineIO> {
 
     public <T> T poll(Class<T> type) {
         checkPoll();
-        return (T) objectStack[readIndex++];
+        return (T) referenceStack[readIndex++];
     }
 
     public boolean pollBoolean() {
@@ -267,9 +267,9 @@ public class AppEngineIO implements Copyable<AppEngineIO> {
         copy.type = this.type;
         copy.readIndex = this.readIndex;
         copy.writeIndex = this.writeIndex;
-        copy.objectStack = new Copyable[this.objectStack.length];
-        for (int i = 0; i < this.objectStack.length; i++)
-            copy.objectStack[i] = (Copyable) this.objectStack[i].copy();
+        copy.referenceStack = new Object[this.referenceStack.length];
+        for (int i = 0; i < this.referenceStack.length; i++)
+            copy.referenceStack[i] = this.referenceStack[i];
 
         copy.intStack = new int[this.intStack.length];
         System.arraycopy(this.intStack,0,copy.intStack,0,this.intStack.length);
