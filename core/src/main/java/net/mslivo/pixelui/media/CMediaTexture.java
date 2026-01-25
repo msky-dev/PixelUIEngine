@@ -21,24 +21,24 @@ public final class CMediaTexture extends CMedia implements Copyable<CMediaTextur
         this.vWrap = Texture.TextureWrap.ClampToEdge;
     }
 
-    public CMediaTexture(String file,int fileID) {
-        this(file,fileID, Pixmap.Format.RGBA8888,Texture.TextureFilter.Nearest, Texture.TextureWrap.ClampToEdge, Texture.TextureWrap.ClampToEdge);
+    public CMediaTexture(String file) {
+        this(file, Pixmap.Format.RGBA8888,Texture.TextureFilter.Nearest, Texture.TextureWrap.ClampToEdge, Texture.TextureWrap.ClampToEdge);
     }
 
-    public CMediaTexture(String file,int fileID, Pixmap.Format format) {
-        this(file,fileID,format,Texture.TextureFilter.Nearest, Texture.TextureWrap.ClampToEdge, Texture.TextureWrap.ClampToEdge);
+    public CMediaTexture(String file, Pixmap.Format format) {
+        this(file,format,Texture.TextureFilter.Nearest, Texture.TextureWrap.ClampToEdge, Texture.TextureWrap.ClampToEdge);
     }
 
-    public CMediaTexture(String file,int fileID, Pixmap.Format format,Texture.TextureFilter filter) {
-        this(file,fileID,format, filter, Texture.TextureWrap.ClampToEdge, Texture.TextureWrap.ClampToEdge);
+    public CMediaTexture(String file, Pixmap.Format format,Texture.TextureFilter filter) {
+        this(file,format, filter, Texture.TextureWrap.ClampToEdge, Texture.TextureWrap.ClampToEdge);
     }
 
-    public CMediaTexture(String file,int fileID, Pixmap.Format format,Texture.TextureFilter filter, Texture.TextureWrap uWrap) {
-        this(file,fileID, format, filter, uWrap, Texture.TextureWrap.ClampToEdge);
+    public CMediaTexture(String file, Pixmap.Format format,Texture.TextureFilter filter, Texture.TextureWrap uWrap) {
+        this(file,  format, filter, uWrap, Texture.TextureWrap.ClampToEdge);
     }
 
-    public CMediaTexture(String file, int fileID, Pixmap.Format format, Texture.TextureFilter filter, Texture.TextureWrap uWrap, Texture.TextureWrap vWrap) {
-        super(file,fileID);
+    public CMediaTexture(String file, Pixmap.Format format, Texture.TextureFilter filter, Texture.TextureWrap uWrap, Texture.TextureWrap vWrap) {
+        super(file);
         this.format = format;
         this.filter = filter;
         this.uWrap = uWrap;

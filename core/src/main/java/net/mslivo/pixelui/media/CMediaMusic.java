@@ -8,8 +8,8 @@ public final class CMediaMusic extends CMediaSound implements Copyable<CMediaMus
         super();
     }
 
-    public CMediaMusic(String filename, int fileID) {
-        super(filename, fileID);
+    public CMediaMusic(String filename) {
+        super(filename);
     }
 
     @Override

@@ -16,20 +16,20 @@ public final class CMediaFont extends CMedia implements Copyable<CMediaFont> {
     }
 
 
-    public CMediaFont(String file, int fileID) {
-        this(file,fileID, true, null, null);
+    public CMediaFont(String file) {
+        this(file, true, null, null);
     }
 
-    public CMediaFont(String file, int fileID, boolean markupEnabled) {
-        this(file,fileID, markupEnabled, null, null);
+    public CMediaFont(String file, boolean markupEnabled) {
+        this(file, markupEnabled, null, null);
     }
 
-    public CMediaFont(String file, int fileID, boolean markupEnabled, CMediaFontSymbol[] symbols) {
-        this(file,fileID, markupEnabled, symbols, null);
+    public CMediaFont(String file, boolean markupEnabled, CMediaFontSymbol[] symbols) {
+        this(file, markupEnabled, symbols, null);
     }
 
-    public CMediaFont(String filename, int fileID, boolean markupEnabled, CMediaFontSymbol[] symbols, FontOutline outline) {
-        super(filename,fileID);
+    public CMediaFont(String filename, boolean markupEnabled, CMediaFontSymbol[] symbols, FontOutline outline) {
+        super(filename);
         this.markupEnabled = markupEnabled;
         if (symbols != null) {
             this.symbols = new CMediaFontSymbol[symbols.length];

@@ -1,28 +1,22 @@
 package net.mslivo.pixelui.media;
 
-import java.util.Objects;
-
 public abstract sealed class CMedia permits CMediaFont, CMediaSound, CMediaSprite, CMediaTexture {
 
     public String file;
-    public int fileID;
-    private int hash;
+    public int mediaManagerIndex;
 
     public CMedia() {
         super();
     }
 
-    CMedia(String file, int fileID) {
+    CMedia(String file) {
         this.file = file;
-        this.fileID = fileID;
-        this.hash = Objects.hash(file, fileID);
     }
 
 
     protected void copyFields(CMedia copyFrom) {
         this.file = copyFrom.file;
-        this.fileID = copyFrom.fileID;
-        this.hash = copyFrom.hash;
+        this.mediaManagerIndex = copyFrom.mediaManagerIndex;
     }
 
     public CMedia copy() {
@@ -35,15 +29,4 @@ public abstract sealed class CMedia permits CMediaFont, CMediaSound, CMediaSprit
         return copy;
     }
 
-    @Override
-    public boolean equals(Object object) {
-        if (object == null || getClass() != object.getClass()) return false;
-        CMedia cMedia = (CMedia) object;
-        return fileID == cMedia.fileID && Objects.equals(file, cMedia.file);
-    }
-
-    @Override
-    public int hashCode() {
-        return hash;
-    }
 }

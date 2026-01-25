@@ -6,8 +6,8 @@ public sealed abstract class CMediaSound extends CMedia permits CMediaSoundEffec
         super();
     }
 
-    public CMediaSound(String filename,int fileID) {
-        super(filename, fileID);
+    public CMediaSound(String filename) {
+        super(filename);
     }
 
     public CMediaSound copy() {

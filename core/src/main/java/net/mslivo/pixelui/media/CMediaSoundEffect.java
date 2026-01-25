@@ -8,8 +8,8 @@ public final class CMediaSoundEffect extends CMediaSound implements Copyable<CMe
         super();
     }
 
-    public CMediaSoundEffect(String filename, int fileID) {
-        super(filename, fileID);
+    public CMediaSoundEffect(String filename) {
+        super(filename);
     }
 
     @Override
