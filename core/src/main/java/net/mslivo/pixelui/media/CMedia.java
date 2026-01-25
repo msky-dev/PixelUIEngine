@@ -6,15 +6,16 @@ public abstract sealed class CMedia permits CMediaFont, CMediaSound, CMediaSprit
 
     public String file;
     public int fileID;
+    private int hash;
 
     public CMedia() {
         super();
-        this.file = "";
     }
 
     CMedia(String file, int fileID) {
         this.file = file;
         this.fileID = fileID;
+        this.hash = Objects.hash(file, fileID);
     }
 
 
@@ -42,6 +43,6 @@ public abstract sealed class CMedia permits CMediaFont, CMediaSound, CMediaSprit
 
     @Override
     public int hashCode() {
-        return Objects.hash(file, fileID);
+        return hash;
     }
 }
