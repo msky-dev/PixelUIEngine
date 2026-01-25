@@ -22,6 +22,7 @@ public abstract sealed class CMedia permits CMediaFont, CMediaSound, CMediaSprit
     protected void copyFields(CMedia copyFrom) {
         this.file = copyFrom.file;
         this.fileID = copyFrom.fileID;
+        this.hash = copyFrom.hash;
     }
 
     public CMedia copy() {
