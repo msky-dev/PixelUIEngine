@@ -1,0 +1,148 @@
+package dev.msky.pixelui.engine;
+
+import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.math.GridPoint2;
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.Queue;
+import com.badlogic.gdx.utils.viewport.Viewport;
+import dev.msky.pixelui.media.CMediaSprite;
+import dev.msky.pixelui.engine.constants.MOUSE_CONTROL_MODE;
+import dev.msky.pixelui.engine.constants.VIEWPORT_MODE;
+import dev.msky.pixelui.rendering.NestedFrameBuffer;
+import dev.msky.pixelui.rendering.SpriteRenderer;
+import dev.msky.pixelui.engine.actions.common.UpdateAction;
+import dev.msky.pixelui.theme.UIEngineTheme;
+
+public final class UIEngineState {
+
+    /* ################ Constructor Parameters ################# */
+    public int resolutionWidth, resolutionHeight;
+    public int resolutionWidthHalf, resolutionHeightHalf;
+    public VIEWPORT_MODE viewportMode;
+    public boolean gamePadSupport;
+    public UIEngineTheme theme;
+
+    /* ##################### Config ########################## */
+    public UIEngineConfig config;
+
+    /* #################### Graphics: App #################### */
+
+    public OrthographicCamera camera_app;
+    public NestedFrameBuffer frameBuffer_app;
+
+    /* #################### Graphics: GUI #################### */
+    public SpriteRenderer spriteRenderer_ui;
+    public OrthographicCamera camera_ui;
+    public NestedFrameBuffer frameBufferComponent_ui;
+    public NestedFrameBuffer frameBufferModal_ui;
+
+    /* #################### Graphics: Composite #################### */
+    public NestedFrameBuffer frameBuffer_composite;
+
+    /* #################### Graphics: Screen #################### */
+    public OrthographicCamera camera_screen;
+    public int upScaleFactor_screen;
+    public NestedFrameBuffer frameBuffer_upScaled_screen;
+    public Viewport viewport_screen;
+
+    /* #################### UI: Added Elements #################### */
+    public Array<Window> windows;
+    public Array<Component> screenComponents;
+    public Window modalWindow;
+    public Queue<Window> modalWindowQueue;
+    public Array<Notification> notifications;
+    public Array<TooltipNotification> tooltipNotifications;
+
+    public Array<HotKey> hotKeys;
+    public Array<AppViewport> appViewPorts;
+    public Array<UpdateAction> singleUpdateActions;
+    public Queue<UpdateAction> singleUpdateActionsRemoveQueue;
+
+    /* #################### UI: Actively used UI References #################### */
+    public Window draggedWindow;
+    public GridPoint2 draggedWindow_offset;
+    public Button pressedButton;
+    public ScrollbarVertical pressedScrollBarVertical;
+    public ScrollbarHorizontal pressedScrollBarHorizontal;
+    public FrameBufferViewport pressedFramebufferViewport;
+    public Tooltip tooltip;
+    public Tooltip fadeOutTooltip;
+    public float tooltip_fadePct;
+    public boolean tooltip_wait_delay;
+    public float tooltip_delay_timer;
+    public Tooltip appToolTip;
+    public Object tooltip_lastHoverObject;
+    public Knob pressedKnob;
+    public AppViewport pressedAppViewPort;
+    public TextField pressedTextField;
+    public int pressedTextFieldInitCaretPosition;
+    public TextField focusedTextField;
+    public int focusedTextField_repeatedKey;
+    public long focusedTextField_repeatedKeyTimer;
+    public Grid draggedGrid;
+    public Grid pressedGrid;
+    public Checkbox pressedCheckBox;
+    public Object pressedGridItem;
+    public GridPoint2 draggedGridFrom;
+    public GridPoint2 draggedGridOffset;
+    public Object draggedGridItem;
+    public List draggedList;
+    public List pressedList;
+    public Object pressedListItem;
+    public int draggedListFromIndex;
+    public GridPoint2 draggedListOffset;
+    public Object draggedListItem;
+    public ComboBox openComboBox;
+    public ComboBoxItem pressedComboBoxItem;
+    public ContextMenu openContextMenu;
+    public ContextMenuItem pressedContextMenuItem;
+    public int displayedContextMenuWidth;
+    public Object keyboardInteractedUIObjectFrame;
+    public Object mouseInteractedUIObjectFrame;
+    public Array<Component> forceTooltipUpdateComponents;
+
+    /* #################### MouseTextInput #################### */
+    public MouseTextInput openMouseTextInput;
+    public boolean mTextInputMouse1Pressed, mTextInputMouse2Pressed;
+    public GridPoint2 mTextInputTempHardwareMousePosition;
+    public int mTextInputScrollTimer;
+    public int mTextInputScrollTime;
+    public boolean mTextInputUnlock;
+
+    /* #################### Control #################### */
+    public Object lastUIMouseHover; // Last GUI Element the mouse hovered over
+    public MOUSE_CONTROL_MODE currentControlMode;
+    public GridPoint2 mouseApp;
+    public GridPoint2 mouseUI;
+    public Vector2 emulatedMousePosition; // Mouse Position for Keyboard/Gamepad mouse control
+    public Vector2 emulatedMouseDirection;
+    public GridPoint2 mouseDelta;
+    public CMediaSprite cursor;
+    public int cursorArrayIndex;
+    public MouseTool mouseTool;
+    public CMediaSprite overrideCursor;
+    public int overrideCursorArrayIndex;
+    public boolean displayOverrideCursor;
+    public Vector3 fboCursorVector;
+    public Vector2 unProjectVector;
+    public boolean[] keyBoardTranslatedKeysDown;
+    public Vector2 keyBoardMouseSmoothing;
+    public Vector2 gamePadTranslatedStickLeft;
+    public Vector2 gamePadTranslatedStickRight;
+    public boolean[] gamePadTranslatedButtonsDown;
+    public long emulatedMouseLastMouseClick;
+    public boolean[] emulatedMouseIsButtonDown;
+
+    /* #################### Misc. ####################  */
+
+    public UIInputEvents inputEvents;
+    public UIInputProcessor inputProcessor;
+    public int itemInfo_listIndex;
+    public GridPoint2 itemInfo_gridPos;
+    public int itemInfo_tabBarTabIndex;
+    public boolean itemInfo_listValid, itemInfo_tabBarValid, itemInfo_gridValid;
+    UIEngineState() {
+    }
+}

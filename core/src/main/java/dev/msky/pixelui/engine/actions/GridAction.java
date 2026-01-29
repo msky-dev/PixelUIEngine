@@ -1,0 +1,41 @@
+package dev.msky.pixelui.engine.actions;
+
+import dev.msky.pixelui.engine.actions.common.CommonActions;
+import dev.msky.pixelui.engine.actions.common.ItemCellColor;
+import dev.msky.pixelui.engine.Grid;
+import dev.msky.pixelui.engine.List;
+import dev.msky.pixelui.engine.Tooltip;
+import dev.msky.pixelui.engine.actions.common.ItemIcons;
+
+public interface GridAction<T> extends CommonActions, ItemIcons<T>, ItemCellColor<T> {
+
+    default Tooltip toolTip(T gridItem) {
+        return null;
+    }
+
+    default boolean onItemSelected(T gridItem) {
+        return true;
+    }
+
+    default void onDragFromGrid(Grid fromGrid, int from_x, int from_y, int to_x, int to_y) {
+    }
+
+    default void onDragFromList(List fromList, int fromIndex, int to_x, int to_y) {
+    }
+
+    default boolean canDragFromGrid(Grid fromGrid) {
+        return false;
+    }
+
+    default boolean canDragFromList(List fromList) {
+        return false;
+    }
+
+    default void onDragIntoApp(T gridItem, int from_x, int from_y, int screenX, int screenY) {
+    }
+
+    default boolean canDragIntoApp() {
+        return false;
+    }
+
+}

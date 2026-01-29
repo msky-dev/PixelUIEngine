@@ -1,15 +1,15 @@
 package net.mslivo.example;
 
 import com.badlogic.gdx.ApplicationAdapter;
-import net.mslivo.pixelui.media.MediaManager;
-import net.mslivo.pixelui.theme.Base8x8Theme;
-import net.mslivo.pixelui.utils.Tools;
-import net.mslivo.pixelui.utils.concurrency.UpdateTimer;
-import net.mslivo.pixelui.utils.transitions.TransitionManager;
-import net.mslivo.pixelui.engine.UIEngine;
+import dev.msky.pixelui.media.MediaManager;
+import dev.msky.pixelui.theme.Base8x8Theme;
+import dev.msky.pixelui.utils.Tools;
+import dev.msky.pixelui.utils.concurrency.UpdateTimer;
+import dev.msky.pixelui.utils.transitions.TransitionManager;
+import dev.msky.pixelui.engine.UIEngine;
 import net.mslivo.example.ui.ExampleUIEngineAdapter;
 import net.mslivo.example.ui.media.ExampleBaseMedia;
-import net.mslivo.pixelui.utils.transitions.basic.ZoomInTransition;
+import dev.msky.pixelui.utils.transitions.basic.ZoomInTransition;
 
 public class ExampleMain extends ApplicationAdapter {
     enum STATE {

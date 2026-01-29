@@ -1,8 +1,8 @@
 package net.mslivo.example;
 
 
-import net.mslivo.pixelui.utils.PixelUILaunchConfig;
-import net.mslivo.pixelui.utils.Tools;
+import dev.msky.pixelui.utils.PixelUILaunchConfig;
+import dev.msky.pixelui.utils.Tools;
 
 public class ExampleLauncherMain {
 

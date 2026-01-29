@@ -2,7 +2,7 @@ package net.mslivo.performancetest;
 
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.Array;
-import net.mslivo.pixelui.utils.concurrency.ParallelExecutor;
+import dev.msky.pixelui.utils.concurrency.ParallelExecutor;
 
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
