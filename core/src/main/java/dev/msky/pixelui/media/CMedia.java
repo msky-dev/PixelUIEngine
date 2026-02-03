@@ -6,13 +6,13 @@ public abstract sealed class CMedia permits CMediaFont, CMediaSound, CMediaSprit
     public int mediaManagerIndex;
 
     public CMedia() {
-        super();
+        this.file = "";
+        this.mediaManagerIndex = -1;
     }
 
     CMedia(String file) {
         this.file = file;
     }
-
 
     protected void copyFields(CMedia copyFrom) {
         this.file = copyFrom.file;
