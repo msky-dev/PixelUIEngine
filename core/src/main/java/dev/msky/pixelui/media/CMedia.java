@@ -7,7 +7,7 @@ public abstract sealed class CMedia permits CMediaFont, CMediaSound, CMediaSprit
 
     public CMedia() {
         this.file = "";
-        this.mediaManagerIndex = -1;
+        this.mediaManagerIndex = -1 ;
     }
 
     CMedia(String file) {

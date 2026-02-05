@@ -28,6 +28,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collection;
 import java.util.Locale;
+import java.util.function.Consumer;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
@@ -83,8 +84,11 @@ public class Tools {
             }
         }
 
-
         public static void launch(ApplicationAdapter applicationAdapter, PixelUILaunchConfig launchConfig) {
+            launch(applicationAdapter, launchConfig, null);
+        }
+
+        public static void launch(ApplicationAdapter applicationAdapter, PixelUILaunchConfig launchConfig, Consumer<Exception> onException) {
             // Determine glEmulation
             String osName = System.getProperty("os.name").toLowerCase();
             PixelUILaunchConfig.GLEmulation glEmulation;
@@ -121,6 +125,8 @@ public class Tools {
                     try {
                         new Lwjgl3Application(applicationAdapter, config);
                     } catch (Exception e) {
+                        if(onException != null)
+                            onException.accept(e);
                         throw new RuntimeException(e);
                     }
                 }
@@ -146,6 +152,8 @@ public class Tools {
                     try {
                         new Lwjgl3VulkanApplication(applicationAdapter, config);
                     } catch (Exception e) {
+                        if(onException != null)
+                            onException.accept(e);
                         throw new RuntimeException(e);
                     }
                 }
