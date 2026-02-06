@@ -40,7 +40,7 @@ public class Tools {
     public static class App {
         private static final Path ERROR_LOG_FILE = Path.of("error.log");
 
-        public static void handleException(Exception e) {
+        public static void logException(Exception e) {
             try (PrintWriter pw = new PrintWriter(new FileWriter(ERROR_LOG_FILE.toString(), true))) {
                 pw.write("Exception \"" + (e.getClass().getSimpleName()) + "\" occured" + System.lineSeparator());
                 e.printStackTrace(pw);
@@ -50,36 +50,12 @@ public class Tools {
             }
         }
 
-        public static void handleError(String error) {
+        public static void logError(String error) {
             try (PrintWriter pw = new PrintWriter(new FileWriter(ERROR_LOG_FILE.toString(), true))) {
                 pw.write(error + System.lineSeparator());
                 System.err.println(error);
             } catch (IOException ex) {
                 ex.printStackTrace();
-            }
-        }
-
-        public static void showExceptionDialog(Exception e) {
-            String stackTrace;
-            try (ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream()) {
-                try (PrintWriter printWriter = new PrintWriter(byteArrayOutputStream)) {
-                    e.printStackTrace(printWriter);
-                    printWriter.flush();
-                    stackTrace = byteArrayOutputStream.toString();
-                }
-            } catch (IOException ex) {
-                stackTrace = e.toString();
-            }
-            StringBuilder shownStackTrace = new StringBuilder(stackTrace);
-            if (shownStackTrace.length() > 512) {
-                shownStackTrace.setLength(512);
-                shownStackTrace.append(System.lineSeparator()).append("...");
-            }
-            shownStackTrace.append(System.lineSeparator()).append("Press OK to copy to Clipboard");
-
-            int option = JOptionPane.showConfirmDialog(null, shownStackTrace.toString(), "Exception", JOptionPane.PLAIN_MESSAGE);
-            if (option == JOptionPane.OK_OPTION) {
-                Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(stackTrace), null);
             }
         }
 
@@ -152,18 +128,35 @@ public class Tools {
         }
 
         private static void handleLaunchException(Exception e, PixelUILaunchConfig launchConfig){
+            logException(e);
             launchConfig.onException.accept(e);
             if(launchConfig.showExceptionDialog){
-                javax.swing.SwingUtilities.invokeLater(() -> {
-                    javax.swing.JOptionPane.showMessageDialog(
-                            null,
-                            e.getMessage(),
-                            "Error",
-                            javax.swing.JOptionPane.ERROR_MESSAGE
-                    );
-                });
-                throw new RuntimeException(e);
+                StringBuilder dialogMessage = new StringBuilder();
+                dialogMessage.append("Error occurred: \""+e.getMessage()+"\""+System.lineSeparator());
+                dialogMessage.append("Details can be found in \""+ ERROR_LOG_FILE.toAbsolutePath()+"\""+System.lineSeparator());
+                dialogMessage.append(System.lineSeparator()).append("Press OK to copy to Clipboard"+System.lineSeparator());
+                javax.swing.JOptionPane.showMessageDialog(
+                        null,
+                        dialogMessage,
+                        "Error",
+                        javax.swing.JOptionPane.ERROR_MESSAGE
+                );
+
+                // Stacktrace to clipboard
+                String stackTrace;
+                try (ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream()) {
+                    try (PrintWriter printWriter = new PrintWriter(byteArrayOutputStream)) {
+                        e.printStackTrace(printWriter);
+                        printWriter.flush();
+                        stackTrace = byteArrayOutputStream.toString();
+                    }
+                } catch (IOException ex) {
+                    stackTrace = ex.getMessage();
+                }
+                final String stackTraceFinal = stackTrace;
+                Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(stackTraceFinal), null);
             }
+            throw new RuntimeException(e);
 
         }
 
