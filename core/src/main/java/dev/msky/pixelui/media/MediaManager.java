@@ -79,6 +79,9 @@ public final class MediaManager implements Disposable {
         return true;
     }
 
+    public boolean isCMediaLoaded(CMedia cMedia){
+        return cMedia.mediaManagerIndex != CMedia.INDEX_NONE && loadedMediaList.contains(cMedia, true);
+    }
 
     /* ----- Load ---- */
 

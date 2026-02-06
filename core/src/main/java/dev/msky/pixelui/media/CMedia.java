@@ -2,12 +2,14 @@ package dev.msky.pixelui.media;
 
 public abstract sealed class CMedia permits CMediaFont, CMediaSound, CMediaSprite, CMediaTexture {
 
+    public static final int INDEX_NONE = -1;
+
     public String file;
     public int mediaManagerIndex;
 
     public CMedia() {
         this.file = "";
-        this.mediaManagerIndex = -1 ;
+        this.mediaManagerIndex = INDEX_NONE;
     }
 
     CMedia(String file) {
