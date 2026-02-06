@@ -1,24 +1,24 @@
 package dev.msky.pixelui.media;
 
+import java.util.Objects;
+
 public abstract sealed class CMedia permits CMediaFont, CMediaSound, CMediaSprite, CMediaTexture {
 
-    public static final int INDEX_NONE = -1;
-
+    private transient int cachedHashCode = 0;
     public String file;
-    public int mediaManagerIndex;
+    public int fileID;
 
     public CMedia() {
-        this.file = "";
-        this.mediaManagerIndex = INDEX_NONE;
     }
 
-    CMedia(String file) {
+    CMedia(String file, int fileID) {
         this.file = file;
+        this.fileID = fileID;
     }
 
     protected void copyFields(CMedia copyFrom) {
         this.file = copyFrom.file;
-        this.mediaManagerIndex = copyFrom.mediaManagerIndex;
+        this.fileID = copyFrom.fileID;
     }
 
     public CMedia copy() {
@@ -31,4 +31,17 @@ public abstract sealed class CMedia permits CMediaFont, CMediaSound, CMediaSprit
         return copy;
     }
 
+    @Override
+    public boolean equals(Object object) {
+        if (object == null || getClass() != object.getClass()) return false;
+        CMedia cMedia = (CMedia) object;
+        return fileID == cMedia.fileID && Objects.equals(file, cMedia.file);
+    }
+
+    @Override
+    public int hashCode() {
+        if (cachedHashCode == 0)
+            cachedHashCode = Objects.hash(file, fileID);
+        return cachedHashCode;
+    }
 }
