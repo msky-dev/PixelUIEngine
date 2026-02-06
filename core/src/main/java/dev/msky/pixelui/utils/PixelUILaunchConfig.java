@@ -2,6 +2,8 @@ package dev.msky.pixelui.utils;
 
 import dev.msky.pixelui.utils.helper.Copyable;
 
+import java.util.function.Consumer;
+
 public final class PixelUILaunchConfig implements Copyable<PixelUILaunchConfig> {
 
     public String appTile = "Pixel UI Game";
@@ -22,6 +24,9 @@ public final class PixelUILaunchConfig implements Copyable<PixelUILaunchConfig> 
     public boolean decorated = true;
     public boolean maximized = true;
     public boolean fullScreen = false;
+    public boolean showExceptionDialog = true;
+    public Consumer<Exception> onException = e -> {
+    };
 
     public PixelUILaunchConfig() {
     }
