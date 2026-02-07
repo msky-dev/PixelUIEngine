@@ -15,7 +15,7 @@ public class ExampleBaseMedia {
     public static final CMediaImage ICON_EXAMPLE_BULLET_ORANGE = new CMediaImage(DIR_EXAMPLE_GRAPHICS + "example_bullet_orange.png",1);
     public static final CMediaImage ICON_EXAMPLE_WINDOW = new CMediaImage(DIR_EXAMPLE_GRAPHICS + "example_icon_window.png",1);
     public static final CMediaAnimation EXAMPLE_ANIMATION_2 = new CMediaAnimation(DIR_EXAMPLE_GRAPHICS + "example_animation_2.png",1,  8*8,  8*8, 0.1f);
-    public static final CMediaAnimation EXAMPLE_ANIMATION_3 = new CMediaAnimation(DIR_EXAMPLE_GRAPHICS + "example_animation_2.png",1,  8*8,  8*8, 0.01f);
+    public static final CMediaAnimation EXAMPLE_ANIMATION_3 = new CMediaAnimation(DIR_EXAMPLE_GRAPHICS + "example_animation_2.png",2,  8*8,  8*8, 0.01f);
     public static final CMediaTexture EXAMPLE_TEST = new CMediaTexture(DIR_EXAMPLE_GRAPHICS + "test.png",1);
 
     public static final CMediaFont FONT_SMALL = new CMediaFont( MediaManager.DIR_GRAPHICS+"/pixelui/misc/font_small.fnt", 1);

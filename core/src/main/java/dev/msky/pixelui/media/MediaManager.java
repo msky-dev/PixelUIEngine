@@ -26,14 +26,17 @@ import java.util.regex.Pattern;
 public final class MediaManager implements Disposable {
     public static final String DIR_MUSIC = "music/", DIR_GRAPHICS = "sprites/", DIR_SOUND = "sound/", DIR_MODELS = "models/";
     public static final int FONT_CUSTOM_SYMBOL_OFFSET = 512;
-    private static final String ERROR_FILE_NOT_FOUND = "CMedia File \"%s\": Does not exist";
-    private static final String ERROR_FILE_ID_NOT_SET = "CMedia File \"%s\": fileID not set (< 1)";
-    private static final String ERROR_ANIMATION_INVALID = "CMedia File \"%s\": Animation dimensions invalid";
-    private static final String ERROR_READ_FONT = "Error reading font file \"%s\"";
-    private static final String ERROR_READ_FONT_FILE_DESCRIPTOR = "Error reading font file \"%s\": file= descriptor not found";
-    private static final String ERROR_READ_FONT_BASE_DECRIPTOR = "Error reading font file \"%s\": base= descriptor not found";
-    private static final String ERROR_SYMBOL_ID_DUPLICATE = "Symbol \"%s\" id \"%d\" is already defined in font";
-    private static final String ERROR_SYMBOL_NOT_ENOUGH_SPACE = "SymbolArray \"%s\" more symbols defined than available in texture";
+    private static final String C_MEDIA_ERROR = "CMedia File \"%s\", fileID \"%d\": %s";
+    private static final String C_MEDIA_SYMBOL_ERROR = "CMediaSymbol File \"%s\", fileID \"%d\": %s";
+    private static final String ERROR_FILE_NOT_FOUND = "File does not exist";
+    private static final String ERROR_FILE_ID_NOT_SET = "File < 1, not set?";
+    private static final String ERROR_FILE_DUPLICATE = "Duplicate detected";
+    private static final String ERROR_ANIMATION_INVALID = "Animation dimensions invalid";
+    private static final String ERROR_READ_FONT_FILE = "Error reading font file \"%s\"";
+    private static final String ERROR_READ_FONT_FILE_DESCRIPTOR = ".fnt File error, file= descriptor not found";
+    private static final String ERROR_READ_FONT_BASE_DECRIPTOR = ".fnt File error,: base= descriptor not found";
+    private static final String ERROR_SYMBOL_ID_DUPLICATE = "Symbol id \"%d\" is already defined in font";
+    private static final String ERROR_SYMBOL_MORE_SYMBOLS_DEFINED = "More symbols in SymbolArray defined than available in texture";
     private static final String PACKED_FONT_NAME = "%s_%d.packed";
     private static final GlyphLayout glyphLayout = new GlyphLayout();
     private static final int DEFAULT_PAGE_WIDTH = 4096;
@@ -60,6 +63,22 @@ public final class MediaManager implements Disposable {
     }
 
     /* ----- Prepare ----- */
+
+    private void handleError(CMediaFontSymbol cMediaFontSymbol, String message) {
+        throw new MediaMangerException(String.format(C_MEDIA_SYMBOL_ERROR, cMediaFontSymbol.file, cMediaFontSymbol.fileID, message));
+    }
+
+    private void handleError(CMedia cMedia, String message) {
+        handleError(cMedia, message, null);
+    }
+
+    private void handleError(CMedia cMedia, String message, Throwable cause) {
+        String exceptionMsg = String.format(C_MEDIA_ERROR, cMedia.file, cMedia.fileID, message);
+        if (cause != null)
+            exceptionMsg += cause.getLocalizedMessage();
+        throw new MediaMangerException(exceptionMsg);
+    }
+
 
     public boolean prepareCMedia(CMedia cMedia) {
         if (loaded) return false;
@@ -189,14 +208,14 @@ public final class MediaManager implements Disposable {
 
         for (int i = 0; i < symbols.length; i++) {
             Pixmap symbolPixmap = createTexturePixmap(Tools.File.findResource(symbols[i].file));
-            Pixmap[] symbolPixmapResults;
+            Pixmap[] symbolPixmapResults = null;
             switch (symbols[i]) {
                 case CMediaFontSymbolSingle singleSymbol -> {
                     if (!uniqueSymbolIds.contains(singleSymbol.id)) {
                         symbolPixmapResults = new Pixmap[]{symbolPixmap};
                         uniqueSymbolIds.add(singleSymbol.id);
                     } else {
-                        throw new RuntimeException(String.format(ERROR_SYMBOL_ID_DUPLICATE, singleSymbol.file, singleSymbol.id));
+                        handleError(singleSymbol, String.format(ERROR_SYMBOL_ID_DUPLICATE, singleSymbol.id));
                     }
                 }
                 case CMediaFontSymbolArray arraySymbol -> {
@@ -206,7 +225,7 @@ public final class MediaManager implements Disposable {
                     int symbolsMax = Math.min(arraySymbol.ids.length, arraySymbol.frameLength);
 
                     if (symbolsMax > maxSymbolsInPixMap) {
-                        throw new RuntimeException(String.format(ERROR_SYMBOL_NOT_ENOUGH_SPACE, arraySymbol.file));
+                        handleError(arraySymbol, ERROR_SYMBOL_MORE_SYMBOLS_DEFINED);
                     }
 
                     symbolPixmapResults = new Pixmap[symbolsMax];
@@ -228,7 +247,7 @@ public final class MediaManager implements Disposable {
                             symbolPixmapResults[i2] = copyPixmap(symbolPixmap, arraySymbol.regionWidth, arraySymbol.regionHeight, currentX, currentY, arraySymbol.regionWidth, arraySymbol.regionHeight);
                             uniqueSymbolIds.add(symbolID);
                         } else {
-                            throw new RuntimeException(String.format(ERROR_SYMBOL_ID_DUPLICATE, arraySymbol.file, symbolID));
+                            handleError(arraySymbol, String.format(ERROR_SYMBOL_ID_DUPLICATE, symbolID));
                         }
                         currentX += arraySymbol.regionWidth;
                         if ((currentX + arraySymbol.regionWidth) > symbolPixmap.getWidth()) {
@@ -322,6 +341,7 @@ public final class MediaManager implements Disposable {
         return textureData.consumePixmap();
     }
 
+
     public boolean loadAssets(int pageWidth, int pageHeight, LoadProgress loadProgress, Texture.TextureFilter textureFilter) {
         if (loaded) return false;
         PixmapPacker pixmapPacker = new PixmapPacker(pageWidth, pageHeight, Pixmap.Format.RGBA8888, 4, true);
@@ -331,21 +351,26 @@ public final class MediaManager implements Disposable {
         Array<CMediaTexture> textureCMediaLoadStack = new Array<>();
         ObjectMap<CMediaFont, String> createFontFontFile = new ObjectMap<>();
         ObjectMap<CMediaFont, String> createFontAtlasPackedName = new ObjectMap<>();
-        ObjectMap<CMediaFont, Texture> createFontFontTexture = new ObjectMap<>();
         ObjectMap<CMediaTexture, Texture> offAtlasTextures = new ObjectMap();
         int step = 0;
         int stepsMax = 0;
 
         // split into Image and Sound data, skip duplicates, check format and index
+
+        ObjectSet<CMedia> duplicateSet = new ObjectSet<>();
+
         while (!loadMediaQueue.isEmpty()) {
             final CMedia loadMedia = loadMediaQueue.removeFirst();
 
-            if(loadMedia.fileID <= 0)
-                throw new RuntimeException(String.format(ERROR_FILE_ID_NOT_SET, loadMedia.file));
 
-            if (!Tools.File.findResource(loadMedia.file).exists()) {
-                throw new RuntimeException(String.format(ERROR_FILE_NOT_FOUND, loadMedia.file));
-            }
+            if (!Tools.File.findResource(loadMedia.file).exists())
+                handleError(loadMedia, ERROR_FILE_NOT_FOUND);
+
+            if (duplicateSet.contains(loadMedia))
+                handleError(loadMedia, ERROR_FILE_DUPLICATE);
+
+            if (loadMedia.fileID <= 0)
+                handleError(loadMedia, ERROR_FILE_ID_NOT_SET);
 
             switch (loadMedia) {
                 case CMediaSprite cMediaSprite -> spriteCMediaLoadStack.add(cMediaSprite);
@@ -354,6 +379,7 @@ public final class MediaManager implements Disposable {
                 case CMediaTexture cMediaTexture -> textureCMediaLoadStack.add(cMediaTexture);
             }
 
+            duplicateSet.add(loadMedia);
             stepsMax++;
         }
         medias_images.clear();
@@ -383,7 +409,7 @@ public final class MediaManager implements Disposable {
         for (int i = 0; i < fontCMediaLoadStack.size; i++) {
             CMediaFont cMediaFont = fontCMediaLoadStack.get(i);
 
-            BitMapFontInformation textureFileHandle = extractBitmapFontInformation(Tools.File.findResource(cMediaFont.file));
+            BitMapFontInformation textureFileHandle = extractBitmapFontInformation(cMediaFont, Tools.File.findResource(cMediaFont.file));
             String packedFontTextureName = String.format(PACKED_FONT_NAME, cMediaFont.file, fontCount);
             CreateFontResult fontResult = createFont(textureFileHandle, cMediaFont.symbols, cMediaFont.outline);
 
@@ -430,7 +456,7 @@ public final class MediaManager implements Disposable {
                     try {
                         extendedAnimation.getKeyFrame(0);
                     } catch (ArithmeticException e) {
-                        throw new RuntimeException(String.format(ERROR_ANIMATION_INVALID, cMediaAnimation.file));
+                        handleError(cMediaAnimation, ERROR_ANIMATION_INVALID);
                     }
                     medias_animations.put(cMediaAnimation, extendedAnimation);
                 }
@@ -443,7 +469,7 @@ public final class MediaManager implements Disposable {
             CMediaFont cMediaFont = fontCMediaLoadStack.get(i);
             TextureRegion fontTextureRegion = new TextureRegion(textureAtlas.findRegion(createFontAtlasPackedName.get(cMediaFont)));
 
-            BitmapFont bitmapFont = new BitmapFont(new FontFileHandle(Tools.File.findResource(cMediaFont.file), createFontFontFile.get(cMediaFont)), fontTextureRegion);
+            BitmapFont bitmapFont = new BitmapFont(new FontFileHandle(cMediaFont, Tools.File.findResource(cMediaFont.file), createFontFontFile.get(cMediaFont)), fontTextureRegion);
 
             bitmapFont.setColor(Color.GRAY);
             bitmapFont.getData().markupEnabled = cMediaFont.markupEnabled;
@@ -482,7 +508,7 @@ public final class MediaManager implements Disposable {
     }
 
 
-    private BitMapFontInformation extractBitmapFontInformation(FileHandle fontFileHandle) {
+    private BitMapFontInformation extractBitmapFontInformation(CMediaFont cMediaFont, FileHandle fontFileHandle) {
         boolean fileFound = false, baseFound = false;
         FileHandle textureHandle = null;
         int lineHeight = 0;
@@ -506,11 +532,11 @@ public final class MediaManager implements Disposable {
                 }
             }
         } catch (IOException e) {
-            throw new RuntimeException(ERROR_READ_FONT, e);
+            handleError(cMediaFont, String.format(ERROR_READ_FONT_FILE, fontFileHandle.name()), e);
         }
 
-        if (!fileFound) throw new RuntimeException(ERROR_READ_FONT_FILE_DESCRIPTOR);
-        if (!baseFound) throw new RuntimeException(ERROR_READ_FONT_BASE_DECRIPTOR);
+        if (!fileFound) handleError(cMediaFont, ERROR_READ_FONT_FILE_DESCRIPTOR);
+        if (!baseFound) handleError(cMediaFont, ERROR_READ_FONT_BASE_DECRIPTOR);
 
         return new BitMapFontInformation(textureHandle, lineHeight);
     }
@@ -760,7 +786,7 @@ public final class MediaManager implements Disposable {
     private class FontFileHandle extends FileHandle {
         private final byte[] modifiedData;
 
-        public FontFileHandle(FileHandle originalFile, String additionalData) {
+        public FontFileHandle(CMediaFont cMediaFont, FileHandle originalFile, String additionalData) {
             super(originalFile.file());
 
             // Read original file content
@@ -775,7 +801,7 @@ public final class MediaManager implements Disposable {
                 // Append additional data
                 outputStream.write(additionalData.getBytes());
             } catch (IOException e) {
-                throw new RuntimeException(e);
+                handleError(cMediaFont, String.format(ERROR_READ_FONT_FILE, cMediaFont), e);
             }
 
             // Store the combined data
@@ -786,6 +812,17 @@ public final class MediaManager implements Disposable {
         public InputStream read() {
             // Provide the modified data as an InputStream
             return new ByteArrayInputStream(modifiedData);
+        }
+    }
+
+
+    public class MediaMangerException extends RuntimeException {
+        public MediaMangerException(String message) {
+            super(message);
+        }
+
+        public MediaMangerException(String message, Throwable cause) {
+            super(message, cause);
         }
     }
 
