@@ -881,6 +881,7 @@ public class UICommonUtils {
             if (comboBoxItem.addedToComboBox == null || comboBoxItem.addedToComboBox != comboBox) return;
             comboBox.selectedItem = comboBoxItem;
             comboBoxItem.comboBoxItemAction.onSelect();
+            comboBox.comboBoxAction.onItemSelected(comboBoxItem);
         } else {
             comboBox.selectedItem = null;
             comboBox.comboBoxAction.onItemSelected(null);
