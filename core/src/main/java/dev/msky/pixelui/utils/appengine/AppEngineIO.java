@@ -4,7 +4,7 @@ import dev.msky.pixelui.utils.helper.Copyable;
 
 public class AppEngineIO implements Copyable<AppEngineIO> {
 
-    public static final int PARAMETERS_MAX = 16;
+    public static final int PARAMETERS_MAX = 32;
     private static final String ERROR_PUSH = String.format("Push exceeds maximum parameter limit of %s", PARAMETERS_MAX);
     private static final String ERROR_OBJECT_LOCKED = "IO Object is locked";
     private static final String ERROR_POLL = String.format("Poll exceeds the parameter count of %s", PARAMETERS_MAX);
