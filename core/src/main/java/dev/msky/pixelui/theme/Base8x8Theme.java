@@ -44,7 +44,7 @@ public class Base8x8Theme extends UIEngineTheme {
         UI_TOOLTIP_CELL = new CMediaArray(DIR_THEME + "ui/tooltip_cell.png",1, TL, TL);
         UI_TOOLTIP = new CMediaArray(DIR_THEME + "ui/tooltip.png",1, TL, TL);
         UI_TOOLTIP_TOP = new CMediaArray(DIR_THEME + "ui/tooltip_top.png",1, TL, TL);
-        UI_TOOLTIP_SEGMENT_BORDER = new CMediaImage(DIR_THEME + "ui/tooltip_segment_border.png",1);
+        UI_TOOLTIP_SEGMENT_BORDER = new CMediaArray(DIR_THEME + "ui/tooltip_segment_border.png",1,8,8);
         UI_TOOLTIP_LINE_HORIZONTAL = new CMediaImage(DIR_THEME + "ui/tooltip_line_horizontal.png",1);
         UI_TOOLTIP_LINE_VERTICAL = new CMediaImage(DIR_THEME + "ui/tooltip_line_vertical.png",1);
         UI_CONTEXT_MENU = new CMediaArray(DIR_THEME + "ui/context_menu.png",1, TL, TL);

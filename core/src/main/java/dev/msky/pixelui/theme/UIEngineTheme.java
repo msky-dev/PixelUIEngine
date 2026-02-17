@@ -43,7 +43,7 @@ public abstract class UIEngineTheme {
     public CMediaArray UI_TOOLTIP_CELL;
     public CMediaArray UI_TOOLTIP;
     public CMediaArray UI_TOOLTIP_TOP;
-    public CMediaImage UI_TOOLTIP_SEGMENT_BORDER;
+    public CMediaArray UI_TOOLTIP_SEGMENT_BORDER;
     public CMediaImage UI_TOOLTIP_LINE_HORIZONTAL;
     public CMediaImage UI_TOOLTIP_LINE_VERTICAL;
     public CMediaArray UI_CONTEXT_MENU;

@@ -14,8 +14,6 @@ import dev.msky.pixelui.engine.actions.common.CommonActions;
 import dev.msky.pixelui.engine.actions.common.UpdateAction;
 import dev.msky.pixelui.engine.constants.*;
 import dev.msky.pixelui.media.*;
-import dev.msky.pixelui.engine.constants.*;
-import dev.msky.pixelui.media.*;
 import dev.msky.pixelui.rendering.NestedFrameBuffer;
 import dev.msky.pixelui.rendering.ShaderParser;
 import dev.msky.pixelui.rendering.SpriteRenderer;
@@ -2510,7 +2508,7 @@ public final class UIEngine<T extends UIEngineAdapter> implements Disposable {
         for (int is = 0; is < tooltip.segments.size; is++) {
             TooltipSegment segment = tooltip.segments.get(is);
             final float segmentAlpha = segment.cellColor.a * alpha;
-            final float borderAlpha = tooltip.color_border.a * alpha;
+            final float borderAlpha = tooltip.colorBorder.a * alpha;
             final float contentAlpha = segment.contentColor.a * alpha;
 
             // Segment Background
@@ -2532,7 +2530,7 @@ public final class UIEngine<T extends UIEngineAdapter> implements Disposable {
                     }
 
                     // Background
-                    if (!segment.clear) {
+                    if (segmentAlpha > 0f) {
                         render_setColor(spriteRenderer, segment.cellColor, segmentAlpha, false);
                         for (int tx = 0; tx < tooltip_width; tx++) {
                             spriteRenderer.drawCMediaArray(uiEngineState.theme.UI_TOOLTIP_CELL, render_get16TilesCMediaIndex(tx, y_combined, width_reference, height_reference), x + TS(tx), y + TS(y_combined));
@@ -2540,13 +2538,16 @@ public final class UIEngine<T extends UIEngineAdapter> implements Disposable {
                     }
 
                     // Border
-                    render_setColor(spriteRenderer, tooltip.color_border, borderAlpha, false);
+                    render_setColor(spriteRenderer, tooltip.colorBorder, borderAlpha, false);
                     for (int tx = 0; tx < tooltip_width; tx++) {
                         // tooltip border
                         spriteRenderer.drawCMediaArray(uiEngineState.theme.UI_TOOLTIP, render_get16TilesCMediaIndex(tx, y_combined, width_reference, tooltip_height), x + TS(tx), y + TS(y_combined));
                         // segmentborder
                         if (drawBottomborder) {
-                            spriteRenderer.drawCMediaImage(uiEngineState.theme.UI_TOOLTIP_SEGMENT_BORDER, x + TS(tx), y + TS(y_combined));
+                            final int index = (tx == 0 ? 0 : (tx == (tooltip_width-1) ? 2 : 1));
+                            render_setColor(spriteRenderer, segment.borderColor != null ? segment.borderColor : tooltip.colorBorder, borderAlpha, false);
+                            spriteRenderer.drawCMediaArray(uiEngineState.theme.UI_TOOLTIP_SEGMENT_BORDER,index, x + TS(tx), y + TS(y_combined));
+                            render_setColor(spriteRenderer, tooltip.colorBorder,borderAlpha, false);
                         }
                     }
 
@@ -2554,7 +2555,7 @@ public final class UIEngine<T extends UIEngineAdapter> implements Disposable {
                 }
 
                 // Top Border
-                render_setColor(spriteRenderer, tooltip.color_border, borderAlpha, false);
+                render_setColor(spriteRenderer, tooltip.colorBorder, borderAlpha, false);
                 for (int tx = 0; tx < tooltip_width; tx++) {
                     // tooltip border
                     spriteRenderer.drawCMediaArray(uiEngineState.theme.UI_TOOLTIP_TOP, render_get3TilesCMediaIndex(tx, width_reference), x + TS(tx), y + TS(tooltip_height));
@@ -2629,7 +2630,7 @@ public final class UIEngine<T extends UIEngineAdapter> implements Disposable {
         if (tooltip == null) return;
         if (tooltip.segments.isEmpty()) return;
         final SpriteRenderer spriteRenderer = uiEngineState.spriteRenderer_ui;
-        final float lineAlpha = tooltip.color_line.a * uiEngineState.tooltip_fadePct;
+        final float lineAlpha = tooltip.colorLine.a * uiEngineState.tooltip_fadePct;
         final int tooltip_width = tooltipWidth(tooltip);
         if (tooltip_width == 0) return;
         final int tooltip_height = tooltipHeight(tooltip);
@@ -2673,7 +2674,7 @@ public final class UIEngine<T extends UIEngineAdapter> implements Disposable {
 
 
         // Draw line
-        render_setColor(spriteRenderer, tooltip.color_line, lineAlpha, false);
+        render_setColor(spriteRenderer, tooltip.colorLine, lineAlpha, false);
         for (int i = 0; i < tooltip.lineLength; i++) {
             int xOffset = switch (direction) {
                 case LEFT -> -TS(i + 1);

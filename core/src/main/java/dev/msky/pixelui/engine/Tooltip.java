@@ -10,8 +10,8 @@ public class Tooltip extends UpdateActionSupport {
     public ToolTipAction toolTipAction;
     public Array<TooltipSegment> segments;
     public int minWidth;
-    public Color color_border;
-    public Color color_line;
+    public Color colorBorder;
+    public Color colorLine;
     public int lineLength;
     public DIRECTION direction;
     public String name;

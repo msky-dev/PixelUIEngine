@@ -12,7 +12,7 @@ public abstract sealed class TooltipSegment permits TooltipFramebufferViewportSe
     public int height;
     public boolean border;
     public boolean merge;
-    public boolean clear;
+    public Color borderColor; // if null -> inherited from tooltip
 
     TooltipSegment() {
     }
