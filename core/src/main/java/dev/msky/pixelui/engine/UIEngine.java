@@ -1238,7 +1238,7 @@ public final class UIEngine<T extends UIEngineAdapter> implements Disposable {
                             // Clicked on Combobox itself -> close
                             if (uiCommonUtils.comboBox_isOpen(comboBox)) {
                                 uiCommonUtils.comboBox_close(comboBox);
-                            }else{
+                            } else {
                                 uiCommonUtils.comboBox_open(comboBox);
                             }
                         }
@@ -2544,14 +2544,15 @@ public final class UIEngine<T extends UIEngineAdapter> implements Disposable {
                         spriteRenderer.drawCMediaArray(uiEngineState.theme.UI_TOOLTIP, render_get16TilesCMediaIndex(tx, y_combined, width_reference, tooltip_height), x + TS(tx), y + TS(y_combined));
                         // segmentborder
                         if (drawBottomborder) {
-                            final int index = (tx == 0 ? 0 : (tx == (tooltip_width-1) ? 2 : 1));
-                            render_setColor(spriteRenderer, segment.borderColor != null ? segment.borderColor : tooltip.colorBorder, borderAlpha, false);
-                            spriteRenderer.drawCMediaArray(uiEngineState.theme.UI_TOOLTIP_SEGMENT_BORDER,index, x + TS(tx), y + TS(y_combined));
-                            render_setColor(spriteRenderer, tooltip.colorBorder,borderAlpha, false);
+                            final int index = (tx == 0 ? 0 : (tx == (tooltip_width - 1) ? 2 : 1));
+                            final boolean customBorderColor = segment.borderColor != null;
+                            if (customBorderColor)
+                                render_setColor(spriteRenderer, segment.borderColor, borderAlpha, false);
+                            spriteRenderer.drawCMediaArray(uiEngineState.theme.UI_TOOLTIP_SEGMENT_BORDER, index, x + TS(tx), y + TS(y_combined));
+                            if (customBorderColor)
+                                render_setColor(spriteRenderer, tooltip.colorBorder, borderAlpha, false);
                         }
                     }
-
-
                 }
 
                 // Top Border
