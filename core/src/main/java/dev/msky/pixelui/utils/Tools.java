@@ -16,7 +16,6 @@ import dev.msky.pixelui.media.MediaManager;
 import dev.msky.pixelui.rendering.NestedFrameBuffer;
 import dev.msky.pixelui.rendering.SpriteRenderer;
 
-import javax.swing.*;
 import java.awt.*;
 import java.awt.datatransfer.StringSelection;
 import java.io.*;
@@ -743,7 +742,7 @@ public class Tools {
             return (baseValue * (float) Math.exp(-exp * (times - 1)));
         }
 
-        public static int exponentialSmooth(int base, float exp, int times) {
+        public static int powerLawScaling(int base, float exp, int times) {
             float x = times - 1;
             float factor = (float) Math.pow(x, exp);
             int addValue = MathUtils.floor(base * factor);
