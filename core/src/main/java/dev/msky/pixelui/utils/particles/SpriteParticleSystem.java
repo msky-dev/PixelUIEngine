@@ -13,6 +13,10 @@ public final class SpriteParticleSystem<T> extends ParticleSystem<T> {
 
     public interface RenderHook<T> {
 
+        default boolean renderParticle(Particle<T> particle){
+            return true;
+        }
+
         default void renderImageParticle(MediaManager mediaManager, SpriteRenderer spriteRenderer, ImageParticle<T> particle){
             CMediaImage cMediaImage = (CMediaImage) particle.sprite;
             spriteRenderer.setColor(particle.r, particle.g, particle.b, particle.a);
@@ -80,7 +84,7 @@ public final class SpriteParticleSystem<T> extends ParticleSystem<T> {
         spriteRenderer.saveState();
         for (int i = 0; i < particles.size; i++) {
             Particle<T> particle = particles.get(i);
-            if (!particle.visible) continue;
+            if (!particle.visible || !renderHook.renderParticle(particle)) continue;
 
             switch (particle) {
                 case ImageParticle<T> imageParticle -> this.renderHook.renderImageParticle(mediaManager, spriteRenderer, imageParticle);

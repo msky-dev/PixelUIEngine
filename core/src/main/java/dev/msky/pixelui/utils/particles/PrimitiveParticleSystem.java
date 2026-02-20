@@ -13,6 +13,10 @@ public final class PrimitiveParticleSystem<T> extends ParticleSystem<T> {
 
     public interface RenderHook<T> {
 
+        default boolean renderParticle(Particle<T> particle){
+            return true;
+        }
+
         default void renderPrimitiveParticle(PrimitiveRenderer primitiveRenderer, PrimitiveParticle<T> particle) {
             if (primitiveRenderer.getPrimitiveType() != particle.primitiveType) {
                 primitiveRenderer.end();
@@ -61,7 +65,7 @@ public final class PrimitiveParticleSystem<T> extends ParticleSystem<T> {
         primitiveRenderer.saveState();
         for (int i = 0; i < particles.size; i++) {
             Particle particle = particles.get(i);
-            if (!particle.visible) continue;
+            if (!particle.visible || !renderHook.renderParticle(particle)) continue;
 
             switch (particle) {
                 case PrimitiveParticle primitiveParticle ->
