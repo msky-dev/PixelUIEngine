@@ -626,7 +626,7 @@ public class Tools {
 
             if (sum <= 0f) return MathUtils.random(0, probabilities.length - 1);
 
-            int random = MathUtils.random(0, sum);
+            int random = MathUtils.random(sum - 1);
             int cumulative = 0;
             for (int i = 0; i < probabilities.length; i++) {
                 if (probabilities[i] <= 0) continue;
@@ -643,7 +643,7 @@ public class Tools {
 
             if (sum <= 0f) return MathUtils.random(0, probabilities.length - 1);
 
-            float random = MathUtils.random(0f, sum);
+            float random = MathUtils.random()*sum;
             float cumulative = 0f;
             for (int i = 0; i < probabilities.length; i++) {
                 if (probabilities[i] <= 0f) continue;
