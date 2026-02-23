@@ -662,11 +662,11 @@ public class Tools {
         }
 
         public static boolean randomChance(float probability) {
-            return MathUtils.random(0f, 1f) <= probability;
+            return MathUtils.random(0f, 1f) < probability;
         }
 
         public static boolean randomChance(double probability) {
-            return MathUtils.random(0f, 1f) <= probability;
+            return MathUtils.random(0f, 1f) < probability;
         }
 
         public static boolean randomChance(int oneIn) {
