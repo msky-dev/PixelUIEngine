@@ -580,7 +580,7 @@ public final class APIWidgets {
 
             Array<String> result = new Array<>();
             StringBuilder currentLine = new StringBuilder();
-            String currentColor = null;
+            Array<String> colorStack = new Array<>();
             for (int i = 0; i < text.length; i++) {
                 String[] words = text[i].split("\\s+");
 
@@ -589,10 +589,10 @@ public final class APIWidgets {
 
                     Matcher matcher = COLOR_PATTERN.matcher(word);
                     if (matcher.matches()) {
-                        currentColor = matcher.group(1);
+                        colorStack.add(matcher.group(1));
                     }
                     if (RESET_PATTERN.matcher(word).matches()) {
-                        currentColor = null;
+                        colorStack.pop();
                     }
 
                     final int newLength = mediaManager.fontTextWidth(uiEngineConfig.ui.font, currentLine.toString()) + mediaManager.fontTextWidth(uiEngineConfig.ui.font, word);
@@ -600,8 +600,10 @@ public final class APIWidgets {
                     if (newLength >= pixelWidth) {
                         result.add(currentLine.toString());
                         currentLine.setLength(0);
-                        if (currentColor != null)
-                            currentLine.append("[#" + currentColor + "]");
+                        if (!colorStack.isEmpty()) {
+                            for(int i3=0;i3<colorStack.size;i3++)
+                            currentLine.append("[#" + colorStack.get(i3) + "]");
+                        }
                         flushed = true;
                     }
 

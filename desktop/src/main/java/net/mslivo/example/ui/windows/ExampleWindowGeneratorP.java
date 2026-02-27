@@ -105,10 +105,7 @@ public class ExampleWindowGeneratorP implements WindowGenerator.P1<MediaManager>
     private Array<Component> createTab4(API api, Window window) {
 
         String[] text = {
-                "[#69357eff]You: whats up[]",
-                "[#863a9cff]Carp: It's just another day in the pond.[]",
-                "[#69357eff]You: What did you do today?",
-                "[#863a9cff]Carp: Im just enjoying the warm sunshine.[]"
+                "[#ff0000]RED  big space    RED RED RED RED [#00ff00] GREEN GREEN GREEN GREEN[] RED RED RED [] [#0000ff] BLUE BLUE BLUE []",
         };
 
 
