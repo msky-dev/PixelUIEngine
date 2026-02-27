@@ -573,7 +573,7 @@ public final class APIWidgets {
                 Pattern.compile(".*\\[#([0-9a-fA-F]{6}|[0-9a-fA-F]{8})\\].*");
 
         private static final Pattern RESET_PATTERN =
-                Pattern.compile("\\[\\]");
+                Pattern.compile(".*\\[\\].*");
 
         private String[] wrapText(String[] text, int pixelWidth) {
             if (text == null) return new String[0];
@@ -591,9 +591,6 @@ public final class APIWidgets {
                     if (matcher.matches()) {
                         colorStack.add(matcher.group(1));
                     }
-                    if (RESET_PATTERN.matcher(word).matches()) {
-                        colorStack.pop();
-                    }
 
                     final int newLength = mediaManager.fontTextWidth(uiEngineConfig.ui.font, currentLine.toString()) + mediaManager.fontTextWidth(uiEngineConfig.ui.font, word);
                     boolean flushed = false;
@@ -607,6 +604,11 @@ public final class APIWidgets {
                         flushed = true;
                     }
 
+                    int endPatterns = countOccurrences(word,"[]");
+                    for(int i3=0;i3<endPatterns;i3++){
+                        colorStack.pop();
+                    }
+
                     if (i2 != 0 && !flushed)
                         currentLine.append(" ");
                     currentLine.append(word);
@@ -615,10 +617,25 @@ public final class APIWidgets {
                 if (!currentLine.isEmpty()) {
                     result.add(currentLine.toString());
                     currentLine.setLength(0);
+                    colorStack.clear();
                 }
 
             }
             return result.toArray(String[]::new);
+        }
+
+        public static int countOccurrences(String text, String sub) {
+            if (text == null || sub == null || sub.isEmpty()) return 0;
+
+            int count = 0;
+            int idx = 0;
+
+            while ((idx = text.indexOf(sub, idx)) != -1) {
+                count++;
+                idx += sub.length(); // move past this match (non-overlapping)
+            }
+
+            return count;
         }
 
         public Text createClickableURL(int x, int y, String url) {

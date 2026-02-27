@@ -105,7 +105,7 @@ public class ExampleWindowGeneratorP implements WindowGenerator.P1<MediaManager>
     private Array<Component> createTab4(API api, Window window) {
 
         String[] text = {
-                "[#ff0000]RED  big space    RED RED RED RED [#00ff00] GREEN GREEN GREEN GREEN[] RED RED RED [] [#0000ff] BLUE BLUE BLUE []",
+                "[#4d65b4]Forabelara: Quick thought about [#4feaa2ff]Tree 2 [#7f7f7fff]Ȅ[][]:  It looks like a big tree with branches, but it's not very pretty.[]",
         };
 
 
@@ -127,7 +127,6 @@ public class ExampleWindowGeneratorP implements WindowGenerator.P1<MediaManager>
         api.window.addComponents(window, components.toArray(Component[]::new));
         return components;
     }
-
     private Array<Component> createTab3(API api, Window window) {
 
         ScrollbarVertical scrollBarVertical = api.component.scrollbar.scrollbarVertical.create(2, 2, 12, new ScrollBarAction() {
@@ -157,7 +156,8 @@ public class ExampleWindowGeneratorP implements WindowGenerator.P1<MediaManager>
 
 
 
-        ScrollbarHorizontal scrollBarHorizontalR = api.component.scrollbar.scrollbarHorizontal.create(4, 8, 6, new ScrollBarAction() {
+        ScrollbarHorizontal scrollBarHorizontalR = api.component.scrollbar.scrollbarHorizontal.create(4,
+8, 6, new ScrollBarAction() {
             @Override
             public void onScrolled(float scrolled) {
             }
