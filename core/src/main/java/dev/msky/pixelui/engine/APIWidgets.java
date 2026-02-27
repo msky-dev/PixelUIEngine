@@ -4,7 +4,6 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.Array;
 import dev.msky.pixelui.engine.actions.*;
-import dev.msky.pixelui.engine.actions.*;
 import dev.msky.pixelui.engine.actions.common.UpdateAction;
 import dev.msky.pixelui.engine.constants.BUTTON_MODE;
 import dev.msky.pixelui.engine.constants.INPUT_METHOD;
@@ -21,6 +20,8 @@ import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.DoubleConsumer;
 import java.util.function.IntConsumer;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public final class APIWidgets {
     private static final char[] numbersAllowedCharacters = new char[]{'-', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9'};
@@ -508,137 +509,115 @@ public final class APIWidgets {
         public Array<Component> createScrollAbleText(int x, int y, int width, int height, String[] text) {
             Array<Component> result = new Array<>();
 
-            final ScrollbarVertical scrollBarVertical =
+            final ScrollbarVertical scrollBar =
                     api.component.scrollbar.scrollbarVertical.create(x + width - 1, y, height);
 
-            final String[] textDisplayedLines = new String[height];
-
-            // Convert input text into wrapped lines that fit into (width - 1) columns
-            final String[] textConverted;
-            if (text != null) {
-                Array<String> textList = new Array<>();
-                final int pixelWidth = uiEngineState.theme.ts.abs(width - 1);
-
-                for (int i = 0; i < text.length; i++) {
-                    String textLine = Tools.Text.validString(text[i]);
-                    if (textLine.trim().length() > 0) {
-
-                        // --- NEW: detect a color tag once per original line ---
-                        java.util.regex.Matcher m = java.util.regex.Pattern
-                                .compile("\\[#([0-9a-fA-F]{6})]")
-                                .matcher(textLine);
-                        final String colorTag = m.find() ? m.group(0) : null;
-
-                        String[] words = textLine.split("\\s+");
-                        if (words.length > 0) {
-                            StringBuilder currentLine = new StringBuilder();
-                            for (int w = 0; w < words.length; w++) {
-                                String value = words[w];
-                                // Predict candidate line (add a trailing space while building)
-                                String candidate = currentLine.length() == 0
-                                        ? value + " "
-                                        : currentLine + value + " ";
-
-                                if (mediaManager.fontTextWidth(uiEngineConfig.ui.font, candidate) >= pixelWidth) {
-                                    // Flush current line
-                                    String flushed = currentLine.toString().trim();
-                                    if (flushed.length() > 0) {
-                                        // --- NEW: force color on every wrapped sub-line ---
-                                        if (colorTag != null && !flushed.startsWith("[#")) flushed = colorTag + flushed;
-                                        if (!flushed.endsWith("[]")) flushed = flushed + "[]";
-                                        textList.add(flushed);
-                                    }
-                                    // Start a new line with the word
-                                    currentLine.setLength(0);
-                                    currentLine.append(value).append(' ');
-                                } else {
-                                    currentLine.setLength(0);
-                                    currentLine.append(candidate);
-                                }
-                            }
-                            String last = currentLine.toString().trim();
-                            if (last.length() > 0) {
-                                // --- NEW: same enforcement for the final sub-line ---
-                                if (colorTag != null && !last.startsWith("[#")) last = colorTag + last;
-                                if (!last.endsWith("[]")) last = last + "[]";
-                                textList.add(last);
-                            }
-                        }
-                    } else {
-                        textList.add("");
-                    }
-                }
-                textConverted = textList.toArray(String[]::new);
-            } else {
-                textConverted = new String[]{};
-            }
+            final int pixelWidth = uiEngineState.theme.ts.abs(width - 1);
+            final String[] wrappedLines = wrapText(text, pixelWidth);
+            final String[] visibleLines = new String[height];
 
             // Create text rows
-            final Text[] texts = new Text[height];
+            final Text[] rows = new Text[height];
             for (int i = 0; i < height; i++) {
-                int text_y = y + ((height - 1) - i);
-                texts[i] = api.component.text.create(x, text_y, width - 1, null);
-                // Per-row mouse scroll handler: use the provided 'scrolled' delta
-                api.component.text.setTextAction(texts[i], new TextAction() {
+                int textY = y + ((height - 1) - i);
+                rows[i] = api.component.text.create(x, textY, width - 1, null);
+
+                api.component.text.setTextAction(rows[i], new TextAction() {
                     @Override
                     public void onMouseScroll(float scrolled) {
-                        // How many extra lines beyond the viewport?
-                        int extra = Math.max(textConverted.length - height, 0);
-                        // If nothing to scroll, ignore
+                        int extra = Math.max(wrappedLines.length - height, 0);
                         if (extra == 0) return;
 
-                        // One wheel notch ≈ one line. Negative to make wheel-up scroll up.
                         float step = -scrolled / (float) extra;
+                        float target = MathUtils.clamp(scrollBar.scrolled + step, 0f, 1f);
 
-                        float target = scrollBarVertical.scrolled + step;
-                        // Clamp to [0, 1]
-                        if (target < 0f) target = 0f;
-                        else if (target > 1f) target = 1f;
-
-                        uiCommonUtils.scrollBar_scroll(scrollBarVertical, target);
+                        uiCommonUtils.scrollBar_scroll(scrollBar, target);
                     }
                 });
-                result.add(texts[i]);
+
+                result.add(rows[i]);
             }
 
-            // Scrollbar action → map to which lines to show
-            api.component.scrollbar.setScrollBarAction(scrollBarVertical, new ScrollBarAction() {
+            // Scrollbar → visible lines mapping
+            api.component.scrollbar.setScrollBarAction(scrollBar, new ScrollBarAction() {
                 @Override
                 public void onScrolled(float scrolledPct) {
-                    // Convert to "top-aligned" fraction (0 = top, 1 = bottom)
                     float scrolled = 1f - scrolledPct;
 
-                    int extra = Math.max(textConverted.length - height, 0);
-                    int scrolledTextIndex = (extra > 0)
+                    int extra = Math.max(wrappedLines.length - height, 0);
+                    int startIndex = (extra > 0)
                             ? MathUtils.clamp(MathUtils.round(extra * scrolled), 0, extra)
                             : 0;
 
-
-                    for (int iy = 0; iy < height; iy++) {
-                        int textIndex = scrolledTextIndex + iy;
-                        textDisplayedLines[iy] = (textIndex < textConverted.length)
-                                ? textConverted[textIndex]
+                    for (int i = 0; i < height; i++) {
+                        int index = startIndex + i;
+                        visibleLines[i] = (index < wrappedLines.length)
+                                ? wrappedLines[index]
                                 : "";
-                    }
-
-                    for (int i = 0; i < texts.length; i++) {
-                        api.component.text.setText(texts[i], textDisplayedLines[i]);
+                        api.component.text.setText(rows[i], visibleLines[i]);
                     }
                 }
             });
 
-            // Initialize: show top
-            uiCommonUtils.scrollBar_scroll(scrollBarVertical, 1f);
+            uiCommonUtils.scrollBar_scroll(scrollBar, 1f);
 
-            // Disable scrollbar if not needed
-            if (textConverted.length <= height) {
-                api.component.setDisabled(scrollBarVertical, true);
+            if (wrappedLines.length <= height) {
+                api.component.setDisabled(scrollBar, true);
             }
 
-            result.add(scrollBarVertical);
+            result.add(scrollBar);
             return result;
         }
 
+        private static final Pattern COLOR_PATTERN =
+                Pattern.compile(".*\\[#([0-9a-fA-F]{6}|[0-9a-fA-F]{8})\\].*");
+
+        private static final Pattern RESET_PATTERN =
+                Pattern.compile("\\[\\]");
+
+        private String[] wrapText(String[] text, int pixelWidth) {
+            if (text == null) return new String[0];
+
+            Array<String> result = new Array<>();
+            StringBuilder currentLine = new StringBuilder();
+            String currentColor = null;
+            for (int i = 0; i < text.length; i++) {
+                String[] words = text[i].split("\\s+");
+
+                for (int i2 = 0; i2 < words.length; i2++) {
+                    final String word = words[i2];
+
+                    Matcher matcher = COLOR_PATTERN.matcher(word);
+                    if (matcher.matches()) {
+                        currentColor = matcher.group(1);
+                    }
+                    if (RESET_PATTERN.matcher(word).matches()) {
+                        currentColor = null;
+                    }
+
+                    final int newLength = mediaManager.fontTextWidth(uiEngineConfig.ui.font, currentLine.toString()) + mediaManager.fontTextWidth(uiEngineConfig.ui.font, word);
+                    boolean flushed = false;
+                    if (newLength >= pixelWidth) {
+                        result.add(currentLine.toString());
+                        currentLine.setLength(0);
+                        if (currentColor != null)
+                            currentLine.append("[#" + currentColor + "]");
+                        flushed = true;
+                    }
+
+                    if (i2 != 0 && !flushed)
+                        currentLine.append(" ");
+                    currentLine.append(word);
+                }
+
+                if (!currentLine.isEmpty()) {
+                    result.add(currentLine.toString());
+                    currentLine.setLength(0);
+                }
+
+            }
+            return result.toArray(String[]::new);
+        }
 
         public Text createClickableURL(int x, int y, String url) {
             return createClickableURL(x, y, url, url, Color.BLACK, url, Color.BLUE);
@@ -966,7 +945,7 @@ public final class APIWidgets {
 
                 // Add Case Button
                 ImageButton caseButton = api.component.button.imageButton.create(ix, iy, 2, 2, uiEngineState.theme.UI_MOUSETEXTINPUT_LOWERCASE, 0, null, BUTTON_MODE.TOGGLE);
-                api.component.setColor2(caseButton,Color.BLACK);
+                api.component.setColor2(caseButton, Color.BLACK);
                 api.component.button.setButtonAction(caseButton, new ButtonAction() {
 
                     @Override
@@ -978,7 +957,7 @@ public final class APIWidgets {
 
                         if (value) {
                             api.component.button.imageButton.setImage(caseButton, uiEngineState.theme.UI_MOUSETEXTINPUT_UPPERCASE);
-                        }else{
+                        } else {
                             api.component.button.imageButton.setImage(caseButton, uiEngineState.theme.UI_MOUSETEXTINPUT_LOWERCASE);
 
                         }
@@ -1004,7 +983,7 @@ public final class APIWidgets {
                                 }
                             }
                         }, BUTTON_MODE.DEFAULT);
-                api.component.setColor2(delButton,Color.BLACK);
+                api.component.setColor2(delButton, Color.BLACK);
                 api.component.move(delButton, uiEngineState.theme.ts.TS_HALF, uiEngineState.theme.ts.TS_HALF);
                 componentsList.add(delButton);
 

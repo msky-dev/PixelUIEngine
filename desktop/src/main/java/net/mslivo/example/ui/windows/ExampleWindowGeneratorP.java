@@ -107,7 +107,7 @@ public class ExampleWindowGeneratorP implements WindowGenerator.P1<MediaManager>
         String[] text = {
                 "[#69357eff]You: whats up[]",
                 "[#863a9cff]Carp: It's just another day in the pond.[]",
-                "[#69357eff]You: how come?[]",
+                "[#69357eff]You: What did you do today?",
                 "[#863a9cff]Carp: Im just enjoying the warm sunshine.[]"
         };
 
