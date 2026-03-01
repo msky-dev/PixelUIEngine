@@ -2627,83 +2627,134 @@ public final class UIEngine<T extends UIEngineAdapter> implements Disposable {
     }
 
     private void render_drawCursorTooltip() {
-        final Tooltip tooltip = uiEngineState.fadeOutTooltip != null ? uiEngineState.fadeOutTooltip : uiEngineState.tooltip;
-        if (tooltip == null) return;
-        if (tooltip.segments.isEmpty()) return;
+
+        Tooltip root = uiEngineState.fadeOutTooltip != null
+                ? uiEngineState.fadeOutTooltip
+                : uiEngineState.tooltip;
+
+        if (root == null || root.segments.isEmpty()) return;
+
         final SpriteRenderer spriteRenderer = uiEngineState.spriteRenderer_ui;
-        final float lineAlpha = tooltip.colorLine.a * uiEngineState.tooltip_fadePct;
-        final int tooltip_width = tooltipWidth(tooltip);
-        if (tooltip_width == 0) return;
-        final int tooltip_height = tooltipHeight(tooltip);
-        if (tooltip_height == 0) return;
 
+        int anchorX = uiEngineState.mouseUI.x;
+        int anchorY = uiEngineState.mouseUI.y;
 
-        final int lineLengthAbs = TS(tooltip.lineLength);
-        final DIRECTION direction = switch (tooltip.direction) {
+        // ---- Resolve direction ONCE from root ----
+        final int rootWidth = tooltipWidth(root);
+        final int rootHeight = tooltipHeight(root);
+        final int rootLineLength = TS(root.lineLength);
+
+        final DIRECTION direction = switch (root.direction) {
             case RIGHT ->
-                    uiEngineState.mouseUI.x + lineLengthAbs > uiEngineState.resolutionWidth - TS(tooltip_width) ? DIRECTION.LEFT : DIRECTION.RIGHT;
+                    anchorX + rootLineLength > uiEngineState.resolutionWidth - TS(rootWidth)
+                            ? DIRECTION.LEFT : DIRECTION.RIGHT;
             case LEFT ->
-                    uiEngineState.mouseUI.x - TS(tooltip_width + tooltip.lineLength) < 0 ? DIRECTION.RIGHT : DIRECTION.LEFT;
+                    anchorX - TS(rootWidth + root.lineLength) < 0
+                            ? DIRECTION.RIGHT : DIRECTION.LEFT;
             case UP ->
-                    uiEngineState.mouseUI.y + lineLengthAbs > uiEngineState.resolutionHeight - TS(tooltip_height) ? DIRECTION.DOWN : DIRECTION.UP;
-            case DOWN -> uiEngineState.mouseUI.y - TS(tooltip_height) < 0 ? DIRECTION.UP : DIRECTION.DOWN;
-            case NONE -> throw new IllegalStateException("Unexpected value: " + tooltip.direction);
-        };
-
-        int tooltip_x = switch (direction) {
-            case RIGHT ->
-                    Math.clamp(uiEngineState.mouseUI.x + lineLengthAbs, 0, Math.max(uiEngineState.resolutionWidth - TS(tooltip_width), 0));
-            case LEFT ->
-                    Math.clamp(uiEngineState.mouseUI.x - TS(tooltip_width + tooltip.lineLength), 0, Math.max(uiEngineState.resolutionWidth - TS(tooltip_width), 0));
-            case UP, DOWN ->
-                    Math.clamp(uiEngineState.mouseUI.x - (TS(tooltip_width) / 2), 0, Math.max(uiEngineState.resolutionWidth - TS(tooltip_width), 0));
-            case NONE -> throw new IllegalStateException("Unexpected value: " + tooltip.direction);
-        };
-
-        int tooltip_y = switch (direction) {
-            case RIGHT, LEFT ->
-                    Math.clamp(uiEngineState.mouseUI.y - (TS(tooltip_height) / 2), 0, Math.max(uiEngineState.resolutionHeight - TS(tooltip_height) - 1, 0));
-            case UP ->
-                    Math.clamp(uiEngineState.mouseUI.y + TS(tooltip.lineLength), 0, Math.max(uiEngineState.resolutionHeight - TS(tooltip_height) - 1, 0));
+                    anchorY + rootLineLength > uiEngineState.resolutionHeight - TS(rootHeight)
+                            ? DIRECTION.DOWN : DIRECTION.UP;
             case DOWN ->
-                    Math.clamp(uiEngineState.mouseUI.y - TS(tooltip_height + tooltip.lineLength), 0, Math.max(uiEngineState.resolutionHeight - TS(tooltip_height) - 1, 0));
-            case NONE -> throw new IllegalStateException("Unexpected value: " + tooltip.direction);
+                    anchorY - TS(rootHeight + root.lineLength) < 0
+                            ? DIRECTION.UP : DIRECTION.DOWN;
+            case NONE -> throw new IllegalStateException();
         };
 
-        // Draw Tooltip
-        render_drawTooltip(tooltip_x, tooltip_y, tooltip, uiEngineState.tooltip_fadePct);
+        Tooltip current = root;
 
+        while (current != null) {
+            final int width = tooltipWidth(current);
+            final int height = tooltipHeight(current);
 
-        // Draw line
-        render_setColor(spriteRenderer, tooltip.colorLine, lineAlpha, false);
-        for (int i = 0; i < tooltip.lineLength; i++) {
-            int xOffset = switch (direction) {
-                case LEFT -> -TS(i + 1);
-                case RIGHT -> TS(i);
-                case UP, DOWN -> 0;
-                case NONE -> throw new IllegalStateException("Unexpected value: " + tooltip.direction);
-            };
-            int yOffset = switch (direction) {
-                case LEFT, RIGHT -> 0;
-                case UP -> TS(i);
-                case DOWN -> -TS(i + 1);
-                case NONE -> throw new IllegalStateException("Unexpected value: " + tooltip.direction);
-            };
-            CMediaImage sprite = switch (direction) {
-                case LEFT, RIGHT -> uiEngineState.theme.UI_TOOLTIP_LINE_HORIZONTAL;
-                case UP, DOWN -> uiEngineState.theme.UI_TOOLTIP_LINE_VERTICAL;
-                case NONE -> throw new IllegalStateException("Unexpected value: " + tooltip.direction);
-            };
-            spriteRenderer.drawCMediaImage(sprite, uiEngineState.mouseUI.x + xOffset, uiEngineState.mouseUI.y + yOffset);
-        }
-        switch (direction) {
-            case LEFT, RIGHT -> {
-                //
+            if (current.segments.isEmpty() || width == 0 || height == 0) {
+                current = current.additionalTooltip;
+                continue;
             }
-            case UP, DOWN -> {
-                int yOffset = direction == DIRECTION.UP ? 0 : -TS2();
-                spriteRenderer.drawCMediaImage(uiEngineState.theme.UI_TOOLTIP_LINE_VERTICAL, uiEngineState.mouseUI.x, uiEngineState.mouseUI.y + yOffset);
+
+            final int lineLength = TS(current.lineLength);
+            final float lineAlpha = current.colorLine.a * uiEngineState.tooltip_fadePct;
+
+            // ---- Position using FIXED direction ----
+            int tooltipX = switch (direction) {
+                case RIGHT ->
+                        Math.clamp(anchorX + lineLength, 0,
+                                Math.max(uiEngineState.resolutionWidth - TS(width), 0));
+                case LEFT ->
+                        Math.clamp(anchorX - TS(width + current.lineLength), 0,
+                                Math.max(uiEngineState.resolutionWidth - TS(width), 0));
+                case UP, DOWN ->
+                        Math.clamp(anchorX - TS(width) / 2, 0,
+                                Math.max(uiEngineState.resolutionWidth - TS(width), 0));
+                default -> throw new IllegalStateException();
+            };
+
+            int tooltipY = switch (direction) {
+                case RIGHT, LEFT ->
+                        Math.clamp(anchorY - TS(height) / 2, 0,
+                                Math.max(uiEngineState.resolutionHeight - TS(height), 0));
+                case UP ->
+                        Math.clamp(anchorY + lineLength, 0,
+                                Math.max(uiEngineState.resolutionHeight - TS(height), 0));
+                case DOWN ->
+                        Math.clamp(anchorY - TS(height + current.lineLength), 0,
+                                Math.max(uiEngineState.resolutionHeight - TS(height), 0));
+                default -> throw new IllegalStateException();
+            };
+
+            // ---- Draw tooltip ----
+            render_drawTooltip(tooltipX, tooltipY, current, uiEngineState.tooltip_fadePct);
+
+            // ---- Draw connecting line ----
+            render_setColor(spriteRenderer, current.colorLine, lineAlpha, false);
+
+            for (int i = 0; i < current.lineLength; i++) {
+
+                int xOffset = switch (direction) {
+                    case LEFT -> -TS(i + 1);
+                    case RIGHT -> TS(i);
+                    default -> 0;
+                };
+
+                int yOffset = switch (direction) {
+                    case UP -> TS(i);
+                    case DOWN -> -TS(i + 1);
+                    default -> 0;
+                };
+
+                CMediaImage sprite = switch (direction) {
+                    case LEFT, RIGHT -> uiEngineState.theme.UI_TOOLTIP_LINE_HORIZONTAL;
+                    case UP, DOWN -> uiEngineState.theme.UI_TOOLTIP_LINE_VERTICAL;
+                    default -> throw new IllegalStateException();
+                };
+
+                spriteRenderer.drawCMediaImage(
+                        sprite,
+                        anchorX + xOffset,
+                        anchorY + yOffset
+                );
             }
+
+            // ---- Move anchor to edge center for next tooltip ----
+            switch (direction) {
+                case RIGHT -> {
+                    anchorX = tooltipX + TS(width);
+                    anchorY = tooltipY + TS(height) / 2;
+                }
+                case LEFT -> {
+                    anchorX = tooltipX;
+                    anchorY = tooltipY + TS(height) / 2;
+                }
+                case UP -> {
+                    anchorX = tooltipX + TS(width) / 2;
+                    anchorY = tooltipY + TS(height);
+                }
+                case DOWN -> {
+                    anchorX = tooltipX + TS(width) / 2;
+                    anchorY = tooltipY;
+                }
+            }
+
+            current = current.additionalTooltip;
         }
     }
 
@@ -3374,7 +3425,7 @@ public final class UIEngine<T extends UIEngineAdapter> implements Disposable {
         }
 
 
-        final UIEngineConfig.TextRenderHook textRenderHook = uiEngineState.config.ui.textRenderHook;
+        final TextRenderHook textRenderHook = uiEngineState.config.ui.textRenderHook;
         final SpriteRenderer spriteRenderer = uiEngineState.spriteRenderer_ui;
 
         final String renderText = textRenderHook.replaceText(uiObject, text);

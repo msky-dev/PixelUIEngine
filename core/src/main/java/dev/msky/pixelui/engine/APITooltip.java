@@ -137,6 +137,18 @@ public final class APITooltip {
         toolTip.toolTipAction = toolTipAction != null ? toolTipAction : DEFAULT_TOOLTIP_ACTION;
     }
 
+    public void setAdditionalToolTip(Tooltip toolTip, Tooltip additionalTooltip) {
+        if (toolTip == null) return;
+        toolTip.additionalTooltip = additionalTooltip;
+    }
+
+
+    public void setLineLength(Tooltip toolTip, int length) {
+        if (toolTip == null) return;
+        toolTip.lineLength = Math.max(length,0);
+    }
+
+
     public void setMinWidth(Tooltip tooltip, int minWidth) {
         tooltip.minWidth = Math.max(minWidth, 0);
     }

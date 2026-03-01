@@ -16,6 +16,7 @@ public class Tooltip extends UpdateActionSupport {
     public DIRECTION direction;
     public String name;
     public Object data;
+    public Tooltip additionalTooltip;
 
     Tooltip() {
     }

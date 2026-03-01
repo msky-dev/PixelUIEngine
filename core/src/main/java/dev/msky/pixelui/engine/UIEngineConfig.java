@@ -4,7 +4,6 @@ import com.badlogic.gdx.graphics.Color;
 import dev.msky.pixelui.engine.constants.KeyCode;
 import dev.msky.pixelui.media.CMediaFont;
 import dev.msky.pixelui.media.CMediaSprite;
-import dev.msky.pixelui.rendering.SpriteRenderer;
 import dev.msky.pixelui.theme.UIEngineTheme;
 
 public final class UIEngineConfig {
@@ -158,9 +157,11 @@ public final class UIEngineConfig {
             this.foldWindowsOnDoubleClick = true;
         }
 
-        public TextRenderHook textRenderHook = new TextRenderHook(){};
+        public TextRenderHook textRenderHook = new TextRenderHook() {
+        };
 
-        public AnimationTimerHook animationTimerHook = new AnimationTimerHook(){};
+        public AnimationTimerHook animationTimerHook = new AnimationTimerHook() {
+        };
     }
 
     public class WindowConfig {
@@ -248,34 +249,6 @@ public final class UIEngineConfig {
             this.defaultColor = DEFAULT_COlOR.cpy();
             this.charsPerRow = 8;
         }
-    }
-
-    public abstract class TextRenderHook {
-
-        public CMediaFont replaceFont(Object uiObject, CMediaFont configFont){
-            return configFont;
-        };
-
-        public String replaceText(Object uiObject, String text){
-            return text;
-        };
-
-        public void render(Object uiObject, SpriteRenderer spriteRenderer, CMediaFont font, int x, int y, String text, int textOffset, int textLength, int maxWidth){
-            spriteRenderer.drawCMediaFont(font, x, y, text, textOffset, textLength, false, false, maxWidth);
-        };
-    }
-
-    public abstract class AnimationTimerHook {
-
-        private float animationTimer;
-
-        public void updateAnimationTimer(){
-            animationTimer += 1/60f;
-        };
-
-        public float getAnimationTimer(){
-            return animationTimer;
-        };
     }
 
 }

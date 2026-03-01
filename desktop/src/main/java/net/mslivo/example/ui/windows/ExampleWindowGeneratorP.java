@@ -77,7 +77,7 @@ public class ExampleWindowGeneratorP implements WindowGenerator.P1<MediaManager>
         });
         tabs.add(tab2);
 
-        api.component.tabbar.tab.setDisabled(tab2, true);
+        api.component.tabbar.tab.setDisabled(tab2, false);
 
         tabs.add(api.component.tabbar.tab.create("Tab III", components_tab3.toArray(Component[]::new), new TabAction() {
             @Override
@@ -497,7 +497,7 @@ public class ExampleWindowGeneratorP implements WindowGenerator.P1<MediaManager>
         api.component.button.setButtonAction(imageButton4, new ButtonAction() {
             @Override
             public Tooltip onShowTooltip() {
-                return api.toolTip.create(
+                Tooltip tooltip  =  api.toolTip.create(
                         new TooltipSegment[]{
                                 api.toolTip.segment.text.create("color[#FF00FF00]Title[][#00FF00AA]Test[]", Color.WHITE, Color.BLUE, SEGMENT_ALIGNMENT.CENTER, false, false),
                                 api.toolTip.segment.text.create("555555", Color.WHITE, Color.BLACK, SEGMENT_ALIGNMENT.CENTER, false, false, null),
@@ -529,9 +529,15 @@ public class ExampleWindowGeneratorP implements WindowGenerator.P1<MediaManager>
                             @Override
                             public void onRemove() {
                             }
-                        }, 0, Color.RED, Color.BLUE, 5, DIRECTION.RIGHT
+                        }, 0, Color.RED, Color.BLUE, 2, DIRECTION.RIGHT
 
                 );
+
+                tooltip.additionalTooltip = api.toolTip.create("Additional Tip");
+                tooltip.additionalTooltip.additionalTooltip = api.toolTip.create("Additional Tip2");
+
+
+                return tooltip;
             }
         });
 
