@@ -3367,15 +3367,18 @@ public final class UIEngine<T extends UIEngineAdapter> implements Disposable {
     }
 
     private void render_drawFont(Object uiObject, String text, int x, int y, Color color, float alpha, boolean iconGrayScale, int textXOffset, int textYOffset, int maxWidth, CMediaSprite icon, int iconIndex, Color iconColor, boolean iconFlipX, boolean iconFlipY, int textOffset, int textLength) {
+
         final boolean withIcon = icon != null;
         if (withIcon) {
             render_drawIcon(icon, x, y, iconColor, alpha, iconGrayScale, iconIndex, false, iconFlipX, iconFlipY);
         }
 
+
         final UIEngineConfig.TextRenderHook textRenderHook = uiEngineState.config.ui.textRenderHook;
         final SpriteRenderer spriteRenderer = uiEngineState.spriteRenderer_ui;
 
-        final CMediaFont cMediaFont = textRenderHook.getFont(uiObject, uiEngineState.config.ui.font);
+        final String renderText = textRenderHook.replaceText(uiObject, text);
+        final CMediaFont cMediaFont = textRenderHook.replaceFont(uiObject, uiEngineState.config.ui.font);
         final int font_x = x + (withIcon ? TS() : 0) + textXOffset;
         final int font_y = y + textYOffset;
         if (withIcon) maxWidth -= TS();
@@ -3385,7 +3388,7 @@ public final class UIEngine<T extends UIEngineAdapter> implements Disposable {
         final BitmapFont font = mediaManager.font(cMediaFont);
         font.setColor(color.r, color.g, color.b, 1f);
 
-        textRenderHook.renderText(uiObject, spriteRenderer, cMediaFont, font_x, font_y, text, textOffset, textLength, maxWidth);
+        textRenderHook.render(uiObject, spriteRenderer, cMediaFont, font_x, font_y, renderText, textOffset, textLength, maxWidth);
 
         spriteRenderer.loadState();
     }

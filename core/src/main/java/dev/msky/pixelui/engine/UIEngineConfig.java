@@ -158,23 +158,9 @@ public final class UIEngineConfig {
             this.foldWindowsOnDoubleClick = true;
         }
 
-        public TextRenderHook textRenderHook = new TextRenderHook() {
-        };
+        public TextRenderHook textRenderHook = new TextRenderHook(){};
 
-        public AnimationTimerHook animationTimerHook = new AnimationTimerHook() {
-            final float delta = 1 / 60f;
-            float animationTimer = 0;
-
-            @Override
-            public void updateAnimationTimer() {
-                animationTimer += delta;
-            }
-
-            @Override
-            public float getAnimationTimer() {
-                return animationTimer;
-            }
-        };
+        public AnimationTimerHook animationTimerHook = new AnimationTimerHook(){};
     }
 
     public class WindowConfig {
@@ -264,22 +250,32 @@ public final class UIEngineConfig {
         }
     }
 
-    public interface TextRenderHook {
+    public abstract class TextRenderHook {
 
-        default CMediaFont getFont(Object uiObject, CMediaFont configFont) {
+        public CMediaFont replaceFont(Object uiObject, CMediaFont configFont){
             return configFont;
-        }
+        };
 
-        default void renderText(Object uiObject, SpriteRenderer spriteRenderer, CMediaFont font, int x, int y, String text, int textOffset, int textLength, int maxWidth) {
+        public String replaceText(Object uiObject, String text){
+            return text;
+        };
+
+        public void render(Object uiObject, SpriteRenderer spriteRenderer, CMediaFont font, int x, int y, String text, int textOffset, int textLength, int maxWidth){
             spriteRenderer.drawCMediaFont(font, x, y, text, textOffset, textLength, false, false, maxWidth);
-        }
-
+        };
     }
 
-    public interface AnimationTimerHook {
-        default void updateAnimationTimer(){};
+    public abstract class AnimationTimerHook {
 
-        float getAnimationTimer();
+        private float animationTimer;
+
+        public void updateAnimationTimer(){
+            animationTimer += 1/60f;
+        };
+
+        public float getAnimationTimer(){
+            return animationTimer;
+        };
     }
 
 }
