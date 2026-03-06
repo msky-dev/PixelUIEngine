@@ -449,10 +449,10 @@ public final class MediaManager implements Disposable {
                     medias_images.put(cMediaImage, textureRegion);
                 }
                 case CMediaArray cMediaArray -> {
-                    medias_arrays.put(cMediaArray, splitFrames(cMediaArray, textureRegion, cMediaArray.frameWidth, cMediaArray.frameHeight, cMediaArray.frameOffset, cMediaArray.frameLength).toArray(TextureRegion[]::new));
+                    medias_arrays.put(cMediaArray, splitFrames( textureRegion, cMediaArray.frameWidth, cMediaArray.frameHeight, cMediaArray.frameOffset, cMediaArray.frameLength).toArray(TextureRegion[]::new));
                 }
                 case CMediaAnimation cMediaAnimation -> {
-                    ExtendedAnimation extendedAnimation = new ExtendedAnimation(cMediaAnimation.animationSpeed, splitFrames(cMediaAnimation, textureRegion, cMediaAnimation.frameWidth, cMediaAnimation.frameHeight, cMediaAnimation.frameOffset, cMediaAnimation.frameLength), cMediaAnimation.playMode);
+                    ExtendedAnimation extendedAnimation = new ExtendedAnimation(cMediaAnimation.animationSpeed, splitFrames( textureRegion, cMediaAnimation.frameWidth, cMediaAnimation.frameHeight, cMediaAnimation.frameOffset, cMediaAnimation.frameLength), cMediaAnimation.playMode);
                     try {
                         extendedAnimation.getKeyFrame(0);
                     } catch (ArithmeticException e) {
@@ -541,7 +541,7 @@ public final class MediaManager implements Disposable {
         return new BitMapFontInformation(textureHandle, lineHeight);
     }
 
-    private Array<TextureRegion> splitFrames(CMediaSprite cMediaSprite, TextureRegion textureRegion, int tile_width, int tile_height, int frameOffset, int frameLength) {
+    private Array<TextureRegion> splitFrames(TextureRegion textureRegion, int tile_width, int tile_height, int frameOffset, int frameLength) {
         int width = (textureRegion.getRegionWidth() / tile_width);
         int height = (textureRegion.getRegionHeight() / tile_height);
         int maxFrames = width * height;
