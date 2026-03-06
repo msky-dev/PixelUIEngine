@@ -732,6 +732,13 @@ public final class MediaManager implements Disposable {
         return medias_fonts.get(cMediaFont);
     }
 
+    public int fontTextWidthHalf(final CMediaFont cMediaFont, final CharSequence text) {
+        return MathUtils.floor(fontTextWidth(cMediaFont, text)/2f);
+    }
+    public int fontTextHeightHalf(final CMediaFont cMediaFont, final CharSequence text) {
+        return MathUtils.floor(fontTextHeight(cMediaFont, text)/2f);
+    }
+
     public int fontTextWidth(final CMediaFont cMediaFont, final CharSequence text) {
         return fontTextWidth(cMediaFont, text, 0, text.length());
     }
