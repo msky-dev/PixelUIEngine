@@ -22,7 +22,7 @@ abstract class CommonRenderer {
     protected static final int RGB_SRC = 0, RGB_DST = 1, ALPHA_SRC = 2, ALPHA_DST = 3;
 
     private static final int[] BLEND_LAYER =  new int[]{
-            GL32.GL_SRC_ALPHA,
+            GL32.GL_ONE,
             GL32.GL_ONE_MINUS_SRC_ALPHA,
             GL32.GL_ONE,
             GL32.GL_ONE_MINUS_SRC_ALPHA
@@ -133,8 +133,49 @@ abstract class CommonRenderer {
         this.blendingEnabled = enabled;
     }
 
-    public void isBlendingEnabled(boolean enabled) {
-        this.blendingEnabled = enabled;
+    public boolean isBlendingEnabled() {
+        return this.blendingEnabled;
+    }
+
+    public String blendFunctionString(){
+        String result = "";
+        for(int i=0;i<blend.length;i++){
+            if(i != 0)
+                result += ", ";
+
+            result += switch (blend[i]){
+                case 0 -> "GL_ZERO";
+                case 1 -> "GL_ONE";
+                case 0x0300 -> "GL_SRC_COLOR";
+                case 0x0301 -> "GL_ONE_MINUS_SRC_COLOR";
+                case 0x0302 -> "GL_SRC_ALPHA";
+                case 0x0303 -> "GL_ONE_MINUS_SRC_ALPHA";
+                case 0x0304 -> "GL_DST_ALPHA";
+                case 0x0305 -> "GL_ONE_MINUS_DST_ALPHA";
+                case 0x0306 -> "GL_DST_COLOR";
+                case 0x0307 -> "GL_ONE_MINUS_DST_COLOR";
+                default -> blend[i];
+            };
+
+        }
+
+        return result;
+    }
+
+    public int getBlendSrcClr(){
+        return blend[0];
+    }
+
+    public int getBlendDstClr(){
+        return blend[1];
+    }
+
+    public int getBlendSrcAlpha(){
+        return blend[2];
+    }
+
+    public int getBlendDstAlpha(){
+        return blend[3];
     }
 
     public void setBlendFunction(int src, int dst) {
