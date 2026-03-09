@@ -15,24 +15,24 @@ public final class CMediaTexture extends CMedia implements Copyable<CMediaTextur
         super();
         this.format = Pixmap.Format.RGBA8888;
         this.filter = Texture.TextureFilter.Nearest;
-        this.uWrap = Texture.TextureWrap.ClampToEdge;
-        this.vWrap = Texture.TextureWrap.ClampToEdge;
+        this.uWrap = Texture.TextureWrap.Repeat;
+        this.vWrap = Texture.TextureWrap.Repeat;
     }
 
     public CMediaTexture(String file, int fileID) {
-        this(file,fileID, Pixmap.Format.RGBA8888,Texture.TextureFilter.Nearest, Texture.TextureWrap.ClampToEdge, Texture.TextureWrap.ClampToEdge);
+        this(file,fileID, Pixmap.Format.RGBA8888,Texture.TextureFilter.Nearest, Texture.TextureWrap.Repeat, Texture.TextureWrap.Repeat);
     }
 
     public CMediaTexture(String file, int fileID, Pixmap.Format format) {
-        this(file,fileID,format,Texture.TextureFilter.Nearest, Texture.TextureWrap.ClampToEdge, Texture.TextureWrap.ClampToEdge);
+        this(file,fileID,format,Texture.TextureFilter.Nearest, Texture.TextureWrap.Repeat, Texture.TextureWrap.Repeat);
     }
 
     public CMediaTexture(String file, int fileID, Pixmap.Format format,Texture.TextureFilter filter) {
-        this(file,fileID,format, filter, Texture.TextureWrap.ClampToEdge, Texture.TextureWrap.ClampToEdge);
+        this(file,fileID,format, filter, Texture.TextureWrap.Repeat, Texture.TextureWrap.Repeat);
     }
 
     public CMediaTexture(String file, int fileID, Pixmap.Format format,Texture.TextureFilter filter, Texture.TextureWrap uWrap) {
-        this(file,fileID,  format, filter, uWrap, Texture.TextureWrap.ClampToEdge);
+        this(file,fileID,  format, filter, uWrap, Texture.TextureWrap.Repeat);
     }
 
     public CMediaTexture(String file, int fileID, Pixmap.Format format, Texture.TextureFilter filter, Texture.TextureWrap uWrap, Texture.TextureWrap vWrap) {
