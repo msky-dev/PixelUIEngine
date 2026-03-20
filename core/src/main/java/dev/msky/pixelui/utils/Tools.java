@@ -155,8 +155,7 @@ public class Tools {
                 final String stackTraceFinal = stackTrace;
                 Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(stackTraceFinal), null);
             }
-            throw new RuntimeException(e);
-
+            System.exit(0);
         }
 
     }

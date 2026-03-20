@@ -3418,30 +3418,36 @@ public final class UIEngine<T extends UIEngineAdapter> implements Disposable {
     }
 
     private void render_drawFont(Object uiObject, String text, int x, int y, Color color, float alpha, boolean iconGrayScale, int textXOffset, int textYOffset, int maxWidth, CMediaSprite icon, int iconIndex, Color iconColor, boolean iconFlipX, boolean iconFlipY, int textOffset, int textLength) {
-
         final boolean withIcon = icon != null;
         if (withIcon) {
             render_drawIcon(icon, x, y, iconColor, alpha, iconGrayScale, iconIndex, false, iconFlipX, iconFlipY);
+            maxWidth -= TS();
         }
-
 
         final TextRenderHook textRenderHook = uiEngineState.config.ui.textRenderHook;
         final SpriteRenderer spriteRenderer = uiEngineState.spriteRenderer_ui;
-
         final String renderText = textRenderHook.replaceText(uiObject, text);
         final CMediaFont cMediaFont = textRenderHook.replaceFont(uiObject, uiEngineState.config.ui.font);
         final int font_x = x + (withIcon ? TS() : 0) + textXOffset;
         final int font_y = y + textYOffset;
-        if (withIcon) maxWidth -= TS();
+        final BitmapFont font = mediaManager.font(cMediaFont);
+        final float fcolor_r = font.getColor().r;
+        final float fcolor_g = font.getColor().g;
+        final float fcolor_b = font.getColor().b;
+        final float fcolor_a = font.getColor().a;
+
+
 
         spriteRenderer.saveState();
+
         spriteRenderer.setColor(Color.GRAY, alpha);
-        final BitmapFont font = mediaManager.font(cMediaFont);
         font.setColor(color.r, color.g, color.b, 1f);
 
         textRenderHook.render(uiObject, spriteRenderer, cMediaFont, font_x, font_y, renderText, textOffset, textLength, maxWidth);
 
+        // reset state
         spriteRenderer.loadState();
+        font.setColor(fcolor_r,fcolor_g,fcolor_b,fcolor_a);
     }
 
     private void render_drawIcon(CMediaSprite icon, int x, int y, Color color, float iconAlpha, boolean iconGrayscale, int arrayIndex, boolean bigMode, boolean flipX, boolean flipY) {
@@ -3461,6 +3467,7 @@ public final class UIEngine<T extends UIEngineAdapter> implements Disposable {
         spriteRenderer.drawCMediaSprite(icon, arrayIndex, uiCommonUtils.ui_getAnimationTimer(uiEngineState),
                 x + xOffset, y + yOffset, renderWidth, renderHeight, 0, 0, width, height, flipX, flipY);
         spriteRenderer.loadState();
+
     }
 
     @Override
