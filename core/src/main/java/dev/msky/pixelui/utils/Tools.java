@@ -72,6 +72,15 @@ public class Tools {
                 throw new RuntimeException("Operating System \"" + osName + "\n not supported");
             }
 
+            if(glEmulation == PixelUILaunchConfig.GLEmulation.GL32_VULKAN){
+                try {
+                    System.loadLibrary("vulkan-12");
+                }catch (Throwable throwable){
+                    logError("Vulkan not available, switching to "+launchConfig.fallbackGLEmulation.name()+".");
+                    glEmulation = launchConfig.fallbackGLEmulation;
+                }
+            }
+
             switch (glEmulation) {
                 case GL32_OPENGL -> {
                     Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();

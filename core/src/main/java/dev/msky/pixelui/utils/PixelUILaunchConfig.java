@@ -13,6 +13,7 @@ public final class PixelUILaunchConfig implements Copyable<PixelUILaunchConfig> 
     public GLEmulation windowsGLEmulation = GLEmulation.GL32_VULKAN;
     public GLEmulation linuxGLEmulation = GLEmulation.GL32_VULKAN;
     public GLEmulation macOSGLEmulation = GLEmulation.GL32_OPENGL;
+    public GLEmulation fallbackGLEmulation = GLEmulation.GL32_OPENGL;
     public int fps = 60;
     public int idleFPS = 60;
     public boolean vSync = false;
