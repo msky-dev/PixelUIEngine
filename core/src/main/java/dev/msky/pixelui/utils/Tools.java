@@ -74,7 +74,7 @@ public class Tools {
 
             if(glEmulation == PixelUILaunchConfig.GLEmulation.GL32_VULKAN){
                 try {
-                    System.loadLibrary("vulkan-12");
+                    System.loadLibrary("vulkan-1");
                 }catch (Throwable throwable){
                     logError("Vulkan not available, switching to "+launchConfig.fallbackGLEmulation.name()+".");
                     glEmulation = launchConfig.fallbackGLEmulation;
