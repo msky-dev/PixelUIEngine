@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.g2d.BitmapFontCache;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.glutils.IndexBufferObject;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.graphics.glutils.VertexBufferObjectWithVAO;
 import com.badlogic.gdx.math.Affine2;
@@ -15,6 +16,7 @@ import dev.msky.pixelui.utils.Tools;
 
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
+import java.nio.ShortBuffer;
 
 public class SpriteRenderer extends CommonRenderer implements Disposable {
 
@@ -39,9 +41,9 @@ public class SpriteRenderer extends CommonRenderer implements Disposable {
     private final float[] vertices;
     private int idx;
     private final FloatBuffer vertexBuffer;
-    private final IntBuffer indexBuffer;
+    private final ShortBuffer indexBuffer;
     private final VertexBufferObjectWithVAO vertexBufferObject;
-    private final IntegerIndexBufferObject indexBufferObject;
+    private final IndexBufferObject indexBufferObject;
 
     private Texture lastTexture;
     private float invTexWidth, invTexHeight;
@@ -102,20 +104,20 @@ public class SpriteRenderer extends CommonRenderer implements Disposable {
         this.tweak_save = this.tweak;
     }
 
-    private IntegerIndexBufferObject createIndexBufferObject(int size) {
+    private IndexBufferObject createIndexBufferObject(int size) {
         int len = (size / VERTEXES_INDICES_RATIO) * INDICES_SIZE;
         int j = 0;
-        int[] indices = new int[len];
+        short[] indices = new short[len];
         for (int i = 0; i < len; i += 6, j += 4) {
-            indices[i] = j;
-            indices[i + 1] = j + 1;
-            indices[i + 2] = j + 2;
-            indices[i + 3] = j + 2;
-            indices[i + 4] = j + 3;
-            indices[i + 5] = j;
+            indices[i] = (short)j;
+            indices[i + 1] = (short)(j + 1);
+            indices[i + 2] =(short) (j + 2);
+            indices[i + 3] = (short)(j + 2);
+            indices[i + 4] =(short) (j + 3);
+            indices[i + 5] =(short) (j);
         }
 
-        IntegerIndexBufferObject indexBufferObject = new IntegerIndexBufferObject(true, size * INDICES_SIZE);
+        IndexBufferObject indexBufferObject = new IndexBufferObject(true, size * INDICES_SIZE);
         indexBufferObject.setIndices(indices, 0, indices.length);
 
         return indexBufferObject;
@@ -778,7 +780,7 @@ public class SpriteRenderer extends CommonRenderer implements Disposable {
         this.indexBufferObject.bind();
 
         // Draw
-        Gdx.gl32.glDrawElements(GL32.GL_TRIANGLES, indicesCount, GL32.GL_UNSIGNED_INT, 0);
+        Gdx.gl32.glDrawElements(GL32.GL_TRIANGLES, indicesCount, GL32.GL_UNSIGNED_SHORT, 0);
 
         // reset
         this.indexBuffer.limit(this.sizeMaxIndices);

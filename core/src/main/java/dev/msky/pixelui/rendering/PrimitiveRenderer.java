@@ -5,14 +5,15 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL32;
 import com.badlogic.gdx.graphics.VertexAttribute;
 import com.badlogic.gdx.graphics.VertexAttributes;
+import com.badlogic.gdx.graphics.glutils.IndexBufferObject;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.graphics.glutils.VertexBufferObjectWithVAO;
 import com.badlogic.gdx.utils.Disposable;
-import com.badlogic.gdx.utils.IntArray;
+import com.badlogic.gdx.utils.ShortArray;
 import dev.msky.pixelui.utils.Tools;
 
 import java.nio.FloatBuffer;
-import java.nio.IntBuffer;
+import java.nio.ShortBuffer;
 
 public class PrimitiveRenderer extends CommonRenderer implements Disposable {
 
@@ -26,7 +27,7 @@ public class PrimitiveRenderer extends CommonRenderer implements Disposable {
     private static final int VERTEXES_INDICES_RATIO = 1;
     public static final int MAX_VERTEXES_DEFAULT = 65534;
     private static final float[] DUMMY_VERTEX = new float[]{0f, 0f, 0f};
-    private static final int PRIMITIVE_RESTART = -1;
+    private static final short PRIMITIVE_RESTART = -1;
 
     private final int sizeMaxVertexes;
     private final int sizeMaxIndices;
@@ -34,11 +35,11 @@ public class PrimitiveRenderer extends CommonRenderer implements Disposable {
     private final float[] vertices;
     private int idx;
     private final FloatBuffer vertexBuffer;
-    private final IntBuffer indexBuffer;
+    private final ShortBuffer indexBuffer;
     private final VertexBufferObjectWithVAO vertexBufferObject;
-    private final IntegerIndexBufferObject indexBufferObject;
-    private final IntArray indexResets;
-    private float vertexColor,vertexColor_save;
+    private final IndexBufferObject indexBufferObject;
+    private final ShortArray indexResets;
+    private float vertexColor, vertexColor_save;
     private int primitiveType;
 
     public PrimitiveRenderer() {
@@ -68,7 +69,7 @@ public class PrimitiveRenderer extends CommonRenderer implements Disposable {
         this.indexBufferObject = createIndexBufferObject(this.sizeMaxVertexes);
         this.indexBuffer = this.indexBufferObject.getBuffer(true);
 
-        this.indexResets = new IntArray();
+        this.indexResets = new ShortArray();
         this.vertexColor = VERTEX_COLOR_RESET;
         this.vertexColor_save = this.vertexColor;
         this.primitiveType = GL32.GL_POINTS;
@@ -110,13 +111,13 @@ public class PrimitiveRenderer extends CommonRenderer implements Disposable {
         Gdx.gl.glDisable(GL32.GL_PRIMITIVE_RESTART_FIXED_INDEX);
     }
 
-    protected IntegerIndexBufferObject createIndexBufferObject(final int size) {
-        final int[] indices = new int[size * INDICES_SIZE];
+    protected IndexBufferObject createIndexBufferObject(final int size) {
+        final short[] indices = new short[size * INDICES_SIZE];
 
         for (int i = 0; i < size; i++)
-            indices[i] = i;
+            indices[i] = (short) i;
 
-        IntegerIndexBufferObject indexBufferObject = new IntegerIndexBufferObject(true, size);
+        IndexBufferObject indexBufferObject = new IndexBufferObject(true, size);
         indexBufferObject.setIndices(indices, 0, indices.length);
 
         return indexBufferObject;
@@ -131,11 +132,11 @@ public class PrimitiveRenderer extends CommonRenderer implements Disposable {
 
         // Insert Restart Index
         final int currentIndex = this.idx / VERTEX_SIZE;
-        IntBuffer indicesBuffer = indexBufferObject.getBuffer(true);
+        ShortBuffer indicesBuffer = indexBufferObject.getBuffer(true);
         indicesBuffer.put(currentIndex, PRIMITIVE_RESTART);
 
         // Insert Dummy Vertex
-        vertexPush(DUMMY_VERTEX,0,VERTEX_SIZE);
+        vertexPush(DUMMY_VERTEX, 0, VERTEX_SIZE);
 
         this.indexResets.add(currentIndex);
     }
@@ -175,7 +176,7 @@ public class PrimitiveRenderer extends CommonRenderer implements Disposable {
         this.indexBufferObject.bind();
 
         // Draw
-        Gdx.gl32.glDrawElements(this.primitiveType, indicesCount, GL32.GL_UNSIGNED_INT, 0);
+        Gdx.gl32.glDrawElements(this.primitiveType, indicesCount, GL32.GL_UNSIGNED_SHORT, 0);
 
         // reset
         this.indexBuffer.limit(this.sizeMaxIndices);
@@ -183,7 +184,7 @@ public class PrimitiveRenderer extends CommonRenderer implements Disposable {
 
         if (!indexResets.isEmpty()) {
             for (int i = indexResets.size - 1; i >= 0; i--) {
-                final int resetIndex = indexResets.items[i];
+                final short resetIndex = indexResets.items[i];
                 indexBufferObject.getBuffer(true).put(resetIndex, resetIndex);
                 indexResets.removeIndex(i);
             }
@@ -198,7 +199,7 @@ public class PrimitiveRenderer extends CommonRenderer implements Disposable {
         if (isVertexBufferLimitReached())
             flush();
 
-        vertexPush((x + 0.5f),(y + 0.5f),this.vertexColor);
+        vertexPush((x + 0.5f), (y + 0.5f), this.vertexColor);
 
     }
 
@@ -210,7 +211,7 @@ public class PrimitiveRenderer extends CommonRenderer implements Disposable {
             flush();
 
 
-        vertexPush((x1 + 0.5f),(y1 + 0.5f),this.vertexColor);
+        vertexPush((x1 + 0.5f), (y1 + 0.5f), this.vertexColor);
 
 
         // Vertex 2
@@ -218,7 +219,7 @@ public class PrimitiveRenderer extends CommonRenderer implements Disposable {
             flush();
         }
 
-        vertexPush((x2 + 0.5f),(y2 + 0.5f),this.vertexColor);
+        vertexPush((x2 + 0.5f), (y2 + 0.5f), this.vertexColor);
 
     }
 
@@ -230,7 +231,7 @@ public class PrimitiveRenderer extends CommonRenderer implements Disposable {
             flush();
 
 
-        vertexPush((x1 + 0.5f),(y1 + 0.5f),this.vertexColor);
+        vertexPush((x1 + 0.5f), (y1 + 0.5f), this.vertexColor);
 
 
         // Vertex 2
@@ -238,14 +239,14 @@ public class PrimitiveRenderer extends CommonRenderer implements Disposable {
             flush();
         }
 
-        vertexPush((x2 + 0.5f),(y2 + 0.5f),this.vertexColor);
+        vertexPush((x2 + 0.5f), (y2 + 0.5f), this.vertexColor);
 
         // Vertex 3
         if (this.idx >= this.sizeMaxVertexesFloats) {
             flush();
         }
 
-        vertexPush((x3 + 0.5f),(y3 + 0.5f),this.vertexColor);
+        vertexPush((x3 + 0.5f), (y3 + 0.5f), this.vertexColor);
 
     }
 
@@ -255,7 +256,7 @@ public class PrimitiveRenderer extends CommonRenderer implements Disposable {
 
 
     protected VertexBufferObjectWithVAO createVertexBufferObject(final int size) {
-        return new VertexBufferObjectWithVAO( true, size * VERTEX_SIZE,
+        return new VertexBufferObjectWithVAO(true, size * VERTEX_SIZE,
                 new VertexAttribute(VertexAttributes.Usage.Position, 2, POSITION_ATTRIBUTE),
                 new VertexAttribute(VertexAttributes.Usage.ColorPacked, 4, VERTEX_COLOR_ATTRIBUTE)
         );
@@ -288,7 +289,7 @@ public class PrimitiveRenderer extends CommonRenderer implements Disposable {
 
     @Override
     protected void setBlendFuncSeparateImpl(int srcColor, int dstColor, int srcAlpha, int dstAlpha) {
-        Gdx.gl.glBlendFuncSeparate(srcColor, dstColor,srcAlpha,dstAlpha);
+        Gdx.gl.glBlendFuncSeparate(srcColor, dstColor, srcAlpha, dstAlpha);
     }
 
     @Override
