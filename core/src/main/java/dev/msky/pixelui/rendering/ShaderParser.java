@@ -1,6 +1,8 @@
 package dev.msky.pixelui.rendering;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
+import com.badlogic.gdx.graphics.GL32;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.IntArray;
@@ -11,6 +13,19 @@ import java.nio.file.Path;
 import java.util.List;
 
 public class ShaderParser {
+
+    private static String glslVersion = null;
+
+
+    private static String getGlslVersion(){
+        String glVersion  = Gdx.gl.glGetString(GL32.GL_VERSION);
+        if (glVersion != null && glVersion.contains("OpenGL ES")) {
+            glslVersion = "#version 320 es";
+        } else {
+            glslVersion = "#version 150";
+        }
+        return glslVersion;
+    }
 
     public static class ShaderParseException extends RuntimeException{
 
@@ -66,14 +81,16 @@ public class ShaderParser {
 
     private static String createVertexShader(SHADER_TEMPLATE template, String vertexDeclarations, String vertexMain) {
         return template.vertexTemplate
-                .replace("#VERTEX_DECLARATIONS", Tools.Text.validString(vertexDeclarations))
-                .replace("#VERTEX_MAIN", Tools.Text.validString(vertexMain));
+                .replace("<GLSL_VERSION>",getGlslVersion())
+                .replace("<VERTEX_DECLARATIONS>", Tools.Text.validString(vertexDeclarations))
+                .replace("<VERTEX_MAIN>", Tools.Text.validString(vertexMain));
     }
 
     private static String createFragmentShader(SHADER_TEMPLATE template, String fragmentDeclarations, String fragmentMain) {
         return template.fragmentTemplate
-                .replace("#FRAGMENT_DECLARATIONS", Tools.Text.validString(fragmentDeclarations))
-                .replace("#FRAGMENT_MAIN", Tools.Text.validString(fragmentMain));
+                .replace("<GLSL_VERSION>",getGlslVersion())
+                .replace("<FRAGMENT_DECLARATIONS>", Tools.Text.validString(fragmentDeclarations))
+                .replace("<FRAGMENT_MAIN>", Tools.Text.validString(fragmentMain));
     }
 
     private static ShaderProgram compileShader(String fileName, String vertexShaderSource, String fragmentShaderSource) {
@@ -230,7 +247,7 @@ public class ShaderParser {
                         
                                 uniform mat4 u_projTrans;
                         
-                                #VERTEX_DECLARATIONS
+                                <VERTEX_DECLARATIONS>
                         
                                 void main()
                                 {
@@ -241,7 +258,7 @@ public class ShaderParser {
                                    gl_Position = u_projTrans * a_position;
                         
                                    // Custom Code
-                                   #VERTEX_MAIN
+                                   <VERTEX_MAIN>
                                 }
                         """,
                 """                        
@@ -253,17 +270,17 @@ public class ShaderParser {
                         uniform sampler2D u_texture;
                         uniform vec2 u_textureSize;
                         
-                        #FRAGMENT_DECLARATIONS
+                        <FRAGMENT_DECLARATIONS>
                         
                         void main() {
                         
                             // Custom Code
-                            #FRAGMENT_MAIN
+                            <FRAGMENT_MAIN>
                         
                         }
                         """),
         PRIMITIVE(".primitive.glsl", """
-                
+               
                         in vec4 a_position;
                         in vec4 a_vertexColor;
                 
@@ -271,7 +288,7 @@ public class ShaderParser {
                 
                         uniform mat4 u_projTrans;
                 
-                        #VERTEX_DECLARATIONS
+                        <VERTEX_DECLARATIONS>
                 
                         void main() {
                             gl_PointSize = 1.0;
@@ -282,18 +299,18 @@ public class ShaderParser {
                             gl_Position = u_projTrans * a_position;
                 
                             // Custom Code
-                            #VERTEX_MAIN
+                            <VERTEX_MAIN>
                         }
                 """,
-                """                            
+                            """                            
                             in vec4 v_vertexColor;
                             out vec4 fragColor;
                             
-                            #FRAGMENT_DECLARATIONS
+                            <FRAGMENT_DECLARATIONS>
                         
                             void main() {
                         
-                               #FRAGMENT_MAIN
+                               <FRAGMENT_MAIN>
                         
                             }
                         """),
@@ -301,15 +318,16 @@ public class ShaderParser {
 
         ;
 
-        private static final String COMMON_DECLARATIONS = """             
-                        #version 320 es
+        private static final String COMMON_DECLARATIONS =
+                """             
+                <GLSL_VERSION>
 
-                        #ifdef GL_ES
-                            precision highp float;
-                            precision highp int;
-                        #endif
-                
-                       const float FLOAT_CORRECTION = (255.0/254.0);
+                #ifdef GL_ES
+                    precision highp float;
+                    precision highp int;
+                #endif
+        
+               const float FLOAT_CORRECTION = (255.0/254.0);
                 """;
 
         public final String vertexTemplate, fragmentTemplate;
