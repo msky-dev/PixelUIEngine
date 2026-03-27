@@ -1,4 +1,4 @@
-package net.mslivo.example;
+package dev.msky.example;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import dev.msky.pixelui.media.MediaManager;
@@ -7,8 +7,8 @@ import dev.msky.pixelui.utils.Tools;
 import dev.msky.pixelui.utils.concurrency.UpdateTimer;
 import dev.msky.pixelui.utils.transitions.TransitionManager;
 import dev.msky.pixelui.engine.UIEngine;
-import net.mslivo.example.ui.ExampleUIEngineAdapter;
-import net.mslivo.example.ui.media.ExampleBaseMedia;
+import dev.msky.example.ui.ExampleUIEngineAdapter;
+import dev.msky.example.ui.media.ExampleBaseMedia;
 import dev.msky.pixelui.utils.transitions.basic.ZoomInTransition;
 
 public class ExampleMain extends ApplicationAdapter {

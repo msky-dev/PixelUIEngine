@@ -1,4 +1,4 @@
-package net.mslivo.example.ui.media;
+package dev.msky.example.ui.media;
 
 import dev.msky.pixelui.media.*;
 

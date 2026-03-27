@@ -1,4 +1,4 @@
-package net.mslivo.example;
+package dev.msky.example;
 
 
 import dev.msky.pixelui.engine.constants.VIEWPORT_MODE;

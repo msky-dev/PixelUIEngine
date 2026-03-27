@@ -1,4 +1,4 @@
-package net.mslivo.example.ui;
+package dev.msky.example.ui;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
@@ -20,8 +20,8 @@ import dev.msky.pixelui.engine.actions.ButtonAction;
 import dev.msky.pixelui.engine.actions.HotKeyAction;
 import dev.msky.pixelui.engine.TextButton;
 import dev.msky.pixelui.engine.AppViewport;
-import net.mslivo.example.ui.media.ExampleBaseMedia;
-import net.mslivo.example.ui.windows.ExampleWindowGeneratorP;
+import dev.msky.example.ui.media.ExampleBaseMedia;
+import dev.msky.example.ui.windows.ExampleWindowGeneratorP;
 import dev.msky.pixelui.utils.concurrency.ParallelExecutor;
 import dev.msky.pixelui.utils.particles.ParticleUpdater;
 import dev.msky.pixelui.utils.particles.PrimitiveParticleSystem;

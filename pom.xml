@@ -11,7 +11,7 @@
 		<gdx.version>1.14.0</gdx.version>
         <lwjgl3-angle-vulkan.version>1.4.0</lwjgl3-angle-vulkan.version>
 		<gdx-controllers.version>2.2.3</gdx-controllers.version>
-		<mainClass>net.mslivo.example.ExampleLauncherMain</mainClass>
+		<mainClass>example.dev.msky.ExampleLauncherMain</mainClass>
 	</properties>
 
 	<dependencyManagement>

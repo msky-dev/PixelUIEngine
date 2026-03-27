@@ -1,4 +1,4 @@
-package net.mslivo.example.ui.windows;
+package dev.msky.example.ui.windows;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
@@ -26,7 +26,7 @@ import dev.msky.pixelui.media.CMediaSprite;
 import dev.msky.pixelui.media.MediaManager;
 import dev.msky.pixelui.rendering.NestedFrameBuffer;
 import dev.msky.pixelui.rendering.SpriteRenderer;
-import net.mslivo.example.ui.media.ExampleBaseMedia;
+import dev.msky.example.ui.media.ExampleBaseMedia;
 
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;

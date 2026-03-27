@@ -1,4 +1,4 @@
-package net.mslivo.performancetest;
+package dev.msky.performancetest;
 
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.Array;

@@ -1,4 +1,4 @@
-package net.mslivo.example;
+package dev.msky.example;
 
 
 import dev.msky.pixelui.utils.PixelUILaunchConfig;
