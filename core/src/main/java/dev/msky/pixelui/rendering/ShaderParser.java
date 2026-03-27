@@ -3,7 +3,6 @@ package dev.msky.pixelui.rendering;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.GL30;
-import com.badlogic.gdx.graphics.GL32;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.IntArray;
@@ -18,44 +17,46 @@ public class ShaderParser {
     private static String glslVersion = null;
 
 
-    private static String getGlslVersion(){
-        if(glslVersion != null)
+    private static String getGlslVersion() {
+        if (glslVersion != null)
             return glslVersion;
-        String glVersionDriver  = Gdx.gl30.glGetString(GL30.GL_VERSION);
-        String glslVersionDriver  = Gdx.gl30.glGetString(GL30.GL_SHADING_LANGUAGE_VERSION);
+        String glVersionDriver = Gdx.gl30.glGetString(GL30.GL_VERSION);
+        String glslVersionDriver = Gdx.gl30.glGetString(GL30.GL_SHADING_LANGUAGE_VERSION);
         if (glVersionDriver != null && glVersionDriver.contains("OpenGL ES")) {
-            if(glslVersionDriver.contains("3.2")){
+            if (glslVersionDriver.contains("3.2")) {
                 glslVersion = "#version 320 es";
-            }else if(glslVersion.contains("3.1")){
+            } else if (glslVersionDriver.contains("3.1")) {
                 glslVersion = "#version 310 es";
-            }else if(glslVersion.contains("3.0")){
+            } else if (glslVersionDriver.contains("3.0")) {
                 glslVersion = "#version 300 es";
+            } else {
+                throw new ShaderParseException("GLSL Version not supported: " + glslVersionDriver);
             }
         } else {
-            if(glslVersionDriver.contains("4.60")){
+            if (glslVersionDriver.contains("4.60")) {
                 glslVersion = "#version 460";
-            }else if(glslVersionDriver.contains("4.50")){
+            } else if (glslVersionDriver.contains("4.50")) {
                 glslVersion = "#version 450";
-            }else if(glslVersionDriver.contains("4.40")){
+            } else if (glslVersionDriver.contains("4.40")) {
                 glslVersion = "#version 440";
-            }else if(glslVersionDriver.contains("4.30")){
+            } else if (glslVersionDriver.contains("4.30")) {
                 glslVersion = "#version 430";
-            }else if(glslVersionDriver.contains("4.20")){
+            } else if (glslVersionDriver.contains("4.20")) {
                 glslVersion = "#version 420";
-            }else if(glslVersionDriver.contains("4.10")){
+            } else if (glslVersionDriver.contains("4.10")) {
                 glslVersion = "#version 410";
-            }else if(glslVersionDriver.contains("4.00")){
+            } else if (glslVersionDriver.contains("4.00")) {
                 glslVersion = "#version 400";
-            }else if(glslVersionDriver.contains("3.30")){
+            } else if (glslVersionDriver.contains("3.30")) {
                 glslVersion = "#version 330";
-            }else{
-                throw new ShaderParseException("GLSL Version not supported: "+glslVersionDriver);
+            } else {
+                throw new ShaderParseException("GLSL Version not supported: " + glslVersionDriver);
             }
         }
         return glslVersion;
     }
 
-    public static class ShaderParseException extends RuntimeException{
+    public static class ShaderParseException extends RuntimeException {
 
         public ShaderParseException(String message) {
             super(message);
@@ -93,7 +94,7 @@ public class ShaderParser {
         final String fragmentShader = createFragmentShader(template, parseResult.fragmentDeclarations, parseResult.fragmentMain);
 
         ShaderProgram shaderProgram = compileShader(fileName, vertexShader, fragmentShader);
-        if(!ignoreErrors && !shaderProgram.isCompiled())
+        if (!ignoreErrors && !shaderProgram.isCompiled())
             throw new ShaderParseException(shaderProgram.getLog());
         return shaderProgram;
     }
@@ -109,14 +110,14 @@ public class ShaderParser {
 
     private static String createVertexShader(SHADER_TEMPLATE template, String vertexDeclarations, String vertexMain) {
         return template.vertexTemplate
-                .replace("<GLSL_VERSION>",getGlslVersion())
+                .replace("<GLSL_VERSION>", getGlslVersion())
                 .replace("<VERTEX_DECLARATIONS>", Tools.Text.validString(vertexDeclarations))
                 .replace("<VERTEX_MAIN>", Tools.Text.validString(vertexMain));
     }
 
     private static String createFragmentShader(SHADER_TEMPLATE template, String fragmentDeclarations, String fragmentMain) {
         return template.fragmentTemplate
-                .replace("<GLSL_VERSION>",getGlslVersion())
+                .replace("<GLSL_VERSION>", getGlslVersion())
                 .replace("<FRAGMENT_DECLARATIONS>", Tools.Text.validString(fragmentDeclarations))
                 .replace("<FRAGMENT_MAIN>", Tools.Text.validString(fragmentMain));
     }
@@ -308,7 +309,7 @@ public class ShaderParser {
                         }
                         """),
         PRIMITIVE(".primitive.glsl", """
-               
+                
                         in vec4 a_position;
                         in vec4 a_vertexColor;
                 
@@ -330,10 +331,10 @@ public class ShaderParser {
                             <VERTEX_MAIN>
                         }
                 """,
-                            """                            
+                """                            
                             in vec4 v_vertexColor;
                             out vec4 fragColor;
-                            
+                        
                             <FRAGMENT_DECLARATIONS>
                         
                             void main() {
@@ -348,15 +349,15 @@ public class ShaderParser {
 
         private static final String COMMON_DECLARATIONS =
                 """             
-                <GLSL_VERSION>
-
-                #ifdef GL_ES
-                    precision highp float;
-                    precision highp int;
-                #endif
-        
-               const float FLOAT_CORRECTION = (255.0/254.0);
-                """;
+                         <GLSL_VERSION>
+                        
+                         #ifdef GL_ES
+                             precision highp float;
+                             precision highp int;
+                         #endif
+                        
+                        const float FLOAT_CORRECTION = (255.0/254.0);
+                        """;
 
         public final String vertexTemplate, fragmentTemplate;
         public final String extension;

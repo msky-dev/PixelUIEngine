@@ -9,13 +9,12 @@ import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.graphics.glutils.VertexBufferObjectWithVAO;
 import com.badlogic.gdx.math.Affine2;
 import com.badlogic.gdx.math.MathUtils;
-import com.badlogic.gdx.utils.*;
-import dev.msky.pixelui.media.*;
+import com.badlogic.gdx.utils.Align;
+import com.badlogic.gdx.utils.Disposable;
 import dev.msky.pixelui.media.*;
 import dev.msky.pixelui.utils.Tools;
 
 import java.nio.FloatBuffer;
-import java.nio.IntBuffer;
 import java.nio.ShortBuffer;
 
 public class SpriteRenderer extends CommonRenderer implements Disposable {
@@ -32,8 +31,8 @@ public class SpriteRenderer extends CommonRenderer implements Disposable {
     private static final int VERTEX_SIZE = 6;
     private static final int INDICES_SIZE = 6;
     private static final int VERTEXES_INDICES_RATIO = 4;
-    private static final int SPRITE_SIZE_VERTEXES=4;
-    public static final int MAX_VERTEXES_DEFAULT = 65532*SPRITE_SIZE_VERTEXES; // 65532 sprites
+    private static final int SPRITE_SIZE_VERTEXES = 4;
+    public static final int MAX_VERTEXES_DEFAULT = 65532 * SPRITE_SIZE_VERTEXES; // 65532 sprites
 
     private final int sizeMaxVertexes;
     private final int sizeMaxIndices;
@@ -109,12 +108,12 @@ public class SpriteRenderer extends CommonRenderer implements Disposable {
         int j = 0;
         short[] indices = new short[len];
         for (int i = 0; i < len; i += 6, j += 4) {
-            indices[i] = (short)j;
-            indices[i + 1] = (short)(j + 1);
-            indices[i + 2] =(short) (j + 2);
-            indices[i + 3] = (short)(j + 2);
-            indices[i + 4] =(short) (j + 3);
-            indices[i + 5] =(short) (j);
+            indices[i] = (short) j;
+            indices[i + 1] = (short) (j + 1);
+            indices[i + 2] = (short) (j + 2);
+            indices[i + 3] = (short) (j + 2);
+            indices[i + 4] = (short) (j + 3);
+            indices[i + 5] = (short) (j);
         }
 
         IndexBufferObject indexBufferObject = new IndexBufferObject(true, size * INDICES_SIZE);
@@ -1038,15 +1037,15 @@ public class SpriteRenderer extends CommonRenderer implements Disposable {
     // ----- CMediaFont -----
 
     public void drawCMediaFont(final CMediaFont cMediaFont, final float x, final float y, CharSequence text) {
-        this.drawCMediaFont(cMediaFont, x, y, text,0,text.length(), false, false, 0);
+        this.drawCMediaFont(cMediaFont, x, y, text, 0, text.length(), false, false, 0);
     }
 
     public void drawCMediaFont(final CMediaFont cMediaFont, final float x, final float y, CharSequence text, final int start, final int end) {
-        this.drawCMediaFont(cMediaFont, x, y, text,start,end, false, false, 0);
+        this.drawCMediaFont(cMediaFont, x, y, text, start, end, false, false, 0);
     }
 
     public void drawCMediaFont(final CMediaFont cMediaFont, final float x, final float y, CharSequence text, final int start, final int end, final boolean centerX, final boolean centerY) {
-        this.drawCMediaFont(cMediaFont, x, y, text,start,end, centerX, centerY, 0);
+        this.drawCMediaFont(cMediaFont, x, y, text, start, end, centerX, centerY, 0);
     }
 
     public void drawCMediaFont(final CMediaFont cMediaFont, final float x, final float y, CharSequence text, final int start, final int end, final boolean centerX, final boolean centerY, final int maxWidth) {
@@ -1057,7 +1056,7 @@ public class SpriteRenderer extends CommonRenderer implements Disposable {
         final String truncate = maxWidth > 0 ? "" : null;
 
         fontCache.clear();
-        fontCache.addText(text, x_draw, y_draw, Math.min(start,end), Math.min(end, text.length()), maxWidth, Align.left, false, truncate);
+        fontCache.addText(text, x_draw, y_draw, Math.min(start, end), Math.min(end, text.length()), maxWidth, Align.left, false, truncate);
 
         // Multiply by Batch Color
         Color.abgr8888ToColor(this.tempColor, this.color);
@@ -1079,7 +1078,7 @@ public class SpriteRenderer extends CommonRenderer implements Disposable {
 
     @Override
     protected void setBlendFuncSeparateImpl(int srcColor, int dstColor, int srcAlpha, int dstAlpha) {
-        Gdx.gl30.glBlendFuncSeparate(srcColor, dstColor,srcAlpha,dstAlpha);
+        Gdx.gl30.glBlendFuncSeparate(srcColor, dstColor, srcAlpha, dstAlpha);
     }
 
     @Override
@@ -1100,7 +1099,7 @@ public class SpriteRenderer extends CommonRenderer implements Disposable {
     }
 
     @Override
-    protected void resetImpl(){
+    protected void resetImpl() {
         this.color = COLOR_RESET;
         this.tweak = this.tweak_reset;
     }
@@ -1111,12 +1110,12 @@ public class SpriteRenderer extends CommonRenderer implements Disposable {
         this.color = colorPackedRGBA(r, g, b, a);
     }
 
-    public void setColor(Color color){
-        this.color = colorPackedRGBA(color.r,color.g,color.b,color.a);
+    public void setColor(Color color) {
+        this.color = colorPackedRGBA(color.r, color.g, color.b, color.a);
     }
 
-    public void setColor(Color color, float a){
-        this.color = colorPackedRGBA(color.r,color.g,color.b,a);
+    public void setColor(Color color, float a) {
+        this.color = colorPackedRGBA(color.r, color.g, color.b, a);
     }
 
     public void setPackedColor(float packed) {
@@ -1141,8 +1140,8 @@ public class SpriteRenderer extends CommonRenderer implements Disposable {
         return this.tweak;
     }
 
-    public Color getColor(){
-        Color.abgr8888ToColor(this.tempColor,getPackedColor());
+    public Color getColor() {
+        Color.abgr8888ToColor(this.tempColor, getPackedColor());
         return this.tempColor;
     }
 
