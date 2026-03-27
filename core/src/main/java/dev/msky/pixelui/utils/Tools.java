@@ -24,6 +24,7 @@ import java.lang.reflect.Modifier;
 import java.net.URISyntaxException;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collection;
@@ -38,7 +39,13 @@ import java.util.zip.ZipOutputStream;
 public class Tools {
 
     public static class App {
-        private static final Path ERROR_LOG_FILE = Path.of("error.log");
+
+        private static final String WORK_DIR = System.getProperty("user.dir")+FileSystems.getDefault().getSeparator();
+        private static final Path ERROR_LOG_FILE = Path.of(WORK_DIR+"error.log");
+
+        public static String workDir(){
+            return WORK_DIR;
+        }
 
         public static void logException(Exception e) {
             try (PrintWriter pw = new PrintWriter(new FileWriter(ERROR_LOG_FILE.toString(), true))) {
