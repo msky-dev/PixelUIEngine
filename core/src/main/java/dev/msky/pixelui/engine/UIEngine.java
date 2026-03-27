@@ -2,10 +2,9 @@ package dev.msky.pixelui.engine;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Cursor;
-import com.badlogic.gdx.graphics.GL32;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.math.*;
 import com.badlogic.gdx.utils.*;
@@ -73,8 +72,8 @@ public final class UIEngine<T extends UIEngineAdapter> implements Disposable {
         this.api = new API(this.uiEngineState, mediaManager);
 
         Gdx.graphics.setSystemCursor(Cursor.SystemCursor.None);
-        Gdx.gl.glClearColor(0, 0, 0, 0);
-        Gdx.gl.glClear(GL32.GL_COLOR_BUFFER_BIT);
+        Gdx.gl30.glClearColor(0, 0, 0, 0);
+        Gdx.gl30.glClear(GL30.GL_COLOR_BUFFER_BIT);
         /*  Call Adapter Init */
         this.uiAdapter.init(this.api, this.mediaManager);
     }
@@ -2101,8 +2100,8 @@ public final class UIEngine<T extends UIEngineAdapter> implements Disposable {
     }
 
     private void render_glClear() {
-        Gdx.gl.glClearColor(0f, 0f, 0f, 0f);
-        Gdx.gl.glClear(GL32.GL_COLOR_BUFFER_BIT);
+        Gdx.gl30.glClearColor(0f, 0f, 0f, 0f);
+        Gdx.gl30.glClear(GL30.GL_COLOR_BUFFER_BIT);
     }
 
     private void renderGameViewPortFrameBuffer(AppViewport appViewPort) {

@@ -50,7 +50,7 @@ public class NestedFrameBuffer extends FrameBuffer {
 
     private int getBoundFboHandle() {
         if (this.getBoundFBOCache != -1) return this.getBoundFBOCache;
-        Gdx.gl.glGetIntegerv(GL32.GL_FRAMEBUFFER_BINDING, this.intBuffer);
+        Gdx.gl30.glGetIntegerv(GL30.GL_FRAMEBUFFER_BINDING, this.intBuffer);
         this.getBoundFBOCache = this.intBuffer.get(0);
         return this.getBoundFBOCache;
     }
@@ -59,7 +59,7 @@ public class NestedFrameBuffer extends FrameBuffer {
         if (this.getViewPortCache != null) return this.getViewPortCache;
         this.getViewPortCache = new int[4];
         IntBuffer intBuf = intBuffer;
-        Gdx.gl.glGetIntegerv(GL32.GL_VIEWPORT, intBuf);
+        Gdx.gl30.glGetIntegerv(GL30.GL_VIEWPORT, intBuf);
         this.getViewPortCache[0] = intBuf.get(0);
         this.getViewPortCache[1] = intBuf.get(1);
         this.getViewPortCache[2] = intBuf.get(2);
@@ -70,8 +70,8 @@ public class NestedFrameBuffer extends FrameBuffer {
 
     public void beginGlClear() {
         this.begin();
-        Gdx.gl.glClearColor(0f, 0f, 0f, 0f);
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+        Gdx.gl30.glClearColor(0f, 0f, 0f, 0f);
+        Gdx.gl30.glClear(GL20.GL_COLOR_BUFFER_BIT);
     }
 
 
@@ -90,7 +90,7 @@ public class NestedFrameBuffer extends FrameBuffer {
     @Deprecated
     @Override
     public void bind() {
-        Gdx.gl.glBindFramebuffer(GL32.GL_FRAMEBUFFER, framebufferHandle);
+        Gdx.gl30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, framebufferHandle);
     }
 
     @Override
@@ -103,14 +103,14 @@ public class NestedFrameBuffer extends FrameBuffer {
     public void end(int x, int y, int width, int height) {
         if (!isBound) throw new RuntimeException(ERROR_END_BEGIN);
         isBound = false;
-        Gdx.gl.glBindFramebuffer(GL32.GL_FRAMEBUFFER, previousFBOHandle);
+        Gdx.gl30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, previousFBOHandle);
     }
 
     @Override
     protected void build() {
         int previousFBOHandle = getBoundFboHandle();
         super.build();
-        Gdx.gl.glBindFramebuffer(GL32.GL_FRAMEBUFFER, previousFBOHandle);
+        Gdx.gl30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, previousFBOHandle);
     }
 
     public boolean isBound() {
@@ -134,17 +134,17 @@ public class NestedFrameBuffer extends FrameBuffer {
     public void copyContentFrom(NestedFrameBuffer source) {
         final int previousFBO = getBoundFboHandle();
 
-        Gdx.gl32.glBindFramebuffer(GL32.GL_READ_FRAMEBUFFER, source.getFramebufferHandle());
-        Gdx.gl32.glBindFramebuffer(GL32.GL_DRAW_FRAMEBUFFER, this.getFramebufferHandle());
+        Gdx.gl30.glBindFramebuffer(GL30.GL_READ_FRAMEBUFFER, source.getFramebufferHandle());
+        Gdx.gl30.glBindFramebuffer(GL30.GL_DRAW_FRAMEBUFFER, this.getFramebufferHandle());
 
-        Gdx.gl32.glBlitFramebuffer(
+        Gdx.gl30.glBlitFramebuffer(
                 0, 0, source.getWidth(), source.getHeight(),
                 0, 0, this.getWidth(), this.getHeight(),
                 GL30.GL_COLOR_BUFFER_BIT,
                 GL30.GL_NEAREST
         );
 
-        Gdx.gl32.glBindFramebuffer(GL32.GL_FRAMEBUFFER, previousFBO);
+        Gdx.gl30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, previousFBO);
     }
 
 
@@ -191,7 +191,7 @@ public class NestedFrameBuffer extends FrameBuffer {
         ByteBuffer buf = BufferUtils.newByteBuffer(w * h * 4);
 
         this.begin();
-        Gdx.gl.glReadPixels(0, 0, w, h, GL32.GL_RGBA, GL32.GL_UNSIGNED_BYTE, buf);
+        Gdx.gl30.glReadPixels(0, 0, w, h, GL30.GL_RGBA, GL30.GL_UNSIGNED_BYTE, buf);
         this.end();
 
         int minX = w, minY = h, maxX = -1, maxY = -1;

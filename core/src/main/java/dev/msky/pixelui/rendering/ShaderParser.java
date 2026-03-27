@@ -2,6 +2,7 @@ package dev.msky.pixelui.rendering;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
+import com.badlogic.gdx.graphics.GL30;
 import com.badlogic.gdx.graphics.GL32;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.utils.Array;
@@ -18,11 +19,38 @@ public class ShaderParser {
 
 
     private static String getGlslVersion(){
-        String glVersion  = Gdx.gl.glGetString(GL32.GL_VERSION);
-        if (glVersion != null && glVersion.contains("OpenGL ES")) {
-            glslVersion = "#version 320 es";
+        if(glslVersion != null)
+            return glslVersion;
+        String glVersionDriver  = Gdx.gl30.glGetString(GL30.GL_VERSION);
+        String glslVersionDriver  = Gdx.gl30.glGetString(GL30.GL_SHADING_LANGUAGE_VERSION);
+        if (glVersionDriver != null && glVersionDriver.contains("OpenGL ES")) {
+            if(glslVersionDriver.contains("3.2")){
+                glslVersion = "#version 320 es";
+            }else if(glslVersion.contains("3.1")){
+                glslVersion = "#version 310 es";
+            }else if(glslVersion.contains("3.0")){
+                glslVersion = "#version 300 es";
+            }
         } else {
-            glslVersion = "#version 150";
+            if(glslVersionDriver.contains("4.60")){
+                glslVersion = "#version 460";
+            }else if(glslVersionDriver.contains("4.50")){
+                glslVersion = "#version 450";
+            }else if(glslVersionDriver.contains("4.40")){
+                glslVersion = "#version 440";
+            }else if(glslVersionDriver.contains("4.30")){
+                glslVersion = "#version 430";
+            }else if(glslVersionDriver.contains("4.20")){
+                glslVersion = "#version 420";
+            }else if(glslVersionDriver.contains("4.10")){
+                glslVersion = "#version 410";
+            }else if(glslVersionDriver.contains("4.00")){
+                glslVersion = "#version 400";
+            }else if(glslVersionDriver.contains("3.30")){
+                glslVersion = "#version 330";
+            }else{
+                throw new ShaderParseException("GLSL Version not supported: "+glslVersionDriver);
+            }
         }
         return glslVersion;
     }

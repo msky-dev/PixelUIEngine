@@ -12,7 +12,7 @@ public final class PixelUILaunchConfig implements Copyable<PixelUILaunchConfig> 
     public String iconPath = null;
     public GLEmulation windowsGLEmulation = GLEmulation.GL32_VULKAN;
     public GLEmulation linuxGLEmulation = GLEmulation.GL32_VULKAN;
-    public GLEmulation macOSGLEmulation = GLEmulation.GL32_OPENGL;
+    public GLEmulation macOSGLEmulation = GLEmulation.GL30_OPENGL;
     public GLEmulation fallbackGLEmulation = GLEmulation.GL32_OPENGL;
     public int fps = 60;
     public int idleFPS = 60;
@@ -62,7 +62,8 @@ public final class PixelUILaunchConfig implements Copyable<PixelUILaunchConfig> 
 
     public enum GLEmulation {
         GL32_VULKAN,
-        GL32_OPENGL
+        GL32_OPENGL,
+        GL30_OPENGL
     }
 
 }

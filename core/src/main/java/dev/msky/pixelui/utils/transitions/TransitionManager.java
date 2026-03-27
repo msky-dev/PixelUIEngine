@@ -121,8 +121,8 @@ public class TransitionManager implements Disposable {
         if (uiEngine != null) {
             this.spriteRenderer_screen.draw(uiEngine.getFrameBufferComposite().getFlippedTextureRegion(), 0, 0, this.resolutionWidth, this.resolutionHeight);
         } else {
-            Gdx.gl.glClearColor(0f, 0f, 0f, 1);
-            Gdx.gl.glClear(GL32.GL_COLOR_BUFFER_BIT);
+            Gdx.gl30.glClearColor(0f, 0f, 0f, 1);
+            Gdx.gl30.glClear(GL30.GL_COLOR_BUFFER_BIT);
         }
         this.spriteRenderer_screen.end();
         frameBuffer.end();
@@ -145,8 +145,8 @@ public class TransitionManager implements Disposable {
 
     public void render() {
         if (this.finished) return;
-        Gdx.gl.glClearColor(0, 0, 0, 0);
-        Gdx.gl.glClear(GL32.GL_COLOR_BUFFER_BIT);
+        Gdx.gl30.glClearColor(0, 0, 0, 0);
+        Gdx.gl30.glClear(GL30.GL_COLOR_BUFFER_BIT);
         // Render Transition
         {
             viewport_screen.apply();

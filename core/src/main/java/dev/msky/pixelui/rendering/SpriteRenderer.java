@@ -134,15 +134,15 @@ public class SpriteRenderer extends CommonRenderer implements Disposable {
 
     public void begin() {
         if (isDrawing()) throw new IllegalStateException(ERROR_END_BEGIN);
-        Gdx.gl.glDepthMask(false);
+        Gdx.gl30.glDepthMask(false);
         this.shader.bind();
         setupMatrices();
         // Blending
         if (this.blendingEnabled) {
-            Gdx.gl.glEnable(GL32.GL_BLEND);
-            Gdx.gl.glBlendFuncSeparate(this.blend[RGB_SRC], this.blend[RGB_DST], this.blend[ALPHA_SRC], this.blend[ALPHA_DST]);
+            Gdx.gl30.glEnable(GL30.GL_BLEND);
+            Gdx.gl30.glBlendFuncSeparate(this.blend[RGB_SRC], this.blend[RGB_DST], this.blend[ALPHA_SRC], this.blend[ALPHA_DST]);
         } else {
-            Gdx.gl.glDisable(GL32.GL_BLEND);
+            Gdx.gl30.glDisable(GL30.GL_BLEND);
         }
         setDrawing(true);
     }
@@ -150,7 +150,7 @@ public class SpriteRenderer extends CommonRenderer implements Disposable {
 
     public void end() {
         flush();
-        Gdx.gl.glDepthMask(true);
+        Gdx.gl30.glDepthMask(true);
         setDrawing(false);
         lastTexture = null;
         this.nextSamplerTextureUnit = 1;
@@ -780,7 +780,7 @@ public class SpriteRenderer extends CommonRenderer implements Disposable {
         this.indexBufferObject.bind();
 
         // Draw
-        Gdx.gl32.glDrawElements(GL32.GL_TRIANGLES, indicesCount, GL32.GL_UNSIGNED_SHORT, 0);
+        Gdx.gl30.glDrawElements(GL30.GL_TRIANGLES, indicesCount, GL30.GL_UNSIGNED_SHORT, 0);
 
         // reset
         this.indexBuffer.limit(this.sizeMaxIndices);
@@ -815,13 +815,13 @@ public class SpriteRenderer extends CommonRenderer implements Disposable {
     }
 
     public void bindTextureToUniform(Texture texture, String uniform, String sizeUniform) {
-        Gdx.gl.glActiveTexture(GL32.GL_TEXTURE0 + this.nextSamplerTextureUnit);
+        Gdx.gl30.glActiveTexture(GL30.GL_TEXTURE0 + this.nextSamplerTextureUnit);
         texture.bind();
         this.shader.setUniformi(uniformLocation(uniform), this.nextSamplerTextureUnit);
         if (sizeUniform != null) {
             this.shader.setUniformf(uniformLocation(sizeUniform), texture.getWidth(), texture.getHeight());
         }
-        Gdx.gl.glActiveTexture(GL32.GL_TEXTURE0);
+        Gdx.gl30.glActiveTexture(GL30.GL_TEXTURE0);
         this.nextSamplerTextureUnit++;
     }
 
@@ -1079,12 +1079,12 @@ public class SpriteRenderer extends CommonRenderer implements Disposable {
 
     @Override
     protected void setBlendFuncSeparateImpl(int srcColor, int dstColor, int srcAlpha, int dstAlpha) {
-        Gdx.gl.glBlendFuncSeparate(srcColor, dstColor,srcAlpha,dstAlpha);
+        Gdx.gl30.glBlendFuncSeparate(srcColor, dstColor,srcAlpha,dstAlpha);
     }
 
     @Override
     protected void setBlendFuncImpl(int srcColor, int dstColor) {
-        Gdx.gl.glBlendFunc(srcColor, dstColor);
+        Gdx.gl30.glBlendFunc(srcColor, dstColor);
     }
 
     @Override
