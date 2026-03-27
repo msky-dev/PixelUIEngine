@@ -21,7 +21,6 @@ import java.awt.datatransfer.StringSelection;
 import java.io.*;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
-import java.net.URISyntaxException;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.FileSystems;
@@ -85,8 +84,8 @@ public class Tools {
                 try {
                     System.loadLibrary("vulkan-1");
                 } catch (Throwable throwable) {
-                    logError("Vulkan not available, fallback to " + launchConfig.fallbackGLEmulation.name() + ".");
-                    glEmulation = launchConfig.fallbackGLEmulation;
+                    logError("Vulkan not available, fallback to " + PixelUILaunchConfig.GLEmulation.GL32_OPENGL.name()+ ".");
+                    glEmulation = PixelUILaunchConfig.GLEmulation.GL32_OPENGL;
                 }
             }
 
