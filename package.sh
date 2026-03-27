@@ -54,7 +54,7 @@ export MAC_X64_AARCH64_TEMP_DIR="temp/out_mac_x64_aarch64"
 export APPNAME_SAFE="${APPNAME// /_}"
 rm -f -r "./temp"
 
-# ############################ WINDOWS X64 ############################
+############################# WINDOWS X64 ############################
 
 if [ "$WIN_X64_ENABLED" = "true" ]; then
     echo "~~~~~~ Packaging WINDOWS_X64 ~~~~~~"
@@ -65,17 +65,16 @@ if [ "$WIN_X64_ENABLED" = "true" ]; then
 	mkdir -p ./runtime
     echo "Copying windows x64 runtime"
 	cp -r "${WIN_X64_JRE}/." "./runtime"
-	# copy binary
+	# roast binary
 	cp "../../${WIN_X64_ROAST_BINARY}" "./${APPNAME}.exe"
 	# set .exe icon
 	echo "setting exe icon"
 	"../../${RCEDIT_PATH}" "${APPNAME}.exe" --set-icon "../../${WIN_X64_ICON}"
-	# copy jar
+	# Jar + additional Files
 	cp "../../${JAR_PATH}" "./${JAR_NAME}"
-	# copy additional files
-    for FILE in "${ADDITIONAL_FILES[@]}"; do
-      cp "../../${FILE}" "./${FILE}"
-    done
+  for FILE in "${ADDITIONAL_FILES[@]}"; do
+    cp "../../${FILE}" "./${FILE}"
+  done
 	# roast .json
 	mkdir "./app"
 	cat > "./app/${APPNAME}.json" << EOF
@@ -112,14 +111,13 @@ if [ "$LINUX_X64_ENABLED" = "true" ]; then
 	mkdir -p ./runtime
     echo "Copying linux x64 runtime"
 	cp -r "${LINUX_X64_JRE}/." "./runtime"
-	# copy binary
+	# roast binary
 	cp "../../${LINUX_X64_ROAST_BINARY}" "./${APPNAME}.exe"
-	# copy jar
+	# Jar + additional files jar
 	cp "../../${JAR_PATH}" "./${JAR_NAME}"
-	# copy additional files
-    for FILE in "${ADDITIONAL_FILES[@]}"; do
-      cp "../../${FILE}" "./${FILE}"
-    done
+  for FILE in "${ADDITIONAL_FILES[@]}"; do
+    cp "../../${FILE}" "./${FILE}"
+  done
 	# roast .json
 	mkdir "./app"
 	cat > "./app/${APPNAME}.json" << EOF
@@ -137,7 +135,7 @@ if [ "$LINUX_X64_ENABLED" = "true" ]; then
   "runOnFirstThread": false
 }
 EOF
-	#Create archive
+	#Package
 	"../../${SEVEN_ZIP_PATH}" "a" "-ttar" "-r" "${APPNAME_SAFE}.tar" .
 	"../../${SEVEN_ZIP_PATH}" "a" "-tgzip" "-r" "${APPNAME_SAFE}.tar.gz" "${APPNAME_SAFE}.tar"
 	mv "./${APPNAME_SAFE}.tar.gz" "./../../${APPNAME_SAFE}_${1}_${LINUX_X64_FILE_SUFFIX}.tar.gz"
@@ -157,17 +155,17 @@ if [ "$MAC_X64_AARCH64_ENABLED" = "true" ]; then
   mkdir -p "${MAC_X64_AARCH64_TEMP_DIR}"
   cd "${MAC_X64_AARCH64_TEMP_DIR}"
 
-  # .APP STRUCTURE
+  # .APP structure
   MACOS_DIR="./${APPNAME}.app/Contents/MacOS"
   RESOURCE_DIR="./${APPNAME}.app/Contents/Resources"
   mkdir -p "${MACOS_DIR}"
   mkdir -p "${RESOURCE_DIR}"
 
-  # UNIVERSAL BINARY
+  # Roast Binary
   cp "../../${MAC_X64_AARCH64_ROAST_BINARY}" "${RESOURCE_DIR}/${APPNAME}"
   chmod +x "${RESOURCE_DIR}/${APPNAME}"
 
-  # RUNTIMES
+  # Runtimes
   echo "Copying macOS runtimes"
 
   mkdir -p "${RESOURCE_DIR}/runtime-x64"
@@ -176,7 +174,7 @@ if [ "$MAC_X64_AARCH64_ENABLED" = "true" ]; then
   mkdir -p "${RESOURCE_DIR}/runtime-aarch64"
   cp -r "${MAC_AARCH64_JRE}/Contents/Home/." "${RESOURCE_DIR}/runtime-aarch64"
 
-  # Jar + Additional files
+  # Jar + additional files
   mkdir -p "${RESOURCE_DIR}/app"
 
   cp "../../${JAR_PATH}" "${RESOURCE_DIR}/${JAR_NAME}"
@@ -244,7 +242,7 @@ EOF
   exec "./${APPNAME}" "\$@"
 EOF
 
-  # PACKAGE
+  # Package
   "../../${SEVEN_ZIP_PATH}" "a" "-ttar" "${APPNAME_SAFE}.tar" "./${APPNAME}.app"
   "../../${SEVEN_ZIP_PATH}" "a" "-tgzip" "${APPNAME_SAFE}.tar.gz" "${APPNAME_SAFE}.tar"
 
@@ -256,5 +254,5 @@ else
     echo "MAC_X64_AARCH64 skipped"
 fi
 
-# CLEANUP
+# Cleanup
 rm -f -r "./temp"
