@@ -76,7 +76,7 @@ if [ "$WIN_X64_ENABLED" = "true" ]; then
     for FILE in "${ADDITIONAL_FILES[@]}"; do
       cp "../../${FILE}" "./${FILE}"
     done
-	# create json
+	# roast .json
 	mkdir "./app"
 	cat > "./app/${APPNAME}.json" << EOF
 {
@@ -120,7 +120,7 @@ if [ "$LINUX_X64_ENABLED" = "true" ]; then
     for FILE in "${ADDITIONAL_FILES[@]}"; do
       cp "../../${FILE}" "./${FILE}"
     done
-	# create json
+	# roast .json
 	mkdir "./app"
 	cat > "./app/${APPNAME}.json" << EOF
 {
@@ -227,10 +227,7 @@ EOF
 
 EOF
 
-  #############################################
   # Launch script
-  #############################################
-
   cat > "${MACOS_DIR}/launch.sh" << EOF
   #!/bin/bash
 
@@ -246,6 +243,7 @@ EOF
 
   exec "./${APPNAME}" "\$@"
 EOF
+
   # PACKAGE
   "../../${SEVEN_ZIP_PATH}" "a" "-ttar" "${APPNAME_SAFE}.tar" "./${APPNAME}.app"
   "../../${SEVEN_ZIP_PATH}" "a" "-tgzip" "${APPNAME_SAFE}.tar.gz" "${APPNAME_SAFE}.tar"
