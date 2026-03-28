@@ -227,19 +227,20 @@ EOF
 
   # Launch script
   cat > "${MACOS_DIR}/launch.sh" << EOF
-  #!/bin/bash
+#!/bin/bash
 
-  MACOS_DIR="\$(cd "\$(dirname "\$0")" && pwd)"
-  RES_DIR="\$MACOS_DIR/../Resources"
+MACOS_DIR="\$(cd "\$(dirname "\$0")" && pwd)"
+RES_DIR="\$MACOS_DIR/../Resources"
 
-  cd "\$RES_DIR"
+cd "\$RES_DIR"
 
-  # execute permissions
-  chmod +x "./${APPNAME}"
-  chmod +x "./runtime-aarch64/bin/java"
-  chmod +x "./runtime-x64/bin/java"
+# execute permissions
+chmod +x "./${APPNAME}"
+chmod +x "./runtime-aarch64/bin/java"
+chmod +x "./runtime-x64/bin/java"
 
-  exec "./${APPNAME}" "\$@"
+exec "./${APPNAME}" "\$@"
+
 EOF
 
   # Package

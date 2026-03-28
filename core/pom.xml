@@ -47,7 +47,6 @@
 			<artifactId>gdx-lwjgl3-angle-vulkan</artifactId>
 		</dependency>
 
-
 	</dependencies>
 
 	<build>

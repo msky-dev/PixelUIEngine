@@ -15,6 +15,7 @@ import dev.msky.pixelui.media.CMedia;
 import dev.msky.pixelui.media.MediaManager;
 import dev.msky.pixelui.rendering.NestedFrameBuffer;
 import dev.msky.pixelui.rendering.SpriteRenderer;
+import dev.msky.pixelui.utils.launcher.PixelUILaunchConfig;
 
 import java.awt.*;
 import java.awt.datatransfer.StringSelection;
@@ -39,12 +40,8 @@ public class Tools {
 
     public static class App {
 
-        private static final String WORK_DIR = System.getProperty("user.dir")+FileSystems.getDefault().getSeparator();
-        private static final Path ERROR_LOG_FILE = Path.of(WORK_DIR+"error.log");
-
-        public static String workDir(){
-            return WORK_DIR;
-        }
+        public static final String WORK_DIR = System.getProperty("user.dir")+FileSystems.getDefault().getSeparator();
+        public static final Path ERROR_LOG_FILE = Path.of(WORK_DIR+"error.log");
 
         public static void logException(Exception e) {
             try (PrintWriter pw = new PrintWriter(new FileWriter(ERROR_LOG_FILE.toString(), true))) {
@@ -63,120 +60,6 @@ public class Tools {
             } catch (IOException ex) {
                 ex.printStackTrace();
             }
-        }
-
-        public static void launch(ApplicationAdapter applicationAdapter, PixelUILaunchConfig launchConfig) {
-            // Determine glEmulation
-            String osName = System.getProperty("os.name").toLowerCase();
-            PixelUILaunchConfig.GLEmulation glEmulation;
-            if (osName.contains("win")) {
-                glEmulation = launchConfig.windowsGLEmulation;
-            } else if (osName.contains("nix") || osName.contains("nux") || osName.contains("aix")) {
-                glEmulation = launchConfig.linuxGLEmulation;
-            } else if (osName.contains("mac")) {
-                glEmulation = launchConfig.macOSGLEmulation;
-            } else {
-                throw new RuntimeException("Operating System \"" + osName + "\n not supported");
-            }
-
-
-            if (glEmulation == PixelUILaunchConfig.GLEmulation.GL32_VULKAN) {
-                try {
-                    System.loadLibrary("vulkan-1");
-                } catch (Throwable throwable) {
-                    logError("Vulkan not available, fallback to " + PixelUILaunchConfig.GLEmulation.GL32_OPENGL.name()+ ".");
-                    glEmulation = PixelUILaunchConfig.GLEmulation.GL32_OPENGL;
-                }
-            }
-
-            switch (glEmulation) {
-                case GL30_OPENGL, GL32_OPENGL -> {
-                    Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
-                    if (glEmulation == PixelUILaunchConfig.GLEmulation.GL32_OPENGL) {
-                        config.setOpenGLEmulation(Lwjgl3ApplicationConfiguration.GLEmulation.GL32, 4, 5);
-                    }else if (glEmulation == PixelUILaunchConfig.GLEmulation.GL30_OPENGL) {
-                        config.setOpenGLEmulation(Lwjgl3ApplicationConfiguration.GLEmulation.GL30, 4, 1);
-                    }
-                    config.setResizable(launchConfig.resizeAble);
-                    config.setDecorated(launchConfig.decorated);
-                    config.setMaximized(launchConfig.maximized);
-                    config.setWindowPosition(-1, -1);
-                    config.setWindowSizeLimits(launchConfig.resolutionWidth, launchConfig.resolutionHeight, -1, -1);
-                    config.setTitle(launchConfig.appTile);
-                    config.setForegroundFPS(launchConfig.fps);
-                    config.setIdleFPS(launchConfig.idleFPS);
-                    config.useVsync(launchConfig.vSync);
-                    if (launchConfig.fullScreen) {
-                        config.setFullscreenMode(Lwjgl3ApplicationConfiguration.getDisplayMode());
-                    } else {
-                        config.setWindowedMode(launchConfig.resolutionWidth, launchConfig.resolutionHeight);
-                    }
-                    config.setBackBufferConfig(launchConfig.r, launchConfig.g, launchConfig.b, launchConfig.a, launchConfig.depth, launchConfig.stencil, launchConfig.samples);
-                    if (launchConfig.iconPath != null) config.setWindowIcon(launchConfig.iconPath);
-                    try {
-                        new Lwjgl3Application(applicationAdapter, config);
-                    } catch (Exception e) {
-                        handleLaunchException(e, launchConfig);
-                    }
-                }
-                case GL32_VULKAN -> {
-                    com.github.dgzt.gdx.lwjgl3.Lwjgl3ApplicationConfiguration config = new com.github.dgzt.gdx.lwjgl3.Lwjgl3ApplicationConfiguration();
-                    config.setOpenGLEmulation(com.github.dgzt.gdx.lwjgl3.Lwjgl3ApplicationConfiguration.GLEmulation.ANGLE_GLES32, 4, 5);
-                    config.setResizable(launchConfig.resizeAble);
-                    config.setDecorated(launchConfig.decorated);
-                    config.setMaximized(launchConfig.maximized);
-                    config.setWindowPosition(-1, -1);
-                    config.setWindowSizeLimits(launchConfig.resolutionWidth, launchConfig.resolutionHeight, -1, -1);
-                    config.setTitle(launchConfig.appTile);
-                    config.setForegroundFPS(launchConfig.fps);
-                    config.setIdleFPS(launchConfig.idleFPS);
-                    config.useVsync(launchConfig.vSync);
-                    if (launchConfig.fullScreen) {
-                        config.setFullscreenMode(com.github.dgzt.gdx.lwjgl3.Lwjgl3ApplicationConfiguration.getDisplayMode());
-                    } else {
-                        config.setWindowedMode(launchConfig.resolutionWidth, launchConfig.resolutionHeight);
-                    }
-                    config.setBackBufferConfig(launchConfig.r, launchConfig.g, launchConfig.b, launchConfig.a, launchConfig.depth, launchConfig.stencil, launchConfig.samples);
-                    if (launchConfig.iconPath != null) config.setWindowIcon(launchConfig.iconPath);
-                    try {
-                        new Lwjgl3VulkanApplication(applicationAdapter, config);
-                    } catch (Exception e) {
-                        handleLaunchException(e, launchConfig);
-                    }
-                }
-            }
-        }
-
-        private static void handleLaunchException(Exception e, PixelUILaunchConfig launchConfig) {
-            logException(e);
-            launchConfig.onException.accept(e);
-            if (launchConfig.showExceptionDialog) {
-                StringBuilder dialogMessage = new StringBuilder();
-                dialogMessage.append("Error occurred: \"" + e.getMessage() + "\"" + System.lineSeparator());
-                dialogMessage.append("Details can be found in \"" + ERROR_LOG_FILE.toAbsolutePath() + "\"" + System.lineSeparator());
-                dialogMessage.append(System.lineSeparator()).append("Press OK to copy to Clipboard" + System.lineSeparator());
-                javax.swing.JOptionPane.showMessageDialog(
-                        null,
-                        dialogMessage,
-                        "Error",
-                        javax.swing.JOptionPane.ERROR_MESSAGE
-                );
-
-                // Stacktrace to clipboard
-                String stackTrace;
-                try (ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream()) {
-                    try (PrintWriter printWriter = new PrintWriter(byteArrayOutputStream)) {
-                        e.printStackTrace(printWriter);
-                        printWriter.flush();
-                        stackTrace = byteArrayOutputStream.toString();
-                    }
-                } catch (IOException ex) {
-                    stackTrace = ex.getMessage();
-                }
-                final String stackTraceFinal = stackTrace;
-                Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(stackTraceFinal), null);
-            }
-            System.exit(0);
         }
 
     }

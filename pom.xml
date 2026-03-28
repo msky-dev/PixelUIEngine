@@ -10,6 +10,7 @@
 		<java.version>25</java.version>
 		<gdx.version>1.14.0</gdx.version>
         <lwjgl3-angle-vulkan.version>1.4.0</lwjgl3-angle-vulkan.version>
+        <lwjgl3-angle-metal.version>6af9274bb1</lwjgl3-angle-metal.version>
 		<gdx-controllers.version>2.2.3</gdx-controllers.version>
 		<mainClass>example.dev.msky.ExampleLauncherMain</mainClass>
 	</properties>
@@ -61,6 +62,7 @@
 				<artifactId>gdx-lwjgl3-angle-vulkan</artifactId>
 				<version>${lwjgl3-angle-vulkan.version}</version>
 			</dependency>
+
 
 		</dependencies>
 	</dependencyManagement>

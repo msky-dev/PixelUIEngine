@@ -1,4 +1,4 @@
-package dev.msky.pixelui.utils;
+package dev.msky.pixelui.utils.launcher;
 
 import dev.msky.pixelui.utils.helper.Copyable;
 
@@ -62,7 +62,7 @@ public final class PixelUILaunchConfig implements Copyable<PixelUILaunchConfig> 
     public enum GLEmulation {
         GL32_VULKAN,
         GL32_OPENGL,
-        GL30_OPENGL
+        GL30_OPENGL,
     }
 
 }

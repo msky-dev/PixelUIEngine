@@ -1,8 +1,9 @@
 package dev.msky.example;
 
 
-import dev.msky.pixelui.utils.PixelUILaunchConfig;
+import dev.msky.pixelui.utils.launcher.PixelUILaunchConfig;
 import dev.msky.pixelui.utils.Tools;
+import dev.msky.pixelui.utils.launcher.PixelUILauncher;
 
 public class ExampleLauncherMain {
 
@@ -14,6 +15,6 @@ public class ExampleLauncherMain {
         pixelUILaunchConfig.resolutionWidth = ExampleMainConstants.INTERNAL_RESOLUTION_WIDTH;
         pixelUILaunchConfig.resolutionHeight = ExampleMainConstants.INTERNAL_RESOLUTION_HEIGHT;
         pixelUILaunchConfig.fullScreen = false;
-        Tools.App.launch(new ExampleMain(), pixelUILaunchConfig);
+        PixelUILauncher.launch(new ExampleMain(), pixelUILaunchConfig);
     }
 }
