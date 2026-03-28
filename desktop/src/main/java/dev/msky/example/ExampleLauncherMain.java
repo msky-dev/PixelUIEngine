@@ -14,8 +14,8 @@ public class ExampleLauncherMain {
         pixelUILaunchConfig.appTile = ExampleMainConstants.APP_TITLE;
         pixelUILaunchConfig.resolutionWidth = ExampleMainConstants.INTERNAL_RESOLUTION_WIDTH;
         pixelUILaunchConfig.resolutionHeight = ExampleMainConstants.INTERNAL_RESOLUTION_HEIGHT;
+        pixelUILaunchConfig.windowsGLEmulation = PixelUILaunchConfig.GLEmulation.GL32_VULKAN;
         pixelUILaunchConfig.fullScreen = false;
-        pixelUILaunchConfig.iconPath = "abcpng";
         PixelUILauncher.launch(new ExampleMain(), pixelUILaunchConfig);
     }
 }
