@@ -100,7 +100,7 @@ public class PixelUILauncher {
             c.getMethod("setBackBufferConfig",int.class,int.class,int.class,int.class,int.class,int.class,int.class)
                     .invoke(config, launchConfig.r, launchConfig.g, launchConfig.b, launchConfig.a, launchConfig.depth, launchConfig.stencil, launchConfig.samples);
             if (launchConfig.iconPath != null)
-                c.getMethod("setWindowIcon", String.class).invoke(config, launchConfig.iconPath);
+                c.getMethod("setWindowIcon", String[].class).invoke(config, (Object) new String[]{launchConfig.iconPath});
         } catch (Exception e) {
             handleLaunchException(e, launchConfig);
         }

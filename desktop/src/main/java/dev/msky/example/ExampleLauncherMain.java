@@ -15,6 +15,7 @@ public class ExampleLauncherMain {
         pixelUILaunchConfig.resolutionWidth = ExampleMainConstants.INTERNAL_RESOLUTION_WIDTH;
         pixelUILaunchConfig.resolutionHeight = ExampleMainConstants.INTERNAL_RESOLUTION_HEIGHT;
         pixelUILaunchConfig.fullScreen = false;
+        pixelUILaunchConfig.iconPath = "abcpng";
         PixelUILauncher.launch(new ExampleMain(), pixelUILaunchConfig);
     }
 }
