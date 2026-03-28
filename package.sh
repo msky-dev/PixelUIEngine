@@ -120,7 +120,7 @@ if [ "$LINUX_X64_ENABLED" = "true" ]; then
   done
 	# roast .json
 	mkdir "./app"
-	cat > "./app/${APPNAME}.json" << EOF
+	cat > "./app/${APPNAME}.json" << EOF # use LF line endings on linux
 {
   "classPath": [
     "${JAR_NAME}"
@@ -184,7 +184,7 @@ if [ "$MAC_X64_AARCH64_ENABLED" = "true" ]; then
   done
 
   # Roast .json
-  cat > "${RESOURCE_DIR}/app/${APPNAME}.json" << EOF
+  cat > "${RESOURCE_DIR}/app/${APPNAME}.json" << EOF # important: use LF line endings on mac
 {
   "classPath": [
     "${JAR_NAME}"
@@ -207,7 +207,7 @@ EOF
   PLIST_DIR="./${APPNAME}.app/Contents"
   mkdir -p "${PLIST_DIR}"
 
-  cat > "${PLIST_DIR}/Info.plist" << EOF
+  cat > "${PLIST_DIR}/Info.plist" << EOF # important: use LF line endings on mac
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
@@ -226,7 +226,7 @@ EOF
 EOF
 
   # Launch script
-  cat > "${MACOS_DIR}/launch.sh" << EOF
+  cat > "${MACOS_DIR}/launch.sh" << EOF # important: use LF line endings on mac & dont intend lines
 #!/bin/bash
 
 MACOS_DIR="\$(cd "\$(dirname "\$0")" && pwd)"
