@@ -1310,6 +1310,26 @@ public final class APIWidgets {
                     public boolean iconFlipY() {
                         return previousAction.iconFlipY();
                     }
+
+                    @Override
+                    public CMediaSprite overlaySprite() {
+                        return previousAction.overlaySprite();
+                    }
+
+                    @Override
+                    public int overlaySpriteIndex() {
+                        return previousAction.overlaySpriteIndex();
+                    }
+
+                    @Override
+                    public void onMouseRelease(int button) {
+                        previousAction.onMouseRelease(button);
+                    }
+
+                    @Override
+                    public Color overlaySpriteColor() {
+                        return previousAction.overlaySpriteColor();
+                    }
                 });
 
                 if (i == toggledButtonIndex) {

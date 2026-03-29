@@ -2,9 +2,10 @@ package dev.msky.pixelui.engine;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Cursor;
+import com.badlogic.gdx.graphics.GL30;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.math.*;
 import com.badlogic.gdx.utils.*;
@@ -452,7 +453,7 @@ public final class UIEngine<T extends UIEngineAdapter> implements Disposable {
             uiEngineState.mTextInputMouse2Pressed = false;
         }
 
-        if(mouse3Pressed){
+        if (mouse3Pressed) {
             changeCase = true;
         }
 
@@ -2573,18 +2574,14 @@ public final class UIEngine<T extends UIEngineAdapter> implements Disposable {
         final int rootLineLength = TS(root.lineLength);
 
         final DIRECTION direction = switch (root.direction) {
-            case RIGHT ->
-                    anchorX + rootLineLength > uiEngineState.resolutionWidth - TS(rootWidth)
-                            ? DIRECTION.LEFT : DIRECTION.RIGHT;
-            case LEFT ->
-                    anchorX - TS(rootWidth + root.lineLength) < 0
-                            ? DIRECTION.RIGHT : DIRECTION.LEFT;
-            case UP ->
-                    anchorY + rootLineLength > uiEngineState.resolutionHeight - TS(rootHeight)
-                            ? DIRECTION.DOWN : DIRECTION.UP;
-            case DOWN ->
-                    anchorY - TS(rootHeight + root.lineLength) < 0
-                            ? DIRECTION.UP : DIRECTION.DOWN;
+            case RIGHT -> anchorX + rootLineLength > uiEngineState.resolutionWidth - TS(rootWidth)
+                    ? DIRECTION.LEFT : DIRECTION.RIGHT;
+            case LEFT -> anchorX - TS(rootWidth + root.lineLength) < 0
+                    ? DIRECTION.RIGHT : DIRECTION.LEFT;
+            case UP -> anchorY + rootLineLength > uiEngineState.resolutionHeight - TS(rootHeight)
+                    ? DIRECTION.DOWN : DIRECTION.UP;
+            case DOWN -> anchorY - TS(rootHeight + root.lineLength) < 0
+                    ? DIRECTION.UP : DIRECTION.DOWN;
             case NONE -> throw new IllegalStateException();
         };
 
@@ -2604,28 +2601,22 @@ public final class UIEngine<T extends UIEngineAdapter> implements Disposable {
 
             // ---- Position using FIXED direction ----
             int tooltipX = switch (direction) {
-                case RIGHT ->
-                        Math.clamp(anchorX + lineLength, 0,
-                                Math.max(uiEngineState.resolutionWidth - TS(width), 0));
-                case LEFT ->
-                        Math.clamp(anchorX - TS(width + current.lineLength), 0,
-                                Math.max(uiEngineState.resolutionWidth - TS(width), 0));
-                case UP, DOWN ->
-                        Math.clamp(anchorX - TS(width) / 2, 0,
-                                Math.max(uiEngineState.resolutionWidth - TS(width), 0));
+                case RIGHT -> Math.clamp(anchorX + lineLength, 0,
+                        Math.max(uiEngineState.resolutionWidth - TS(width), 0));
+                case LEFT -> Math.clamp(anchorX - TS(width + current.lineLength), 0,
+                        Math.max(uiEngineState.resolutionWidth - TS(width), 0));
+                case UP, DOWN -> Math.clamp(anchorX - TS(width) / 2, 0,
+                        Math.max(uiEngineState.resolutionWidth - TS(width), 0));
                 default -> throw new IllegalStateException();
             };
 
             int tooltipY = switch (direction) {
-                case RIGHT, LEFT ->
-                        Math.clamp(anchorY - TS(height) / 2, 0,
-                                Math.max(uiEngineState.resolutionHeight - TS(height), 0));
-                case UP ->
-                        Math.clamp(anchorY + lineLength, 0,
-                                Math.max(uiEngineState.resolutionHeight - TS(height), 0));
-                case DOWN ->
-                        Math.clamp(anchorY - TS(height + current.lineLength), 0,
-                                Math.max(uiEngineState.resolutionHeight - TS(height), 0));
+                case RIGHT, LEFT -> Math.clamp(anchorY - TS(height) / 2, 0,
+                        Math.max(uiEngineState.resolutionHeight - TS(height), 0));
+                case UP -> Math.clamp(anchorY + lineLength, 0,
+                        Math.max(uiEngineState.resolutionHeight - TS(height), 0));
+                case DOWN -> Math.clamp(anchorY - TS(height + current.lineLength), 0,
+                        Math.max(uiEngineState.resolutionHeight - TS(height), 0));
                 default -> throw new IllegalStateException();
             };
 
@@ -3282,6 +3273,18 @@ public final class UIEngine<T extends UIEngineAdapter> implements Disposable {
         }
 
 
+        CommonActions commonAction = actions_getUIObjectCommonActions(component);
+        if (commonAction.overlaySprite() != null) {
+            CMediaSprite overlaySprite = commonAction.overlaySprite();
+            spriteRenderer.saveState();
+            this.render_setColor(spriteRenderer, commonAction.overlaySpriteColor(), componentAlpha*commonAction.overlaySpriteColor().a, componentGrayScale);
+            spriteRenderer.drawCMediaSprite(overlaySprite, commonAction.overlaySpriteIndex(), uiCommonUtils.ui_getAnimationTimer(uiEngineState),
+                    uiCommonUtils.component_getAbsoluteX(component),
+                    uiCommonUtils.component_getAbsoluteY(component));
+            spriteRenderer.loadState();
+        }
+
+
         spriteRenderer.reset();
 
     }
@@ -3365,7 +3368,6 @@ public final class UIEngine<T extends UIEngineAdapter> implements Disposable {
         final float fcolor_a = font.getColor().a;
 
 
-
         spriteRenderer.saveState();
 
         spriteRenderer.setColor(Color.GRAY, alpha);
@@ -3375,7 +3377,7 @@ public final class UIEngine<T extends UIEngineAdapter> implements Disposable {
 
         // reset state
         spriteRenderer.loadState();
-        font.setColor(fcolor_r,fcolor_g,fcolor_b,fcolor_a);
+        font.setColor(fcolor_r, fcolor_g, fcolor_b, fcolor_a);
     }
 
     private void render_drawIcon(CMediaSprite icon, int x, int y, Color color, float iconAlpha, boolean iconGrayscale, int arrayIndex, boolean bigMode, boolean flipX, boolean flipY) {
