@@ -822,42 +822,100 @@ public final class APIWidgets {
             return createYesNoRequester(caption, text, choiceFunction, "Yes", "No");
         }
 
-        public Window createYesNoRequester(String caption, String text, Consumer<Boolean> choiceFunction, String yes, String no) {
-
-            int textWidthMin = Math.max(
-                    (mediaManager.fontTextWidth(uiEngineConfig.ui.font, caption) + 8),
-                    mediaManager.fontTextWidth(uiEngineConfig.ui.font, text)
+        public Window createYesNoRequester(
+                String caption,
+                String text,
+                Consumer<Boolean> choiceFunction,
+                String yes,
+                String no
+        ) {
+            return createChoiceRequester(
+                    caption,
+                    text,
+                    choice -> {
+                        if (choiceFunction != null) {choiceFunction.accept(choice.equals(yes));}
+                    },
+                    yes,
+                    no
             );
+        }
 
-            int width = Math.max(MathUtils.round(textWidthMin / uiEngineState.theme.ts.TSF) + 2, 12);
-            if (width % 2 == 0) width++;
-            Window modal = api.window.create(0, 0, width, 5, caption);
+        public Window createChoiceRequester(
+                String caption,
+                String text,
+                Consumer<String> choiceFunction,
+                String... choices
+        ) {
+            if (choices == null || choices.length == 0) {
+                throw new IllegalArgumentException("choices must not be empty");
+            }
 
-            int width1 = MathUtils.round(width / 2f) - 1;
-            int width2 = width - width1 - 1;
+
+            int buttonWidthMinSum = 0;
+            int[] buttonWidths = new int[choices.length];
+            for(int i=0;i<choices.length;i++){
+                buttonWidths[i] = MathUtils.floor(mediaManager.fontTextWidth(uiEngineConfig.ui.font, choices[i])/uiEngineState.theme.ts.TSF)+2;
+                buttonWidthMinSum += buttonWidths[i];
+            }
+
+            int textWidthMin = MathUtils.floor(mediaManager.fontTextWidth(uiEngineConfig.ui.font, text)/uiEngineState.theme.ts.TSF)+2;
+
+            int width = Math.max(textWidthMin, buttonWidthMinSum);
+
+            Window modal = api.window.create(0, 0, width+1, 5, caption);
 
             Text textC = api.component.text.create(0, 2, 0, text);
-            int xOffset = 0;
-            Button yesC = api.component.button.textButton.create(xOffset, 0, width1, 1, yes, new ButtonAction() {
-                @Override
-                public void onRelease() {
-                    if (choiceFunction != null) choiceFunction.accept(Boolean.TRUE);
-                    api.removeCurrentModalWindow();
-                }
-            });
-            api.component.button.centerContent(yesC);
-            xOffset += width1;
-            Button noC = api.component.button.textButton.create(xOffset, 0, width2, 1, no, new ButtonAction() {
-                @Override
-                public void onRelease() {
-                    if (choiceFunction != null) choiceFunction.accept(Boolean.FALSE);
-                    api.removeCurrentModalWindow();
-                }
-            });
-            api.component.button.centerContent(noC);
+// ---- Button layout ----
+            int totalButtons = choices.length;
 
-            Component[] componentsl = new Component[]{textC, yesC, noC};
-            api.component.move(componentsl, uiEngineState.theme.ts.TS_HALF, uiEngineState.theme.ts.TS_HALF);
+// Total width available for buttons (inside window)
+            int availableWidth = width;
+
+// Compute how much space is left after min widths
+            int remaining = availableWidth - buttonWidthMinSum;
+
+// Distribute extra space evenly
+            int extraPerButton = remaining / totalButtons;
+            int remainder = remaining % totalButtons;
+
+            int xOffset = 0;
+            Component[] components = new Component[1 + totalButtons];
+            components[0] = textC;
+
+            for (int i = 0; i < totalButtons; i++) {
+                final String choice = choices[i];
+
+                int finalWidth = buttonWidths[i] + extraPerButton + (i < remainder ? 1 : 0);
+
+                Button btn = api.component.button.textButton.create(
+                        xOffset,
+                        0,
+                        finalWidth,
+                        1,
+                        choice,
+                        new ButtonAction() {
+                            @Override
+                            public void onRelease() {
+                                if (choiceFunction != null) {
+                                    choiceFunction.accept(choice);
+                                }
+                                api.removeCurrentModalWindow();
+                            }
+                        }
+                );
+
+                api.component.button.centerContent(btn);
+
+                components[i + 1] = btn;
+                xOffset += finalWidth;
+            }
+
+            // Offset components into window padding
+            api.component.move(
+                    components,
+                    uiEngineState.theme.ts.TS_HALF,
+                    uiEngineState.theme.ts.TS_HALF
+            );
 
             api.window.setWindowAction(modal, new WindowAction() {
                 @Override
@@ -866,7 +924,7 @@ public final class APIWidgets {
                 }
             });
 
-            api.window.addComponents(modal, componentsl);
+            api.window.addComponents(modal, components);
             return modal;
         }
 
