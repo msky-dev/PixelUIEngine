@@ -13,6 +13,23 @@ public abstract class ValueWatcher {
     }
 
     // ---------------------------------------------------------------------
+    // Reference
+    // ---------------------------------------------------------------------
+    public static class Reference<T> extends ValueWatcher {
+        private T value;
+
+        public boolean hasChanged(T v) {
+            if (shouldChange(v != value)) {
+                value = v;
+                return true;
+            }
+            return false;
+        }
+
+        public T value() { return value; }
+    }
+
+    // ---------------------------------------------------------------------
     // INT
     // ---------------------------------------------------------------------
     public static class Int extends ValueWatcher {
