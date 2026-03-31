@@ -2,7 +2,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>net.mslivo</groupId>
+	<groupId>dev.msky</groupId>
 	<artifactId>pixeluiengine</artifactId>
 	<version>1.0</version>
 	<packaging>pom</packaging>
@@ -10,9 +10,8 @@
 		<java.version>25</java.version>
 		<gdx.version>1.14.0</gdx.version>
         <lwjgl3-angle-vulkan.version>1.4.0</lwjgl3-angle-vulkan.version>
-        <lwjgl3-angle-metal.version>6af9274bb1</lwjgl3-angle-metal.version>
 		<gdx-controllers.version>2.2.3</gdx-controllers.version>
-		<mainClass>example.dev.msky.ExampleLauncherMain</mainClass>
+		<mainClass>dev.msky.example.ExampleLauncherMain</mainClass>
 	</properties>
 
 	<dependencyManagement>
@@ -69,6 +68,7 @@
 
 
 	<repositories>
+		<!--
 		<repository>
 			<id>gdx-nightlies</id>
 			<url>https://oss.sonatype.org/content/repositories/snapshots/</url>
@@ -77,10 +77,12 @@
 			<id>gdx-releases</id>
 			<url>https://oss.sonatype.org/content/repositories/releases/</url>
 		</repository>
+				-->
 		<repository>
 			<id>jitpack.io</id>
 			<url>https://jitpack.io</url>
 		</repository>
+
 	</repositories>
 
 	<build>
