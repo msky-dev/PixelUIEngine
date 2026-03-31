@@ -1,76 +1,74 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-				 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-	<modelVersion>4.0.0</modelVersion>
-	<parent>
-		<groupId>net.mslivo</groupId>
-		<artifactId>pixeluiengine</artifactId>
-		<version>1.0</version>
-	</parent>
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>net.mslivo</groupId>
+        <artifactId>pixeluiengine</artifactId>
+        <version>1.0</version>
+    </parent>
 
-	<artifactId>pixeluiengine-core</artifactId>
-	<packaging>jar</packaging>
+    <artifactId>pixeluiengine-core</artifactId>
+    <packaging>jar</packaging>
 
-	<dependencies>
+    <dependencies>
 
-		<!-- GDX -->
+        <!-- GDX -->
 
-		<dependency>
-			<groupId>com.badlogicgames.gdx</groupId>
-			<artifactId>gdx</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.badlogicgames.gdx</groupId>
-			<artifactId>gdx-backend-lwjgl3</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.badlogicgames.gdx</groupId>
-			<artifactId>gdx-platform</artifactId>
-			<classifier>natives-desktop</classifier>
-		</dependency>
+        <dependency>
+            <groupId>com.badlogicgames.gdx</groupId>
+            <artifactId>gdx</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.badlogicgames.gdx</groupId>
+            <artifactId>gdx-backend-lwjgl3</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.badlogicgames.gdx</groupId>
+            <artifactId>gdx-platform</artifactId>
+            <classifier>natives-desktop</classifier>
+        </dependency>
 
-		<!-- GDX Controller support -->
+        <!-- GDX Controller support -->
+        <dependency>
+            <groupId>com.badlogicgames.gdx-controllers</groupId>
+            <artifactId>gdx-controllers-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.badlogicgames.gdx-controllers</groupId>
+            <artifactId>gdx-controllers-desktop</artifactId>
+        </dependency>
 
-		<dependency>
-			<groupId>com.badlogicgames.gdx-controllers</groupId>
-			<artifactId>gdx-controllers-core</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.badlogicgames.gdx-controllers</groupId>
-			<artifactId>gdx-controllers-desktop</artifactId>
-		</dependency>
+        <!-- Vulkan -->
+        <dependency>
+            <groupId>com.github.Dgzt</groupId>
+            <artifactId>gdx-lwjgl3-angle-vulkan</artifactId>
+        </dependency>
 
-		<!-- Vulkan -->
+    </dependencies>
 
-		<dependency>
-			<groupId>com.github.Dgzt</groupId>
-			<artifactId>gdx-lwjgl3-angle-vulkan</artifactId>
-		</dependency>
-
-	</dependencies>
-
-	<build>
-		<resources>
-			<resource>
-				<directory>../assets</directory>
-			</resource>
-			<resource>
-				<directory>src/main/java</directory>
-				<includes>
-					<include>**/*.java</include>
-					<include>**/*.gwt.xml</include>
-				</includes>
-			</resource>
-		</resources>
-		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
+    <build>
+        <resources>
+            <resource>
+                <directory>../assets</directory>
+            </resource>
+            <resource>
+                <directory>src/main/java</directory>
+                <includes>
+                    <include>**/*.java</include>
+                    <include>**/*.gwt.xml</include>
+                </includes>
+            </resource>
+        </resources>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
             </plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-jar-plugin</artifactId>
-			</plugin>
-		</plugins>
-	</build>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
 </project>

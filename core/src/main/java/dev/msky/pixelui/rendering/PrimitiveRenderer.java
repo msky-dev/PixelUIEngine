@@ -48,12 +48,12 @@ public class PrimitiveRenderer extends CommonRenderer implements Disposable {
     }
 
     public PrimitiveRenderer(final ShaderProgram defaultShader, final int maxVertexes) {
+        super(defaultShader);
         int vertexAbsoluteLimit = Integer.MAX_VALUE / (VERTEX_SIZE * 4);
         if (maxVertexes > vertexAbsoluteLimit)
             throw new IllegalArgumentException("size " + maxVertexes + " bigger than mix allowed size " + vertexAbsoluteLimit);
         if (maxVertexes % VERTEXES_INDICES_RATIO != 0)
             throw new IllegalArgumentException("size is not multiple of ratio " + VERTEXES_INDICES_RATIO);
-        super(defaultShader);
 
         this.sizeMaxVertexes = maxVertexes;
         this.sizeMaxVertexesFloats = this.sizeMaxVertexes * VERTEX_SIZE;

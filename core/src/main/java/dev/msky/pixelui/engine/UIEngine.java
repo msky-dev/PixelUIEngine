@@ -1321,7 +1321,7 @@ public final class UIEngine<T extends UIEngineAdapter> implements Disposable {
                         checkBox.checkBoxAction.onCheck(checkBox.checked);
                         uiCommonUtils.resetPressedCheckBoxReference(uiEngineState);
                     }
-                    case TextField _ -> {
+                    case TextField textField -> {
                         uiCommonUtils.resetPressedTextFieldReference(uiEngineState);
                     }
                     case AppViewport appViewPort -> {

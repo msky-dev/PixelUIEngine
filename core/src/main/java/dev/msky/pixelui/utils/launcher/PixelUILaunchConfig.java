@@ -10,9 +10,9 @@ public final class PixelUILaunchConfig implements Copyable<PixelUILaunchConfig> 
     public int resolutionWidth = 320;
     public int resolutionHeight = 240;
     public String iconPath = null;
-    public GLEmulation windowsGLEmulation = GLEmulation.GL32_VULKAN;
-    public GLEmulation linuxGLEmulation = GLEmulation.GL32_VULKAN;
-    public GLEmulation macOSGLEmulation = GLEmulation.GL30_OPENGL;
+    public GLEmulation windowsGLEmulation = GLEmulation.ANGLE_GL32_VULKAN;
+    public GLEmulation linuxGLEmulation = GLEmulation.ANGLE_GL32_VULKAN;
+    public GLEmulation macOSGLEmulation = GLEmulation.ANGLE_GL30_METAL;
     public int fps = 60;
     public int idleFPS = 60;
     public boolean vSync = false;
@@ -60,9 +60,12 @@ public final class PixelUILaunchConfig implements Copyable<PixelUILaunchConfig> 
 
 
     public enum GLEmulation {
-        GL32_VULKAN,
-        GL32_OPENGL,
         GL30_OPENGL,
+        GL32_OPENGL,
+        ANGLE_GL32_VULKAN,
+        ANGLE_GL30_DESKTOP_GL,
+        ANGLE_GL30_METAL,
+        ANGLE_GL30_DIRECT3D_11
     }
 
 }

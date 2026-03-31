@@ -3,6 +3,8 @@ package dev.msky.pixelui.utils.launcher;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
+import com.badlogic.gdx.utils.Os;
+import com.badlogic.gdx.utils.SharedLibraryLoader;
 import com.github.dgzt.gdx.lwjgl3.Lwjgl3VulkanApplication;
 import dev.msky.pixelui.utils.Tools;
 
@@ -18,25 +20,18 @@ public class PixelUILauncher {
         // Determine glEmulation
         String osName = System.getProperty("os.name").toLowerCase();
         PixelUILaunchConfig.GLEmulation glEmulation;
-        if (osName.contains("win")) {
+        if (SharedLibraryLoader.os == Os.Windows) {
             glEmulation = launchConfig.windowsGLEmulation;
-        } else if (osName.contains("nix") || osName.contains("nux") || osName.contains("aix")) {
+        } else if (SharedLibraryLoader.os == Os.Linux) {
             glEmulation = launchConfig.linuxGLEmulation;
-        } else if (osName.contains("mac")) {
+        } else if (SharedLibraryLoader.os == Os.MacOsX) {
             glEmulation = launchConfig.macOSGLEmulation;
         } else {
             throw new RuntimeException("Operating System \"" + osName + "\n not supported");
         }
 
+        System.out.println("OS: "+osName+" GL Emulation: "+launchConfig.macOSGLEmulation);
 
-        if (glEmulation == PixelUILaunchConfig.GLEmulation.GL32_VULKAN) {
-            try {
-                System.loadLibrary("vulkan-1");
-            } catch (Throwable throwable) {
-                Tools.App.logError("Vulkan not available, fallback to " + PixelUILaunchConfig.GLEmulation.GL32_OPENGL.name() + ".");
-                glEmulation = PixelUILaunchConfig.GLEmulation.GL32_OPENGL;
-            }
-        }
 
         switch (glEmulation) {
             case GL30_OPENGL, GL32_OPENGL -> {
@@ -53,11 +48,21 @@ public class PixelUILauncher {
                     handleLaunchException(e, launchConfig);
                 }
             }
-            case GL32_VULKAN -> {
+            case ANGLE_GL32_VULKAN, ANGLE_GL30_METAL,ANGLE_GL30_DIRECT3D_11 -> {
                 com.github.dgzt.gdx.lwjgl3.Lwjgl3ApplicationConfiguration config = new com.github.dgzt.gdx.lwjgl3.Lwjgl3ApplicationConfiguration();
                 config.setOpenGLEmulation(com.github.dgzt.gdx.lwjgl3.Lwjgl3ApplicationConfiguration.GLEmulation.ANGLE_GLES32, 4, 5);
 
                 setConfigUniversal(config, launchConfig);
+
+
+                config.setAngleBackend(switch (glEmulation){
+                    case ANGLE_GL32_VULKAN -> com.github.dgzt.gdx.lwjgl3.Lwjgl3ApplicationConfiguration.AngleBackend.VULKAN;
+                    case ANGLE_GL30_METAL -> com.github.dgzt.gdx.lwjgl3.Lwjgl3ApplicationConfiguration.AngleBackend.METAL;
+                    case ANGLE_GL30_DIRECT3D_11 -> com.github.dgzt.gdx.lwjgl3.Lwjgl3ApplicationConfiguration.AngleBackend.DIRECT3D_11;
+                    case ANGLE_GL30_DESKTOP_GL -> com.github.dgzt.gdx.lwjgl3.Lwjgl3ApplicationConfiguration.AngleBackend.DESKTOP_GL;
+                    default -> null;
+                });
+
                 try {
                     new Lwjgl3VulkanApplication(applicationAdapter, config);
                 } catch (Exception e) {

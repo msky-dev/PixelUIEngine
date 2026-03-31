@@ -185,7 +185,7 @@ public class MusicPlayer implements Disposable {
                         if (playCurrent != null) {
                             playCurrentFileName = nextTrack.file;
                             playCurrent.setVolume(volume);
-                            playCurrent.setOnCompletionListener(_ -> {
+                            playCurrent.setOnCompletionListener(music -> {
                                 playCurrent.stop();
                                 playCurrent = null;
                                 playCurrentFileName = "";
