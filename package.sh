@@ -29,21 +29,21 @@ export ADDITIONAL_FILES=(
 #WINDOWS_X64
 export WIN_X64_ENABLED="true"
 export WIN_X64_ROAST_BINARY="./buildtools/roast/roast-win-x86_64.exe"
-export WIN_X64_JRE="C:/Program Files/Java/21/windows_x64/jdk-21.0.10+7-jre"
+export WIN_X64_JRE="C:/Program Files/Java/25/windows_x64/jdk-25.0.2+10-jre"
 export WIN_X64_ICON="./buildtools/appicon.ico"
 export WIN_X64_FILE_SUFFIX="win_x64"
 
 #LINUX_X64
 export LINUX_X64_ENABLED="true"
 export LINUX_X64_ROAST_BINARY="./buildtools/roast/roast-linux-x86_64"
-export LINUX_X64_JRE="C:/Program Files/Java/21/linux_x64/jdk-21.0.10+7-jre"
+export LINUX_X64_JRE="C:/Program Files/Java/25/linux_x64/jdk-25.0.2+10-jre"
 export LINUX_X64_FILE_SUFFIX="linux_x64"
 
 #MACOS_X64_AARCH64
 export MAC_X64_AARCH64_ENABLED="true"
 export MAC_X64_AARCH64_ROAST_BINARY="./buildtools/roast/roast-macos-universal"
-export MAC_X64_JRE="C:/Program Files/Java/21/macos_x64/jdk-21.0.10+7-jre"
-export MAC_AARCH64_JRE="C:/Program Files/Java/21/macos_aarch64/jdk-21.0.10+7-jre"
+export MAC_X64_JRE="C:/Program Files/Java/25/macos_x64/jdk-25.0.2+10-jre"
+export MAC_AARCH64_JRE="C:/Program Files/Java/25/macos_aarch64/jdk-25.0.2+10-jre"
 export MAC_X64_AARCH64_ICON="./buildtools/appicon.icns"
 export MAC_X64_AARCH64_FILE_SUFFIX="mac_x64_aarch64"
 

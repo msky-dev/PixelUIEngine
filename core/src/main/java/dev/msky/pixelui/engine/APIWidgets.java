@@ -819,7 +819,7 @@ public final class APIWidgets {
         }
 
         public Window createYesNoRequester(String caption, String text, Consumer<Boolean> choiceFunction) {
-            return createYesNoRequester(caption, text, choiceFunction, "Yes", "No");
+            return createYesNoRequester(caption, text, choiceFunction, "No", "Yes");
         }
 
         public Window createYesNoRequester(
@@ -858,23 +858,19 @@ public final class APIWidgets {
                 buttonWidthMinSum += buttonWidths[i];
             }
 
-            int textWidthMin = MathUtils.floor(mediaManager.fontTextWidth(uiEngineConfig.ui.font, text)/uiEngineState.theme.ts.TSF)+2;
+            int textWidthMin = Math.max(MathUtils.floor(mediaManager.fontTextWidth(uiEngineConfig.ui.font, text)/uiEngineState.theme.ts.TSF)+2,10);
 
             int width = Math.max(textWidthMin, buttonWidthMinSum);
 
             Window modal = api.window.create(0, 0, width+1, 5, caption);
 
             Text textC = api.component.text.create(0, 2, 0, text);
-// ---- Button layout ----
             int totalButtons = choices.length;
 
-// Total width available for buttons (inside window)
             int availableWidth = width;
 
-// Compute how much space is left after min widths
             int remaining = availableWidth - buttonWidthMinSum;
 
-// Distribute extra space evenly
             int extraPerButton = remaining / totalButtons;
             int remainder = remaining % totalButtons;
 
