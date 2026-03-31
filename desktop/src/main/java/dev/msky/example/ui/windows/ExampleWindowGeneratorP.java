@@ -246,8 +246,8 @@ public class ExampleWindowGeneratorP implements WindowGenerator.P1<MediaManager>
         Button modal1 = api.component.button.textButton.create(28, 5, 5, 1, "Modal 1", new ButtonAction() {
             @Override
             public void onRelease() {
-                api.addWindowAsModal(api.widgets.modal.createYesNoRequester("Caption ", "Modal 1 Example Text", null));
-                api.addWindowAsModal(api.widgets.modal.createYesNoRequester("FollowUp 1 ", "Modal 1 Example Text", null));
+                api.addWindowAsModal(api.widgets.modal.createYesNoRequester("Caption ", "Modal 1 ", null));
+                api.addWindowAsModal(api.widgets.modal.createYesNoRequester("FollowUp 1 ", "Modal 1 Example ", null));
                 api.addWindowAsModal(api.widgets.modal.createYesNoRequester("FollowUp 2 ", "Modal 1 Example Text", null));
             }
         });
