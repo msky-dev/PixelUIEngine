@@ -1,135 +1,135 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-	<modelVersion>4.0.0</modelVersion>
-	<groupId>dev.msky</groupId>
-	<artifactId>pixeluiengine</artifactId>
-	<version>1.0</version>
-	<packaging>pom</packaging>
-	<properties>
-		<java.version>25</java.version>
-		<gdx.version>1.14.0</gdx.version>
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>dev.msky</groupId>
+    <artifactId>pixeluiengine</artifactId>
+    <version>1.0</version>
+    <packaging>pom</packaging>
+    <properties>
+        <java.version>25</java.version>
+        <gdx.version>1.14.0</gdx.version>
         <lwjgl3-angle-vulkan.version>1.1.0-SNAPSHOT</lwjgl3-angle-vulkan.version>
-		<gdx-controllers.version>2.2.3</gdx-controllers.version>
-		<mainClass>dev.msky.example.ExampleLauncherMain</mainClass>
-	</properties>
+        <gdx-controllers.version>2.2.3</gdx-controllers.version>
+        <mainClass>dev.msky.example.ExampleLauncherMain</mainClass>
+    </properties>
 
-	<dependencyManagement>
-		<dependencies>
+    <dependencyManagement>
+        <dependencies>
 
-			<!-- GDX -->
-			<dependency>
-				<groupId>com.badlogicgames.gdx</groupId>
-				<artifactId>gdx</artifactId>
-				<version>${gdx.version}</version>
-				<scope>compile</scope>
-			</dependency>
-			<dependency>
-				<groupId>com.badlogicgames.gdx</groupId>
-				<artifactId>gdx-backend-lwjgl3</artifactId>
-				<version>${gdx.version}</version>
-				<scope>compile</scope>
-			</dependency>
-			<dependency>
-				<groupId>com.badlogicgames.gdx</groupId>
-				<artifactId>gdx-platform</artifactId>
-				<version>${gdx.version}</version>
-				<classifier>natives-desktop</classifier>
-				<scope>compile</scope>
-			</dependency>
+            <!-- GDX -->
+            <dependency>
+                <groupId>com.badlogicgames.gdx</groupId>
+                <artifactId>gdx</artifactId>
+                <version>${gdx.version}</version>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.badlogicgames.gdx</groupId>
+                <artifactId>gdx-backend-lwjgl3</artifactId>
+                <version>${gdx.version}</version>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.badlogicgames.gdx</groupId>
+                <artifactId>gdx-platform</artifactId>
+                <version>${gdx.version}</version>
+                <classifier>natives-desktop</classifier>
+                <scope>compile</scope>
+            </dependency>
 
-			<!-- GDX Controller support -->
+            <!-- GDX Controller support -->
 
-			<dependency>
-				<groupId>com.badlogicgames.gdx-controllers</groupId>
-				<artifactId>gdx-controllers-core</artifactId>
-				<version>${gdx-controllers.version}</version>
-				<scope>compile</scope>
-			</dependency>
-			<dependency>
-				<groupId>com.badlogicgames.gdx-controllers</groupId>
-				<artifactId>gdx-controllers-desktop</artifactId>
-				<version>${gdx-controllers.version}</version>
-				<scope>compile</scope>
-			</dependency>
-
-
-			<!-- Vulkan -->
-
-			<dependency>
-				<groupId>com.github.Dgzt</groupId>
-				<artifactId>gdx-lwjgl3-angle-vulkan</artifactId>
-				<version>${lwjgl3-angle-vulkan.version}</version>
-			</dependency>
+            <dependency>
+                <groupId>com.badlogicgames.gdx-controllers</groupId>
+                <artifactId>gdx-controllers-core</artifactId>
+                <version>${gdx-controllers.version}</version>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.badlogicgames.gdx-controllers</groupId>
+                <artifactId>gdx-controllers-desktop</artifactId>
+                <version>${gdx-controllers.version}</version>
+                <scope>compile</scope>
+            </dependency>
 
 
-		</dependencies>
-	</dependencyManagement>
+            <!-- Vulkan -->
+            <dependency>
+                <groupId>com.github.Dgzt</groupId>
+                <artifactId>gdx-lwjgl3-angle-vulkan</artifactId>
+                <version>${lwjgl3-angle-vulkan.version}</version>
+            </dependency>
 
 
-	<repositories>
-		<repository>
-			<id>gdx-nightlies</id>
-			<url>https://oss.sonatype.org/content/repositories/snapshots/</url>
-		</repository>
-		<repository>
-			<id>gdx-releases</id>
-			<url>https://oss.sonatype.org/content/repositories/releases/</url>
-		</repository>
-		<repository>
-			<id>jitpack.io</id>
-			<url>https://jitpack.io</url>
-		</repository>
-	</repositories>
 
-	<build>
-		<pluginManagement>
-			<plugins>
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-compiler-plugin</artifactId>
-					<version>3.11.0</version>
-					<configuration>
-						<source>${java.version}</source>
-						<target>${java.version}</target>
-					</configuration>
-				</plugin>
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-jar-plugin</artifactId>
-					<version>3.3.0</version>
-				</plugin>
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-assembly-plugin</artifactId>
-					<version>3.3.0</version>
-					<configuration>
-						<descriptorRefs>
-							<descriptorRef>jar-with-dependencies</descriptorRef>
-						</descriptorRefs>
-						<archive>
-							<manifest>
-								<mainClass>${mainClass}</mainClass>
-							</manifest>
-						</archive>
-					</configuration>
-					<executions>
-						<execution>
-							<id>make-assembly</id>
-							<phase>package</phase>
-							<goals>
-								<goal>single</goal>
-							</goals>
-						</execution>
-					</executions>
-				</plugin>
-			</plugins>
-		</pluginManagement>
-	</build>
+        </dependencies>
+    </dependencyManagement>
 
 
-	<modules>
-		<module>core</module>
-		<module>desktop</module>
-	</modules>
+    <repositories>
+        <repository>
+            <id>gdx-nightlies</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
+        </repository>
+        <repository>
+            <id>gdx-releases</id>
+            <url>https://oss.sonatype.org/content/repositories/releases/</url>
+        </repository>
+        <repository>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
+        </repository>
+    </repositories>
+
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>3.11.0</version>
+                    <configuration>
+                        <source>${java.version}</source>
+                        <target>${java.version}</target>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-jar-plugin</artifactId>
+                    <version>3.3.0</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-assembly-plugin</artifactId>
+                    <version>3.3.0</version>
+                    <configuration>
+                        <descriptorRefs>
+                            <descriptorRef>jar-with-dependencies</descriptorRef>
+                        </descriptorRefs>
+                        <archive>
+                            <manifest>
+                                <mainClass>${mainClass}</mainClass>
+                            </manifest>
+                        </archive>
+                    </configuration>
+                    <executions>
+                        <execution>
+                            <id>make-assembly</id>
+                            <phase>package</phase>
+                            <goals>
+                                <goal>single</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
+
+
+    <modules>
+        <module>core</module>
+        <module>desktop</module>
+    </modules>
 </project>
