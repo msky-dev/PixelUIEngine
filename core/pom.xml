@@ -40,11 +40,15 @@
 			<artifactId>gdx-controllers-desktop</artifactId>
 		</dependency>
 
-		<!-- Vulkan -->
+		<!-- WebGPU -->
 
 		<dependency>
-			<groupId>com.github.Dgzt</groupId>
-			<artifactId>gdx-lwjgl3-angle-vulkan</artifactId>
+			<groupId>io.github.monstroussoftware.gdx-webgpu</groupId>
+			<artifactId>gdx-webgpu</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>io.github.monstroussoftware.gdx-webgpu</groupId>
+			<artifactId>backend-desktop</artifactId>
 		</dependency>
 
 	</dependencies>

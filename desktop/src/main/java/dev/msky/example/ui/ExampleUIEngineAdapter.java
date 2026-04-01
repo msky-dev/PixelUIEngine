@@ -37,7 +37,7 @@ public class ExampleUIEngineAdapter implements UIEngineAdapter {
     private float animation_timer;
     private boolean resetPressed;
     private SpriteRenderer spriteRenderer;
-    private PrimitiveRenderer primitiveRenderer;
+    //private PrimitiveRenderer primitiveRenderer;
     private ParallelExecutor parallelExecutor = new ParallelExecutor();
 
     private SpriteParticleSystem<ParticleDataInner> spriteParticleSystem;
@@ -71,7 +71,7 @@ public class ExampleUIEngineAdapter implements UIEngineAdapter {
         this.animation_timer = 0;
         this.spriteRenderer = new SpriteRenderer(mediaManager, ShaderParser.parse(Tools.File.findResource("shaders/pixelui/hsl.sprite.glsl")), SpriteRenderer.MAX_VERTEXES_DEFAULT);
         this.spriteRenderer.setTweakResetValues(0.5f,0.5f,0.5f,0f);
-        this.primitiveRenderer = new PrimitiveRenderer();
+        //this.primitiveRenderer = new PrimitiveRenderer();
 
 
 
@@ -185,6 +185,8 @@ public class ExampleUIEngineAdapter implements UIEngineAdapter {
         spriteRenderer.end();
 
 
+        /*
+
         if (IM_PERFORMANCE_TEST) {
 
             primitiveRenderer.saveState();
@@ -209,6 +211,7 @@ public class ExampleUIEngineAdapter implements UIEngineAdapter {
 
 
         primitiveRenderer.setProjectionMatrix(camera.combined);
+
 
 
         // Primitive Drawing Test
@@ -268,6 +271,7 @@ public class ExampleUIEngineAdapter implements UIEngineAdapter {
 
         primitiveRenderer.end();
 
+         */
 
 
         spriteRenderer.begin();
@@ -335,6 +339,7 @@ public class ExampleUIEngineAdapter implements UIEngineAdapter {
 
         spriteRenderer.end();
 
+        /*
         primitiveRenderer.setProjectionMatrix(camera.combined);
         primitiveRenderer.begin(GL30.GL_TRIANGLES);
         primitiveRenderer.setVertexColor(Color.BLUE);
@@ -345,6 +350,7 @@ public class ExampleUIEngineAdapter implements UIEngineAdapter {
         primitiveRenderer.vertex(340,380);
 
         primitiveRenderer.end();
+         */
 
 
 

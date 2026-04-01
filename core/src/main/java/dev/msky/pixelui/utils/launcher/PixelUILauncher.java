@@ -3,7 +3,6 @@ package dev.msky.pixelui.utils.launcher;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
-import com.github.dgzt.gdx.lwjgl3.Lwjgl3VulkanApplication;
 import dev.msky.pixelui.utils.Tools;
 
 import javax.swing.*;
@@ -12,58 +11,19 @@ import java.awt.datatransfer.StringSelection;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
+import com.monstrous.gdx.webgpu.backends.desktop.WgDesktopApplication;
+import com.monstrous.gdx.webgpu.backends.desktop.WgDesktopApplicationConfiguration;
 
 public class PixelUILauncher {
     public static void launch(ApplicationAdapter applicationAdapter, PixelUILaunchConfig launchConfig) {
-        // Determine glEmulation
-        String osName = System.getProperty("os.name").toLowerCase();
-        PixelUILaunchConfig.GLEmulation glEmulation;
-        if (osName.contains("win")) {
-            glEmulation = launchConfig.windowsGLEmulation;
-        } else if (osName.contains("nix") || osName.contains("nux") || osName.contains("aix")) {
-            glEmulation = launchConfig.linuxGLEmulation;
-        } else if (osName.contains("mac")) {
-            glEmulation = launchConfig.macOSGLEmulation;
-        } else {
-            throw new RuntimeException("Operating System \"" + osName + "\n not supported");
-        }
 
+        WgDesktopApplicationConfiguration config = new WgDesktopApplicationConfiguration();
+        setConfigUniversal(config, launchConfig);
 
-        if (glEmulation == PixelUILaunchConfig.GLEmulation.GL32_VULKAN) {
-            try {
-                System.loadLibrary("vulkan-1");
-            } catch (Throwable throwable) {
-                Tools.App.logError("Vulkan not available, fallback to " + PixelUILaunchConfig.GLEmulation.GL32_OPENGL.name() + ".");
-                glEmulation = PixelUILaunchConfig.GLEmulation.GL32_OPENGL;
-            }
-        }
-
-        switch (glEmulation) {
-            case GL30_OPENGL, GL32_OPENGL -> {
-                Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
-                if (glEmulation == PixelUILaunchConfig.GLEmulation.GL32_OPENGL) {
-                    config.setOpenGLEmulation(Lwjgl3ApplicationConfiguration.GLEmulation.GL32, 4, 5);
-                } else if (glEmulation == PixelUILaunchConfig.GLEmulation.GL30_OPENGL) {
-                    config.setOpenGLEmulation(Lwjgl3ApplicationConfiguration.GLEmulation.GL30, 4, 1);
-                }
-                setConfigUniversal(config, launchConfig);
-                try {
-                    new Lwjgl3Application(applicationAdapter, config);
-                } catch (Exception e) {
-                    handleLaunchException(e, launchConfig);
-                }
-            }
-            case GL32_VULKAN -> {
-                com.github.dgzt.gdx.lwjgl3.Lwjgl3ApplicationConfiguration config = new com.github.dgzt.gdx.lwjgl3.Lwjgl3ApplicationConfiguration();
-                config.setOpenGLEmulation(com.github.dgzt.gdx.lwjgl3.Lwjgl3ApplicationConfiguration.GLEmulation.ANGLE_GLES32, 4, 5);
-
-                setConfigUniversal(config, launchConfig);
-                try {
-                    new Lwjgl3VulkanApplication(applicationAdapter, config);
-                } catch (Exception e) {
-                    handleLaunchException(e, launchConfig);
-                }
-            }
+        try {
+            new WgDesktopApplication(applicationAdapter, config);
+        } catch (Exception e) {
+            handleLaunchException(e, launchConfig);
         }
 
     }
@@ -86,11 +46,8 @@ public class PixelUILauncher {
 
             if(launchConfig.fullScreen){
                 switch (config){
-                    case Lwjgl3ApplicationConfiguration libgdxConfig -> {
-                        libgdxConfig.setFullscreenMode(Lwjgl3ApplicationConfiguration.getDisplayMode());
-                    }
-                    case com.github.dgzt.gdx.lwjgl3.Lwjgl3ApplicationConfiguration vulkanConfig -> {
-                        vulkanConfig.setFullscreenMode(Lwjgl3ApplicationConfiguration.getDisplayMode());
+                    case WgDesktopApplicationConfiguration wgDesktopApplicationConfiguration -> {
+                        wgDesktopApplicationConfiguration.setFullscreenMode(WgDesktopApplicationConfiguration.getDisplayMode());
                     }
                     default -> throw new IllegalStateException("Unexpected value: " + config);
                 }

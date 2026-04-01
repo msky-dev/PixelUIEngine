@@ -1,24 +1,18 @@
 package dev.msky.pixelui.utils;
 
-import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
-import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.*;
-import com.github.dgzt.gdx.lwjgl3.Lwjgl3VulkanApplication;
 import dev.msky.pixelui.media.CMedia;
 import dev.msky.pixelui.media.MediaManager;
 import dev.msky.pixelui.rendering.NestedFrameBuffer;
 import dev.msky.pixelui.rendering.SpriteRenderer;
-import dev.msky.pixelui.utils.launcher.PixelUILaunchConfig;
 
 import java.awt.*;
-import java.awt.datatransfer.StringSelection;
 import java.io.*;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
