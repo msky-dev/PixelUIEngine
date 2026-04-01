@@ -3,16 +3,17 @@ package dev.msky.pixelui.rendering;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL30;
-import com.badlogic.gdx.graphics.GL32;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.utils.NumberUtils;
 import com.badlogic.gdx.utils.ObjectIntMap;
 import com.badlogic.gdx.utils.ObjectMap;
+import com.monstrous.gdx.webgpu.graphics.Binder;
+import com.monstrous.gdx.webgpu.graphics.WgShaderProgram;
 
 import java.util.Arrays;
 
-abstract class CommonRenderer {
+abstract class WgCommonRenderer {
 
     // -------- Common Constants --------
     public static final String PROJTRANS_UNIFORM = "u_projTrans";
@@ -50,20 +51,22 @@ abstract class CommonRenderer {
     protected final Matrix4 combinedMatrix = new Matrix4();
 
     // -------- Shader --------
-    protected ShaderProgram shader;
-    protected ShaderProgram defaultShader;
+    protected WgShaderProgram shader;
+    protected WgShaderProgram defaultShader;
 
     protected final Color tempColor;
     // Uniform caching per shader
-    protected final ObjectMap<ShaderProgram, ObjectIntMap<String>> uniformLocationCache = new ObjectMap<>();
+    protected final ObjectMap<WgShaderProgram, ObjectIntMap<String>> uniformLocationCache = new ObjectMap<>();
+    private final Binder binder;
 
     // -------- Constructor --------
-    protected CommonRenderer(ShaderProgram defaultShader) {
+    protected WgCommonRenderer(WgShaderProgram defaultShader) {
         this.projectionMatrix.setToOrtho2D(0, 0,
                 Gdx.graphics.getWidth(),
                 Gdx.graphics.getHeight()
         );
 
+        this.binder = new Binder();
         this.tempColor = new Color(Color.CLEAR);
 
         this.blend = Arrays.copyOf(BLEND_LAYER, BLEND_LAYER.length);
@@ -91,17 +94,18 @@ abstract class CommonRenderer {
 
     protected void setupMatrices() {
         combinedMatrix.set(projectionMatrix).mul(transformMatrix);
-        shader.setUniformMatrix(uniformLocation(PROJTRANS_UNIFORM), combinedMatrix);
+        shader.set(uniformLocation(PROJTRANS_UNIFORM), combinedMatrix);
     }
 
-    public void setShader(ShaderProgram shader) {
-        ShaderProgram next = shader != null ? shader : defaultShader;
+    public void setShader(WgShaderProgram shader) {
+        WgShaderProgram next = shader != null ? shader : defaultShader;
         if (this.shader == next) return;
 
         this.shader = next;
 
         if (drawing) {
             flush();
+
             this.shader.bind();
             setupMatrices();
         }
@@ -265,6 +269,6 @@ abstract class CommonRenderer {
     protected abstract void setBlendFuncImpl(int srcColor, int dstColor);
     protected abstract void saveStateImpl();
     protected abstract void loadStateImpl();
-    protected abstract ShaderProgram provideDefaultShader();
+    protected abstract WgShaderProgram provideDefaultShader();
 
 }

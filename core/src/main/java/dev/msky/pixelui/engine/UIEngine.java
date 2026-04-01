@@ -15,7 +15,6 @@ import dev.msky.pixelui.engine.actions.common.UpdateAction;
 import dev.msky.pixelui.engine.constants.*;
 import dev.msky.pixelui.media.*;
 import dev.msky.pixelui.rendering.NestedFrameBuffer;
-import dev.msky.pixelui.rendering.ShaderParser;
 import dev.msky.pixelui.rendering.SpriteRenderer;
 import dev.msky.pixelui.theme.UIEngineTheme;
 import dev.msky.pixelui.utils.Tools;

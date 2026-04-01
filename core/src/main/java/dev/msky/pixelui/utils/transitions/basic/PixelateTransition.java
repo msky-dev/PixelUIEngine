@@ -6,7 +6,6 @@ import dev.msky.pixelui.utils.Tools;
 import dev.msky.pixelui.utils.transitions.TRANSITION_RENDER_ORDER;
 import dev.msky.pixelui.utils.transitions.TRANSITION_SPEED;
 import dev.msky.pixelui.utils.transitions.Transition;
-import dev.msky.pixelui.rendering.ShaderParser;
 import dev.msky.pixelui.rendering.SpriteRenderer;
 
 public class PixelateTransition extends Transition {
