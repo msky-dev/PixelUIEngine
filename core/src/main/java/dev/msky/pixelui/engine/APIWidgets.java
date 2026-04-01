@@ -819,7 +819,7 @@ public final class APIWidgets {
         }
 
         public Window createYesNoRequester(String caption, String text, Consumer<Boolean> choiceFunction) {
-            return createYesNoRequester(caption, text, choiceFunction, "No", "Yes");
+            return createYesNoRequester(caption, text, choiceFunction, "Yes", "No");
         }
 
         public Window createYesNoRequester(
