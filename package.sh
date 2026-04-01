@@ -40,12 +40,12 @@ export LINUX_X64_JRE="C:/Program Files/Java/25/linux_x64/jdk-25.0.2+10-jre"
 export LINUX_X64_FILE_SUFFIX="linux_x64"
 
 #MACOS_X64_AARCH64
-export MAC_X64_AARCH64_ENABLED="true"
-export MAC_X64_AARCH64_ROAST_BINARY="./buildtools/roast/roast-macos-universal"
-export MAC_X64_JRE="C:/Program Files/Java/25/macos_x64/jdk-25.0.2+10-jre"
-export MAC_AARCH64_JRE="C:/Program Files/Java/25/macos_aarch64/jdk-25.0.2+10-jre"
-export MAC_X64_AARCH64_ICON="./buildtools/appicon.icns"
-export MAC_X64_AARCH64_FILE_SUFFIX="mac_x64_aarch64"
+#export MAC_X64_AARCH64_ENABLED="true"
+#export MAC_X64_AARCH64_ROAST_BINARY="./buildtools/roast/roast-macos-universal"
+#export MAC_X64_JRE="C:/Program Files/Java/25/macos_x64/jdk-25.0.2+10-jre"
+#export MAC_AARCH64_JRE="C:/Program Files/Java/25/macos_aarch64/jdk-25.0.2+10-jre"
+#export MAC_X64_AARCH64_ICON="./buildtools/appicon.icns"
+#export MAC_X64_AARCH64_FILE_SUFFIX="mac_x64_aarch64"
 
 # Init
 export WIN_X64_TEMP_DIR="temp/out_win_x64"
@@ -147,113 +147,113 @@ fi
 
 ############################ MAC X64 AARCH64 ############################
 
-if [ "$MAC_X64_AARCH64_ENABLED" = "true" ]; then
-  echo "~~~~~~ Packaging MAC X64 AARCH64 ~~~~~~"
-
-  rm -f "${APPNAME_SAFE}_${1}_${MAC_X64_AARCH64_FILE_SUFFIX}.tar.gz"
-
-  mkdir -p "${MAC_X64_AARCH64_TEMP_DIR}"
-  cd "${MAC_X64_AARCH64_TEMP_DIR}"
-
-  # .APP structure
-  MACOS_DIR="./${APPNAME}.app/Contents/MacOS"
-  RESOURCE_DIR="./${APPNAME}.app/Contents/Resources"
-  mkdir -p "${MACOS_DIR}"
-  mkdir -p "${RESOURCE_DIR}"
-
-  # Roast Binary
-  cp "../../${MAC_X64_AARCH64_ROAST_BINARY}" "${RESOURCE_DIR}/${APPNAME}"
-  chmod +x "${RESOURCE_DIR}/${APPNAME}"
-
-  # Runtimes
-  echo "Copying macOS runtimes"
-
-  mkdir -p "${RESOURCE_DIR}/runtime-x64"
-  cp -r "${MAC_X64_JRE}/Contents/Home/." "${RESOURCE_DIR}/runtime-x64"
-
-  mkdir -p "${RESOURCE_DIR}/runtime-aarch64"
-  cp -r "${MAC_AARCH64_JRE}/Contents/Home/." "${RESOURCE_DIR}/runtime-aarch64"
-
-  # Jar + additional files
-  mkdir -p "${RESOURCE_DIR}/app"
-
-  cp "../../${JAR_PATH}" "${RESOURCE_DIR}/${JAR_NAME}"
-
-  for FILE in "${ADDITIONAL_FILES[@]}"; do
-      cp "../../${FILE}" "${RESOURCE_DIR}/${FILE}"
-  done
-
-  # Roast .json
-  cat > "${RESOURCE_DIR}/app/${APPNAME}.json" << EOF # important: use LF line endings on mac
-{
-  "classPath": [
-    "${JAR_NAME}"
-  ],
-  "mainClass": "${MAIN_CLASS}",
-  "vmArgs": [
-    "--add-modules=jdk.incubator.vector"
-  ],
-  "args":[],
-  "useMainAsContextClassLoader": false,
-  "useZgcIfSupportedOs": true,
-  "runOnFirstThread": true
-}
-EOF
-
-  # Icon
-  cp "../../${MAC_X64_AARCH64_ICON}" "${RESOURCE_DIR}/${APPNAME}.icns"
-
-  # Info.plist
-  PLIST_DIR="./${APPNAME}.app/Contents"
-  mkdir -p "${PLIST_DIR}"
-
-  cat > "${PLIST_DIR}/Info.plist" << EOF # important: use LF line endings on mac
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-<plist version="1.0">
-<dict>
-  <key>CFBundleName</key>
-  <string>${APPNAME}</string>
-  <key>CFBundleGetInfoString</key>
-  <string>${APPNAME}</string>
-  <key>CFBundleExecutable</key>
-  <string>launch.sh</string>
-  <key>CFBundleIconFile</key>
-  <string>${APPNAME}</string>
-</dict>
-</plist>
-
-EOF
-
-  # Launch script
-  cat > "${MACOS_DIR}/launch.sh" << EOF # important: use LF line endings on mac & dont intend lines
-#!/bin/bash
-
-MACOS_DIR="\$(cd "\$(dirname "\$0")" && pwd)"
-RES_DIR="\$MACOS_DIR/../Resources"
-
-cd "\$RES_DIR"
-
-# execute permissions
-chmod +x "./${APPNAME}"
-chmod +x "./runtime-aarch64/bin/java"
-chmod +x "./runtime-x64/bin/java"
-
-exec "./${APPNAME}" "\$@"
-
-EOF
-
-  # Package
-  "../../${SEVEN_ZIP_PATH}" "a" "-ttar" "${APPNAME_SAFE}.tar" "./${APPNAME}.app"
-  "../../${SEVEN_ZIP_PATH}" "a" "-tgzip" "${APPNAME_SAFE}.tar.gz" "${APPNAME_SAFE}.tar"
-
-  mv "./${APPNAME_SAFE}.tar.gz" \
-     "./../../${APPNAME_SAFE}_${1}_${MAC_X64_AARCH64_FILE_SUFFIX}.tar.gz"
-
-  cd ../..
-else
-    echo "MAC_X64_AARCH64 skipped"
-fi
+#if [ "$MAC_X64_AARCH64_ENABLED" = "true" ]; then
+#  echo "~~~~~~ Packaging MAC X64 AARCH64 ~~~~~~"
+#
+#  rm -f "${APPNAME_SAFE}_${1}_${MAC_X64_AARCH64_FILE_SUFFIX}.tar.gz"
+#
+#  mkdir -p "${MAC_X64_AARCH64_TEMP_DIR}"
+#  cd "${MAC_X64_AARCH64_TEMP_DIR}"
+#
+#  # .APP structure
+#  MACOS_DIR="./${APPNAME}.app/Contents/MacOS"
+#  RESOURCE_DIR="./${APPNAME}.app/Contents/Resources"
+#  mkdir -p "${MACOS_DIR}"
+#  mkdir -p "${RESOURCE_DIR}"
+#
+#  # Roast Binary
+#  cp "../../${MAC_X64_AARCH64_ROAST_BINARY}" "${RESOURCE_DIR}/${APPNAME}"
+#  chmod +x "${RESOURCE_DIR}/${APPNAME}"
+#
+#  # Runtimes
+#  echo "Copying macOS runtimes"
+#
+#  mkdir -p "${RESOURCE_DIR}/runtime-x64"
+#  cp -r "${MAC_X64_JRE}/Contents/Home/." "${RESOURCE_DIR}/runtime-x64"
+#
+#  mkdir -p "${RESOURCE_DIR}/runtime-aarch64"
+#  cp -r "${MAC_AARCH64_JRE}/Contents/Home/." "${RESOURCE_DIR}/runtime-aarch64"
+#
+#  # Jar + additional files
+#  mkdir -p "${RESOURCE_DIR}/app"
+#
+#  cp "../../${JAR_PATH}" "${RESOURCE_DIR}/${JAR_NAME}"
+#
+#  for FILE in "${ADDITIONAL_FILES[@]}"; do
+#      cp "../../${FILE}" "${RESOURCE_DIR}/${FILE}"
+#  done
+#
+#  # Roast .json
+#  cat > "${RESOURCE_DIR}/app/${APPNAME}.json" << EOF # important: use LF line endings on mac
+#{
+#  "classPath": [
+#    "${JAR_NAME}"
+#  ],
+#  "mainClass": "${MAIN_CLASS}",
+#  "vmArgs": [
+#    "--add-modules=jdk.incubator.vector"
+#  ],
+#  "args":[],
+#  "useMainAsContextClassLoader": false,
+#  "useZgcIfSupportedOs": true,
+#  "runOnFirstThread": true
+#}
+#EOF
+#
+#  # Icon
+#  cp "../../${MAC_X64_AARCH64_ICON}" "${RESOURCE_DIR}/${APPNAME}.icns"
+#
+#  # Info.plist
+#  PLIST_DIR="./${APPNAME}.app/Contents"
+#  mkdir -p "${PLIST_DIR}"
+#
+#  cat > "${PLIST_DIR}/Info.plist" << EOF # important: use LF line endings on mac
+#<?xml version="1.0" encoding="UTF-8"?>
+#<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+#<plist version="1.0">
+#<dict>
+#  <key>CFBundleName</key>
+#  <string>${APPNAME}</string>
+#  <key>CFBundleGetInfoString</key>
+#  <string>${APPNAME}</string>
+#  <key>CFBundleExecutable</key>
+#  <string>launch.sh</string>
+#  <key>CFBundleIconFile</key>
+#  <string>${APPNAME}</string>
+#</dict>
+#</plist>
+#
+#EOF
+#
+#  # Launch script
+#  cat > "${MACOS_DIR}/launch.sh" << EOF # important: use LF line endings on mac & dont intend lines
+##!/bin/bash
+#
+#MACOS_DIR="\$(cd "\$(dirname "\$0")" && pwd)"
+#RES_DIR="\$MACOS_DIR/../Resources"
+#
+#cd "\$RES_DIR"
+#
+## execute permissions
+#chmod +x "./${APPNAME}"
+#chmod +x "./runtime-aarch64/bin/java"
+#chmod +x "./runtime-x64/bin/java"
+#
+#exec "./${APPNAME}" "\$@"
+#
+#EOF
+#
+#  # Package
+#  "../../${SEVEN_ZIP_PATH}" "a" "-ttar" "${APPNAME_SAFE}.tar" "./${APPNAME}.app"
+#  "../../${SEVEN_ZIP_PATH}" "a" "-tgzip" "${APPNAME_SAFE}.tar.gz" "${APPNAME_SAFE}.tar"
+#
+#  mv "./${APPNAME_SAFE}.tar.gz" \
+#     "./../../${APPNAME_SAFE}_${1}_${MAC_X64_AARCH64_FILE_SUFFIX}.tar.gz"
+#
+#  cd ../..
+#else
+#    echo "MAC_X64_AARCH64 skipped"
+#fi
 
 # Cleanup
 rm -f -r "./temp"

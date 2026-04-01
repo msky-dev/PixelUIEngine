@@ -420,8 +420,8 @@ public class ExampleWindowGeneratorP implements WindowGenerator.P1<MediaManager>
             @Override
             public void onUpdate() {
                 nestedFrameBuffer.begin();
-                Gdx.gl30.glClearColor(Math.abs(MathUtils.sin(deg1)), 1f - Math.abs(MathUtils.sin(deg2)), 0f, 1f);
-                Gdx.gl30.glClear(GL20.GL_COLOR_BUFFER_BIT);
+                Gdx.gl32.glClearColor(Math.abs(MathUtils.sin(deg1)), 1f - Math.abs(MathUtils.sin(deg2)), 0f, 1f);
+                Gdx.gl32.glClear(GL20.GL_COLOR_BUFFER_BIT);
                 spriteRenderer2.setProjectionMatrix(camera2.combined);
                 spriteRenderer2.begin();
                 spriteRenderer2.drawCMediaImage(ExampleBaseMedia.ICON_EXAMPLE_1, 12 + MathUtils.sin(deg1) * 8f, 12 + MathUtils.cos(deg2) * 8f);
@@ -517,8 +517,8 @@ public class ExampleWindowGeneratorP implements WindowGenerator.P1<MediaManager>
                             @Override
                             public void onUpdate() {
                                 tt_nestedFrameBuffer.begin();
-                                Gdx.gl30.glClearColor(0f, 1f, 0f, 1f);
-                                Gdx.gl30.glClear(GL20.GL_COLOR_BUFFER_BIT);
+                                Gdx.gl32.glClearColor(0f, 1f, 0f, 1f);
+                                Gdx.gl32.glClear(GL20.GL_COLOR_BUFFER_BIT);
                                 tt_spriteRenderer.setProjectionMatrix(tt_camera.combined);
                                 tt_spriteRenderer.begin();
                                 tt_spriteRenderer.drawCMediaImage(ExampleBaseMedia.ICON_EXAMPLE_1, 8, 8);

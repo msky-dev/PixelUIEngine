@@ -3,6 +3,8 @@ package dev.msky.pixelui.utils.launcher;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
+import com.badlogic.gdx.utils.Os;
+import com.badlogic.gdx.utils.SharedLibraryLoader;
 import com.github.dgzt.gdx.lwjgl3.Lwjgl3VulkanApplication;
 import dev.msky.pixelui.utils.Tools;
 
@@ -15,77 +17,64 @@ import java.io.PrintWriter;
 
 public class PixelUILauncher {
     public static void launch(ApplicationAdapter applicationAdapter, PixelUILaunchConfig launchConfig) {
-        // Determine glEmulation
-        String osName = System.getProperty("os.name").toLowerCase();
-        PixelUILaunchConfig.GLEmulation glEmulation;
-        if (osName.contains("win")) {
-            glEmulation = launchConfig.windowsGLEmulation;
-        } else if (osName.contains("nix") || osName.contains("nux") || osName.contains("aix")) {
-            glEmulation = launchConfig.linuxGLEmulation;
-        } else if (osName.contains("mac")) {
-            glEmulation = launchConfig.macOSGLEmulation;
-        } else {
-            throw new RuntimeException("Operating System \"" + osName + "\n not supported");
+        if (SharedLibraryLoader.os != Os.Windows && SharedLibraryLoader.os != Os.Linux) {
+            throw new RuntimeException("Operating System \"" + System.getProperty("os.name") + "\n not supported");
         }
 
-
-        if (glEmulation == PixelUILaunchConfig.GLEmulation.GL32_VULKAN) {
+        boolean useVulkan = launchConfig.useVulkan;
+        if (useVulkan) {
             try {
-                System.loadLibrary("vulkan-1");
-            } catch (Throwable throwable) {
-                Tools.App.logError("Vulkan not available, fallback to " + PixelUILaunchConfig.GLEmulation.GL32_OPENGL.name() + ".");
-                glEmulation = PixelUILaunchConfig.GLEmulation.GL32_OPENGL;
+                if (SharedLibraryLoader.os == Os.Windows) {
+                    System.loadLibrary("vulkan-1");
+                } else if (SharedLibraryLoader.os == Os.Linux) {
+                    System.loadLibrary("vulkan");
+                }
+            } catch (UnsatisfiedLinkError _) {
+                Tools.App.logError("Vulkan not available, fallback to OpenGL");
+                useVulkan = false;
             }
         }
 
-        switch (glEmulation) {
-            case GL30_OPENGL, GL32_OPENGL -> {
-                Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
-                if (glEmulation == PixelUILaunchConfig.GLEmulation.GL32_OPENGL) {
-                    config.setOpenGLEmulation(Lwjgl3ApplicationConfiguration.GLEmulation.GL32, 4, 5);
-                } else if (glEmulation == PixelUILaunchConfig.GLEmulation.GL30_OPENGL) {
-                    config.setOpenGLEmulation(Lwjgl3ApplicationConfiguration.GLEmulation.GL30, 4, 1);
-                }
-                setConfigUniversal(config, launchConfig);
-                try {
-                    new Lwjgl3Application(applicationAdapter, config);
-                } catch (Exception e) {
-                    handleLaunchException(e, launchConfig);
-                }
-            }
-            case GL32_VULKAN -> {
-                com.github.dgzt.gdx.lwjgl3.Lwjgl3ApplicationConfiguration config = new com.github.dgzt.gdx.lwjgl3.Lwjgl3ApplicationConfiguration();
-                config.setOpenGLEmulation(com.github.dgzt.gdx.lwjgl3.Lwjgl3ApplicationConfiguration.GLEmulation.ANGLE_GLES32, 4, 5);
+        if(useVulkan){
+            com.github.dgzt.gdx.lwjgl3.Lwjgl3ApplicationConfiguration config = new com.github.dgzt.gdx.lwjgl3.Lwjgl3ApplicationConfiguration();
+            config.setOpenGLEmulation(com.github.dgzt.gdx.lwjgl3.Lwjgl3ApplicationConfiguration.GLEmulation.ANGLE_GLES32, 4, 5);
 
-                setConfigUniversal(config, launchConfig);
-                try {
-                    new Lwjgl3VulkanApplication(applicationAdapter, config);
-                } catch (Exception e) {
-                    handleLaunchException(e, launchConfig);
-                }
+            setConfigUniversal(config, launchConfig);
+            try {
+                new Lwjgl3VulkanApplication(applicationAdapter, config);
+            } catch (Exception e) {
+                handleLaunchException(e, launchConfig);
+            }
+        }else{
+            Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
+            config.setOpenGLEmulation(Lwjgl3ApplicationConfiguration.GLEmulation.GL32, 4, 5);
+            setConfigUniversal(config, launchConfig);
+            try {
+                new Lwjgl3Application(applicationAdapter, config);
+            } catch (Exception e) {
+                handleLaunchException(e, launchConfig);
             }
         }
-
     }
 
-    private static void setConfigUniversal(Object config, PixelUILaunchConfig launchConfig){
+    private static void setConfigUniversal(Object config, PixelUILaunchConfig launchConfig) {
 
         try {
 
             final Class c = config.getClass();
             c.getMethod("setResizable", boolean.class).invoke(config, launchConfig.resizeAble);
-            c.getMethod("setResizable",boolean.class).invoke(config, launchConfig.decorated);
+            c.getMethod("setResizable", boolean.class).invoke(config, launchConfig.decorated);
             c.getMethod("setDecorated", boolean.class).invoke(config, launchConfig.maximized);
             c.getMethod("setMaximized", boolean.class).invoke(config, launchConfig.maximized);
             c.getMethod("setWindowPosition", int.class, int.class).invoke(config, -1, -1);
-            c.getMethod("setWindowSizeLimits", int.class, int.class, int.class, int.class).invoke(config, launchConfig.resolutionWidth, launchConfig.resolutionHeight,-1, -1);
-            c.getMethod("setTitle",String.class).invoke(config, launchConfig.appTile);
+            c.getMethod("setWindowSizeLimits", int.class, int.class, int.class, int.class).invoke(config, launchConfig.resolutionWidth, launchConfig.resolutionHeight, -1, -1);
+            c.getMethod("setTitle", String.class).invoke(config, launchConfig.appTile);
             c.getMethod("setForegroundFPS", int.class).invoke(config, launchConfig.fps);
             c.getMethod("setIdleFPS", int.class).invoke(config, launchConfig.idleFPS);
             c.getMethod("useVsync", boolean.class).invoke(config, launchConfig.vSync);
 
-            if(launchConfig.fullScreen){
-                switch (config){
+            if (launchConfig.fullScreen) {
+                switch (config) {
                     case Lwjgl3ApplicationConfiguration libgdxConfig -> {
                         libgdxConfig.setFullscreenMode(Lwjgl3ApplicationConfiguration.getDisplayMode());
                     }
@@ -94,10 +83,10 @@ public class PixelUILauncher {
                     }
                     default -> throw new IllegalStateException("Unexpected value: " + config);
                 }
-            }else{
+            } else {
                 c.getMethod("setWindowedMode", int.class, int.class).invoke(config, launchConfig.resolutionWidth, launchConfig.resolutionHeight);
             }
-            c.getMethod("setBackBufferConfig",int.class,int.class,int.class,int.class,int.class,int.class,int.class)
+            c.getMethod("setBackBufferConfig", int.class, int.class, int.class, int.class, int.class, int.class, int.class)
                     .invoke(config, launchConfig.r, launchConfig.g, launchConfig.b, launchConfig.a, launchConfig.depth, launchConfig.stencil, launchConfig.samples);
             if (launchConfig.iconPath != null)
                 c.getMethod("setWindowIcon", String[].class).invoke(config, (Object) new String[]{launchConfig.iconPath});

@@ -23,17 +23,17 @@ abstract class CommonRenderer {
     protected static final int RGB_SRC = 0, RGB_DST = 1, ALPHA_SRC = 2, ALPHA_DST = 3;
 
     private static final int[] BLEND_LAYER =  new int[]{
-            GL30.GL_SRC_ALPHA,
-            GL30.GL_ONE_MINUS_SRC_ALPHA,
-            GL30.GL_ONE,
-            GL30.GL_ONE_MINUS_SRC_ALPHA
+            GL32.GL_SRC_ALPHA,
+            GL32.GL_ONE_MINUS_SRC_ALPHA,
+            GL32.GL_ONE,
+            GL32.GL_ONE_MINUS_SRC_ALPHA
     };
 
     private static final int[] BLEND_COMPOSITE =  new int[]{
-            GL30.GL_ONE,
-            GL30.GL_ONE_MINUS_SRC_ALPHA,
-            GL30.GL_ONE,
-            GL30.GL_ONE_MINUS_SRC_ALPHA
+            GL32.GL_ONE,
+            GL32.GL_ONE_MINUS_SRC_ALPHA,
+            GL32.GL_ONE,
+            GL32.GL_ONE_MINUS_SRC_ALPHA
     };
 
     // -------- State --------

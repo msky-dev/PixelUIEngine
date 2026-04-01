@@ -109,7 +109,7 @@ public class Tools {
             ByteBuffer buf = BufferUtils.newByteBuffer(w * h * 4);
 
             frameBuffer.begin();
-            Gdx.gl30.glReadPixels(0, 0, w, h, GL30.GL_RGBA, GL30.GL_UNSIGNED_BYTE, buf);
+            Gdx.gl32.glReadPixels(0, 0, w, h, GL32.GL_RGBA, GL32.GL_UNSIGNED_BYTE, buf);
             frameBuffer.end();
 
             int minX = w, minY = h, maxX = -1, maxY = -1;

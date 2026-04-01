@@ -69,28 +69,28 @@ public class PrimitiveRenderer extends CommonRenderer implements Disposable {
         this.indexResets = new ShortArray();
         this.vertexColor = VERTEX_COLOR_RESET;
         this.vertexColor_save = this.vertexColor;
-        this.primitiveType = GL30.GL_POINTS;
+        this.primitiveType = GL32.GL_POINTS;
 
     }
 
     public void begin() {
-        begin(GL30.GL_POINTS);
+        begin(GL32.GL_POINTS);
     }
 
     public void begin(int primitiveType) {
         if (isDrawing()) throw new IllegalStateException(ERROR_END_BEGIN);
-        Gdx.gl30.glDepthMask(false);
+        Gdx.gl32.glDepthMask(false);
         this.shader.bind();
         setupMatrices();
         // Blending
         if (this.blendingEnabled) {
-            Gdx.gl30.glEnable(GL30.GL_BLEND);
-            Gdx.gl30.glBlendFuncSeparate(this.blend[RGB_SRC], this.blend[RGB_DST], this.blend[ALPHA_SRC], this.blend[ALPHA_DST]);
+            Gdx.gl32.glEnable(GL32.GL_BLEND);
+            Gdx.gl32.glBlendFuncSeparate(this.blend[RGB_SRC], this.blend[RGB_DST], this.blend[ALPHA_SRC], this.blend[ALPHA_DST]);
         } else {
-            Gdx.gl30.glDisable(GL30.GL_BLEND);
+            Gdx.gl32.glDisable(GL32.GL_BLEND);
         }
         this.setPrimitiveType(primitiveType);
-        Gdx.gl30.glEnable(GL30.GL_PRIMITIVE_RESTART_FIXED_INDEX);
+        Gdx.gl32.glEnable(GL32.GL_PRIMITIVE_RESTART_FIXED_INDEX);
         setDrawing(true);
     }
 
@@ -103,9 +103,9 @@ public class PrimitiveRenderer extends CommonRenderer implements Disposable {
 
     public void end() {
         flush();
-        Gdx.gl30.glDepthMask(true);
+        Gdx.gl32.glDepthMask(true);
         setDrawing(false);
-        Gdx.gl30.glDisable(GL30.GL_PRIMITIVE_RESTART_FIXED_INDEX);
+        Gdx.gl32.glDisable(GL32.GL_PRIMITIVE_RESTART_FIXED_INDEX);
     }
 
     protected IndexBufferObject createIndexBufferObject(final int size) {
@@ -173,7 +173,7 @@ public class PrimitiveRenderer extends CommonRenderer implements Disposable {
         this.indexBufferObject.bind();
 
         // Draw
-        Gdx.gl30.glDrawElements(this.primitiveType, indicesCount, GL30.GL_UNSIGNED_SHORT, 0);
+        Gdx.gl32.glDrawElements(this.primitiveType, indicesCount, GL32.GL_UNSIGNED_SHORT, 0);
 
         // reset
         this.indexBuffer.limit(this.sizeMaxIndices);
@@ -286,12 +286,12 @@ public class PrimitiveRenderer extends CommonRenderer implements Disposable {
 
     @Override
     protected void setBlendFuncSeparateImpl(int srcColor, int dstColor, int srcAlpha, int dstAlpha) {
-        Gdx.gl30.glBlendFuncSeparate(srcColor, dstColor, srcAlpha, dstAlpha);
+        Gdx.gl32.glBlendFuncSeparate(srcColor, dstColor, srcAlpha, dstAlpha);
     }
 
     @Override
     protected void setBlendFuncImpl(int srcColor, int dstColor) {
-        Gdx.gl30.glBlendFunc(srcColor, dstColor);
+        Gdx.gl32.glBlendFunc(srcColor, dstColor);
     }
 
     @Override

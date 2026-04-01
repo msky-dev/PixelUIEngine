@@ -41,7 +41,7 @@ public class MusicPlayer implements Disposable {
     private final IntArray randomHistory;
 
     public MusicPlayer(MediaManager mediaManager) {
-        this(mediaManager,null);
+        this(mediaManager, new CMediaMusic[0]);
     }
 
     public MusicPlayer(MediaManager mediaManager, CMediaMusic... playlist) {
@@ -55,9 +55,8 @@ public class MusicPlayer implements Disposable {
         this.randomHistory = new IntArray();
         this.playNext = this.playPrevious = false;
         this.volume = 1f;
-        if(playlist != null)
-            for(int i=0;i<playlist.length;i++)
-                playListAdd(playlist[i]);
+        for (int i = 0; i < playlist.length; i++)
+            playListAdd(playlist[i]);
     }
 
     public void playlistClear() {
@@ -231,7 +230,7 @@ public class MusicPlayer implements Disposable {
     }
 
     public void play() {
-        if(!this.isPlaying()){
+        if (!this.isPlaying()) {
             this.state = STATE.PLAY;
         }
     }
