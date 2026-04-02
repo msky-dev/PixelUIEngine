@@ -112,7 +112,7 @@ public class UICommonUtils {
 
     public void window_enforceScreenBounds(Window window) {
         int wndWidth = uiEngineState.theme.ts.abs(window.width);
-        window.x = Math.clamp(window.x, 0, uiEngineState.resolutionWidth - wndWidth);
+        window.x = Math.clamp(window.x, 0, Math.max(uiEngineState.resolutionWidth - wndWidth,0));
         if (window.folded) {
             window.y = Math.clamp(window.y, -(uiEngineState.theme.ts.abs(window.height - 1)), uiEngineState.resolutionHeight - uiEngineState.theme.ts.abs(window.height));
         } else {
