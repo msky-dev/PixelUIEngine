@@ -66,7 +66,7 @@ if [ "$WIN_X64_ENABLED" = "true" ]; then
     echo "Copying windows x64 runtime"
 	cp -r "${WIN_X64_JRE}/." "./runtime"
 	# roast binary
-	cp "../../${WIN_X64_ROAST_BINARY}" "./${APPNAME}.exe"
+	cp "../../${LINUX_X64_ROAST_BINARY}" "./${APPNAME}"
 	# set .exe icon
 	echo "setting exe icon"
 	"../../${RCEDIT_PATH}" "${APPNAME}.exe" --set-icon "../../${WIN_X64_ICON}"
