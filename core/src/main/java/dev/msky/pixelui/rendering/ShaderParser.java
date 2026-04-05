@@ -3,7 +3,6 @@ package dev.msky.pixelui.rendering;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.GL30;
-import com.badlogic.gdx.graphics.GL32;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.IntArray;
@@ -21,14 +20,48 @@ public class ShaderParser {
     private static String getGlslVersion() {
         if (glslVersion != null)
             return glslVersion;
-        String glVersionDriver = Gdx.gl32.glGetString(GL32.GL_VERSION);
-        String glslVersionDriver = Gdx.gl32.glGetString(GL32.GL_SHADING_LANGUAGE_VERSION);
-        if (glVersionDriver != null && glVersionDriver.contains("OpenGL ES")) {
-            glslVersion = "#version 320 es"; // GL ES 3.2
+
+        final String[] ES_VERSIONS = new String[]{
+                "320 es", "310 es", "300 es"
+        };
+        final String[] DESKTOP_VERSIONS = new String[]{
+                "460", "450", "440", "430", "420", "410", "400", "330"
+        };
+
+
+        String glVersion = Gdx.gl30.glGetString(GL30.GL_VERSION);
+        if (glVersion != null && glVersion.contains("OpenGL ES")) {
+
+            for(int i=0;i<ES_VERSIONS.length;i++){
+                final String version =  ES_VERSIONS[i];
+                if(testShaderVersion(version)){
+                    glslVersion = "#version "+version;
+                    break;
+                }
+            }
+
         } else {
-            glslVersion = "#version 450"; // 4.5 emulate GL ES 3.2
+            for(int i=0;i<DESKTOP_VERSIONS.length;i++){
+                final String version =  DESKTOP_VERSIONS[i];
+                if(testShaderVersion(version)){
+                    glslVersion = "#version "+version;
+                    break;
+                }
+            }
+
         }
+
+        if(glslVersion == null)
+            throw new ShaderParseException("GL Version not supported: " + glVersion);
+
         return glslVersion;
+    }
+
+    private static boolean testShaderVersion(String version){
+        ShaderProgram shaderProgram = new ShaderProgram("#version "+version+"\nvoid main(){}","#version "+version+"\nvoid main(){}");
+        boolean compiled = shaderProgram.isCompiled();
+        shaderProgram.dispose();
+        return compiled;
     }
 
     public static class ShaderParseException extends RuntimeException {
