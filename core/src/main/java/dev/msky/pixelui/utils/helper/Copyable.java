@@ -6,6 +6,7 @@ import com.badlogic.gdx.utils.ObjectLongMap;
 import com.badlogic.gdx.utils.ObjectSet;
 
 import java.util.Arrays;
+import java.util.Stack;
 
 public interface Copyable<T> {
     T copy();

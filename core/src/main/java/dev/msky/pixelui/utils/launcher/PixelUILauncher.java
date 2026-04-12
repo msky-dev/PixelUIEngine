@@ -14,8 +14,59 @@ import java.awt.datatransfer.StringSelection;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.lang.foreign.*;
+import java.lang.invoke.MethodHandle;
+
+import static java.lang.foreign.ValueLayout.ADDRESS;
+import static java.lang.foreign.ValueLayout.JAVA_INT;
 
 public class PixelUILauncher {
+
+    private record VulkanResult(boolean vulkanAvailable, String version){
+    }
+
+    private static VulkanResult checkVulkan() {
+        final String vulkanLibName;
+        switch (SharedLibraryLoader.os){
+            case Windows -> vulkanLibName = "vulkan-1";
+            case Linux -> vulkanLibName = "libvulkan.so.1";
+            default -> {
+                return new VulkanResult(false, null);
+            }
+        };
+
+        Linker linker = Linker.nativeLinker();
+        Arena arena = Arena.ofConfined();
+        SymbolLookup lib = SymbolLookup.libraryLookup(vulkanLibName, arena);
+        MemorySegment func = lib.find("vkEnumerateInstanceVersion")
+                .orElseThrow();
+        MethodHandle vkEnumerateInstanceVersion =
+                linker.downcallHandle(
+                        func,
+                        FunctionDescriptor.of(JAVA_INT, ADDRESS)
+                );
+        MemorySegment versionPtr = arena.allocate(JAVA_INT);
+        int result = 0;
+        try {
+            result = (int) vkEnumerateInstanceVersion.invoke(versionPtr);
+        } catch (Throwable e) {
+            return new VulkanResult(false, null);
+        }
+
+        if (result != 0) {
+            return new VulkanResult(false, null);
+        }
+
+        int version = versionPtr.get(JAVA_INT, 0);
+
+        int major = (version >> 22) & 0x3FF;
+        int minor = (version >> 12) & 0x3FF;
+        int patch = version & 0xFFF;
+
+        return new VulkanResult(true, major + "." + minor + "." + patch);
+    }
+
+
     public static void launch(ApplicationAdapter applicationAdapter, PixelUILaunchConfig launchConfig) {
         if (SharedLibraryLoader.os != Os.Windows && SharedLibraryLoader.os != Os.Linux) {
             throw new RuntimeException("Operating System \"" + System.getProperty("os.name") + "\n not supported");
@@ -23,14 +74,9 @@ public class PixelUILauncher {
 
         boolean useVulkan = launchConfig.useVulkan;
         if (useVulkan) {
-            try {
-                if (SharedLibraryLoader.os == Os.Windows) {
-                    System.loadLibrary("vulkan-1");
-                } else if (SharedLibraryLoader.os == Os.Linux) {
-                    System.loadLibrary("vulkan");
-                }
-            } catch (UnsatisfiedLinkError _) {
-                Tools.App.logError("Vulkan not available, fallback to OpenGL");
+            final boolean vulkanAvailable = checkVulkan().vulkanAvailable();
+            if(!vulkanAvailable){
+                Tools.App.logError("Vulkan not available, fallback to OpenGL 4.5");
                 useVulkan = false;
             }
         }
