@@ -3,12 +3,12 @@ package dev.msky.pixelui.rendering;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL30;
-import com.badlogic.gdx.graphics.GL32;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.utils.NumberUtils;
 import com.badlogic.gdx.utils.ObjectIntMap;
 import com.badlogic.gdx.utils.ObjectMap;
+import org.lwjgl.opengl.GL32;
 
 import java.util.Arrays;
 
@@ -22,17 +22,24 @@ abstract class CommonRenderer {
 
     protected static final int RGB_SRC = 0, RGB_DST = 1, ALPHA_SRC = 2, ALPHA_DST = 3;
 
-    private static final int[] BLEND_LAYER =  new int[]{
+    private static final int[] BLEND_LAYER = new int[]{
             GL30.GL_SRC_ALPHA,
             GL30.GL_ONE_MINUS_SRC_ALPHA,
             GL30.GL_ONE,
             GL30.GL_ONE_MINUS_SRC_ALPHA
     };
 
-    private static final int[] BLEND_COMPOSITE =  new int[]{
+    private static final int[] BLEND_COMPOSITE = new int[]{
             GL30.GL_ONE,
             GL30.GL_ONE_MINUS_SRC_ALPHA,
             GL30.GL_ONE,
+            GL30.GL_ONE_MINUS_SRC_ALPHA
+    };
+
+    private static final int[] BLEND_REMOVE = new int[]{
+            GL32.GL_ZERO,
+            GL30.GL_ONE_MINUS_SRC_ALPHA,
+            GL30.GL_ZERO,
             GL30.GL_ONE_MINUS_SRC_ALPHA
     };
 
@@ -125,10 +132,6 @@ abstract class CommonRenderer {
     }
 
 
-
-
-
-
     // -------- Blending --------
     public void setBlendingEnabled(boolean enabled) {
         this.blendingEnabled = enabled;
@@ -138,13 +141,13 @@ abstract class CommonRenderer {
         return this.blendingEnabled;
     }
 
-    public String blendFunctionString(){
+    public String blendFunctionString() {
         String result = "";
-        for(int i=0;i<blend.length;i++){
-            if(i != 0)
+        for (int i = 0; i < blend.length; i++) {
+            if (i != 0)
                 result += ", ";
 
-            result += switch (blend[i]){
+            result += switch (blend[i]) {
                 case 0 -> "GL_ZERO";
                 case 1 -> "GL_ONE";
                 case 0x0300 -> "GL_SRC_COLOR";
@@ -163,19 +166,19 @@ abstract class CommonRenderer {
         return result;
     }
 
-    public int getBlendSrcClr(){
+    public int getBlendSrcClr() {
         return blend[0];
     }
 
-    public int getBlendDstClr(){
+    public int getBlendDstClr() {
         return blend[1];
     }
 
-    public int getBlendSrcAlpha(){
+    public int getBlendSrcAlpha() {
         return blend[2];
     }
 
-    public int getBlendDstAlpha(){
+    public int getBlendDstAlpha() {
         return blend[3];
     }
 
@@ -229,8 +232,18 @@ abstract class CommonRenderer {
         );
     }
 
-    public void reset(){
-        this.setBlendFunctionSeparate(BLEND_LAYER[0],BLEND_LAYER[1],BLEND_LAYER[2],BLEND_LAYER[3]);
+    public void setBlendFunctionRemove() {
+        this.setBlendFunctionSeparate(
+                BLEND_REMOVE[0],
+                BLEND_REMOVE[1],
+                BLEND_REMOVE[2],
+                BLEND_REMOVE[3]
+        );
+    }
+
+
+    public void reset() {
+        this.setBlendFunctionSeparate(BLEND_LAYER[0], BLEND_LAYER[1], BLEND_LAYER[2], BLEND_LAYER[3]);
         this.resetImpl();
     }
 
@@ -249,27 +262,35 @@ abstract class CommonRenderer {
         return drawing;
     }
 
-    protected void setDrawing(boolean drawing){
+    protected void setDrawing(boolean drawing) {
         this.drawing = drawing;
     }
 
     protected static float colorPackedRGBA(float r, float g, float b, float a) {
         return NumberUtils.intBitsToFloat(
-                ((int)(a * 255) << 24 & 0xFE000000) |
-                        ((int)(b * 255) << 16 & 0xFF0000) |
-                        ((int)(g * 255) << 8  & 0xFF00) |
-                        ((int)(r * 255)       & 0xFF)
+                ((int) (a * 255) << 24 & 0xFE000000) |
+                        ((int) (b * 255) << 16 & 0xFF0000) |
+                        ((int) (g * 255) << 8 & 0xFF00) |
+                        ((int) (r * 255) & 0xFF)
         );
     }
 
     protected abstract void flush();
+
     public abstract void begin();
+
     public abstract void end();
+
     protected abstract void resetImpl();
+
     protected abstract void setBlendFuncSeparateImpl(int srcColor, int dstColor, int srcAlpha, int dstAlpha);
+
     protected abstract void setBlendFuncImpl(int srcColor, int dstColor);
+
     protected abstract void saveStateImpl();
+
     protected abstract void loadStateImpl();
+
     protected abstract ShaderProgram provideDefaultShader();
 
 }
