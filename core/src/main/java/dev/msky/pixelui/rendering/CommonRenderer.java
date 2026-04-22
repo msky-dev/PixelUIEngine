@@ -241,8 +241,8 @@ abstract class CommonRenderer {
         );
     }
 
-
     public void reset() {
+        this.setShader(null);
         this.setBlendFunctionSeparate(BLEND_LAYER[0], BLEND_LAYER[1], BLEND_LAYER[2], BLEND_LAYER[3]);
         this.resetImpl();
     }
