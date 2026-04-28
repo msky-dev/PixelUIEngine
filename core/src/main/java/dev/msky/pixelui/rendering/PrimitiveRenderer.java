@@ -47,6 +47,10 @@ public class PrimitiveRenderer extends CommonRenderer implements Disposable {
         this(shaderProgram, MAX_VERTEXES_DEFAULT);
     }
 
+    @Override
+    protected void setShaderImpl() {
+    }
+
     public PrimitiveRenderer(final ShaderProgram defaultShader, final int maxVertexes) {
         int vertexAbsoluteLimit = Integer.MAX_VALUE / (VERTEX_SIZE * 4);
         if (maxVertexes > vertexAbsoluteLimit)
@@ -73,11 +77,7 @@ public class PrimitiveRenderer extends CommonRenderer implements Disposable {
 
     }
 
-    public void begin() {
-        begin(GL30.GL_POINTS);
-    }
-
-    public void begin(int primitiveType) {
+    protected void beginImpl() {
         if (isDrawing()) throw new IllegalStateException(ERROR_END_BEGIN);
         Gdx.gl30.glDepthMask(false);
         this.shader.bind();
@@ -94,14 +94,14 @@ public class PrimitiveRenderer extends CommonRenderer implements Disposable {
         setDrawing(true);
     }
 
-    protected void setPrimitiveType(int primitiveType) {
+    public void setPrimitiveType(int primitiveType) {
         if (primitiveType == this.primitiveType)
             return;
         this.flush();
         this.primitiveType = primitiveType;
     }
 
-    public void end() {
+    protected void endImpl() {
         flush();
         Gdx.gl30.glDepthMask(true);
         setDrawing(false);

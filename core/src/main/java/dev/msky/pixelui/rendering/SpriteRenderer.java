@@ -47,7 +47,6 @@ public class SpriteRenderer extends CommonRenderer implements Disposable {
     private Texture lastTexture;
     private float invTexWidth, invTexHeight;
     private MediaManager mediaManager;
-    private int nextSamplerTextureUnit;
 
     protected float color, color_save;
     protected float tweak, tweak_save, tweak_reset;
@@ -93,7 +92,6 @@ public class SpriteRenderer extends CommonRenderer implements Disposable {
         this.indexBufferObject = createIndexBufferObject(this.sizeMaxVertexes);
         this.indexBuffer = this.indexBufferObject.getBuffer(true);
         this.invTexWidth = this.invTexHeight = 0;
-        this.nextSamplerTextureUnit = 1;
         this.mediaManager = mediaManager;
 
         this.color = COLOR_RESET;
@@ -131,7 +129,7 @@ public class SpriteRenderer extends CommonRenderer implements Disposable {
                 new VertexAttribute(VertexAttributes.Usage.ColorPacked, 4, TWEAK_ATTRIBUTE));
     }
 
-    public void begin() {
+    protected void beginImpl() {
         if (isDrawing()) throw new IllegalStateException(ERROR_END_BEGIN);
         Gdx.gl30.glDepthMask(false);
         this.shader.bind();
@@ -147,12 +145,11 @@ public class SpriteRenderer extends CommonRenderer implements Disposable {
     }
 
 
-    public void end() {
+    protected void endImpl() {
         flush();
         Gdx.gl30.glDepthMask(true);
         setDrawing(false);
         lastTexture = null;
-        this.nextSamplerTextureUnit = 1;
     }
 
     private boolean isVertexBufferLimitReached() {
@@ -796,33 +793,18 @@ public class SpriteRenderer extends CommonRenderer implements Disposable {
     }
 
     @Override
-    public void setShader(ShaderProgram shader) {
-        super.setShader(shader);
-        this.nextSamplerTextureUnit = 1;
+    protected void setShaderImpl() {
     }
 
     public void bindCMediaTextureToUniform(CMediaTexture texture, String uniform) {
-        bindTextureToUniform(mediaManager.texture(texture), uniform);
+        super.bindTextureToUniform(mediaManager.texture(texture), uniform);
     }
 
     public void bindCMediaTextureToUniform(CMediaTexture texture, String uniform, String sizeUniform) {
-        bindTextureToUniform(mediaManager.texture(texture), uniform, sizeUniform);
+        super.bindTextureToUniform(mediaManager.texture(texture), uniform, sizeUniform);
     }
 
-    public void bindTextureToUniform(Texture texture, String uniform) {
-        bindTextureToUniform(texture, uniform, null);
-    }
 
-    public void bindTextureToUniform(Texture texture, String uniform, String sizeUniform) {
-        Gdx.gl30.glActiveTexture(GL30.GL_TEXTURE0 + this.nextSamplerTextureUnit);
-        texture.bind();
-        this.shader.setUniformi(uniformLocation(uniform), this.nextSamplerTextureUnit);
-        if (sizeUniform != null) {
-            this.shader.setUniformf(uniformLocation(sizeUniform), texture.getWidth(), texture.getHeight());
-        }
-        Gdx.gl30.glActiveTexture(GL30.GL_TEXTURE0);
-        this.nextSamplerTextureUnit++;
-    }
 
     // ####### MediaManager Draw Methods #######
 

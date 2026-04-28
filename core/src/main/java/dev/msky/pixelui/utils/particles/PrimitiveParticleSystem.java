@@ -6,6 +6,7 @@ import dev.msky.pixelui.utils.concurrency.ParallelExecutor;
 import dev.msky.pixelui.utils.particles.particles.EmptyParticle;
 import dev.msky.pixelui.utils.particles.particles.Particle;
 import dev.msky.pixelui.utils.particles.particles.PrimitiveParticle;
+import org.lwjgl.opengl.GL32;
 
 public final class PrimitiveParticleSystem<T> extends ParticleSystem<T> {
 
@@ -20,7 +21,8 @@ public final class PrimitiveParticleSystem<T> extends ParticleSystem<T> {
         default void renderPrimitiveParticle(PrimitiveRenderer primitiveRenderer, PrimitiveParticle<T> particle) {
             if (primitiveRenderer.getPrimitiveType() != particle.primitiveType) {
                 primitiveRenderer.end();
-                primitiveRenderer.begin(particle.primitiveType);
+                primitiveRenderer.setPrimitiveType(GL32.GL_POINT);
+                primitiveRenderer.begin();
             }
             primitiveRenderer.setVertexColor(particle.r, particle.g, particle.b, particle.a);
             primitiveRenderer.vertex(MathUtils.round(particle.x), MathUtils.round(particle.y));

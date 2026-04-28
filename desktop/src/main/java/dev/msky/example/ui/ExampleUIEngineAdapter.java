@@ -214,7 +214,7 @@ public class ExampleUIEngineAdapter implements UIEngineAdapter {
 
         // Primitive Drawing Test
 
-        primitiveRenderer.begin(GL30.GL_POINTS);
+        primitiveRenderer.begin();
 
         primitiveRenderer.setVertexColor(Color.BLUE);
 
@@ -229,14 +229,15 @@ public class ExampleUIEngineAdapter implements UIEngineAdapter {
 
 
 
-        primitiveRenderer.begin(GL30.GL_LINES);
+        primitiveRenderer.setPrimitiveType(GL30.GL_LINES);
+        primitiveRenderer.begin();
         primitiveRenderer.setVertexColor(Color.RED);
         primitiveRenderer.vertex(50, 60);
         primitiveRenderer.vertex(55, 60);
         primitiveRenderer.end();
 
-
-        primitiveRenderer.begin(GL30.GL_TRIANGLES);
+        primitiveRenderer.setPrimitiveType(GL30.GL_TRIANGLES);
+        primitiveRenderer.begin();
         primitiveRenderer.setVertexColor(Color.YELLOW);
         primitiveRenderer.vertex(50, 70);
         primitiveRenderer.setVertexColor(Color.BLUE);
@@ -250,8 +251,8 @@ public class ExampleUIEngineAdapter implements UIEngineAdapter {
         primitiveRenderer.vertex(60 + 15, 70);
         primitiveRenderer.end();
 
-
-        primitiveRenderer.begin(GL30.GL_LINE_STRIP);
+        primitiveRenderer.setPrimitiveType(GL30.GL_LINE_STRIP);
+        primitiveRenderer.begin();
         primitiveRenderer.setVertexColor(Color.RED);
 
         primitiveRenderer.vertex(100, 140);
@@ -337,7 +338,8 @@ public class ExampleUIEngineAdapter implements UIEngineAdapter {
         spriteRenderer.end();
 
         primitiveRenderer.setProjectionMatrix(camera.combined);
-        primitiveRenderer.begin(GL30.GL_TRIANGLES);
+        primitiveRenderer.setPrimitiveType(GL30.GL_TRIANGLES);
+        primitiveRenderer.begin();
         primitiveRenderer.setVertexColor(Color.BLUE);
         primitiveRenderer.vertex(300,300);
         primitiveRenderer.setVertexColor(Color.RED);

@@ -3,6 +3,7 @@ package dev.msky.pixelui.rendering;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL30;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.utils.NumberUtils;
@@ -46,8 +47,8 @@ abstract class CommonRenderer {
     // -------- State --------
 
     protected int[] blend, blend_save;
-
     protected boolean blendingEnabled = true;
+    private int nextSamplerTextureUnit;
 
     private boolean drawing = false;
 
@@ -78,6 +79,7 @@ abstract class CommonRenderer {
 
         this.defaultShader = defaultShader != null ? defaultShader : provideDefaultShader();
         this.shader = this.defaultShader;
+        this.nextSamplerTextureUnit = 1;
     }
 
     // -------- Shader Helpers --------
@@ -99,19 +101,6 @@ abstract class CommonRenderer {
     protected void setupMatrices() {
         combinedMatrix.set(projectionMatrix).mul(transformMatrix);
         shader.setUniformMatrix(uniformLocation(PROJTRANS_UNIFORM), combinedMatrix);
-    }
-
-    public void setShader(ShaderProgram shader) {
-        ShaderProgram next = shader != null ? shader : defaultShader;
-        if (this.shader == next) return;
-
-        this.shader = next;
-
-        if (drawing) {
-            flush();
-            this.shader.bind();
-            setupMatrices();
-        }
     }
 
     // -------- State Save/Load --------
@@ -275,11 +264,53 @@ abstract class CommonRenderer {
         );
     }
 
+    public void bindTextureToUniform(Texture texture, String uniform) {
+        bindTextureToUniform(texture, uniform, null);
+    }
+
+    public void bindTextureToUniform(Texture texture, String uniform, String sizeUniform) {
+        Gdx.gl30.glActiveTexture(GL30.GL_TEXTURE0 + this.nextSamplerTextureUnit);
+        texture.bind();
+        this.shader.setUniformi(uniformLocation(uniform), this.nextSamplerTextureUnit);
+        if (sizeUniform != null) {
+            this.shader.setUniformf(uniformLocation(sizeUniform), texture.getWidth(), texture.getHeight());
+        }
+        Gdx.gl30.glActiveTexture(GL30.GL_TEXTURE0);
+        this.nextSamplerTextureUnit++;
+    }
+
+
+    public void setShader(ShaderProgram shader) {
+        ShaderProgram next = shader != null ? shader : defaultShader;
+        if (this.shader == next) return;
+
+        this.shader = next;
+
+        if (drawing) {
+            flush();
+            this.shader.bind();
+            setupMatrices();
+        }
+        this.nextSamplerTextureUnit = 1;
+        this.setShaderImpl();
+    }
+
+    public void end(){
+        this.nextSamplerTextureUnit = 1;
+        this.endImpl();
+    }
+
+    public void begin(){
+        this.beginImpl();
+    }
+
+    protected abstract void setShaderImpl();
+
     protected abstract void flush();
 
-    public abstract void begin();
+    protected abstract void beginImpl();
 
-    public abstract void end();
+    protected abstract void endImpl();
 
     protected abstract void resetImpl();
 
