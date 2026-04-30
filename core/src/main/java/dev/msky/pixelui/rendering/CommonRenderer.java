@@ -304,6 +304,10 @@ abstract class CommonRenderer {
         this.beginImpl();
     }
 
+    public ShaderProgram shader(){
+        return this.shader;
+    }
+
     protected abstract void setShaderImpl();
 
     protected abstract void flush();
