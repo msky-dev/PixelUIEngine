@@ -2457,6 +2457,7 @@ public final class UIEngine<T extends UIEngineAdapter> implements Disposable {
                         }
                     }
 
+
                     // Background
                     if (segmentAlpha > 0f) {
                         render_setColor(spriteRenderer, segment.cellColor, segmentAlpha, false);
@@ -2572,14 +2573,25 @@ public final class UIEngine<T extends UIEngineAdapter> implements Disposable {
         final int rootHeight = tooltipHeight(root);
         final int rootLineLength = TS(root.lineLength);
 
+        int combinedWidth = rootWidth;
+        int combinedHeight = rootHeight;
+        int combinedLineLength = rootLineLength;
+        Tooltip additionalToolTip = root.additionalTooltip;
+        while (additionalToolTip != null){
+            combinedWidth += tooltipWidth(additionalToolTip);
+            combinedHeight += tooltipWidth(additionalToolTip);
+            combinedLineLength += TS(additionalToolTip.lineLength);
+            additionalToolTip = additionalToolTip.additionalTooltip;
+        }
+
         final DIRECTION direction = switch (root.direction) {
-            case RIGHT -> anchorX + rootLineLength > uiEngineState.resolutionWidth - TS(rootWidth)
+            case RIGHT -> anchorX + combinedLineLength > uiEngineState.resolutionWidth - TS(combinedWidth)
                     ? DIRECTION.LEFT : DIRECTION.RIGHT;
-            case LEFT -> anchorX - TS(rootWidth + root.lineLength) < 0
+            case LEFT -> anchorX - TS(combinedWidth + root.lineLength) < 0
                     ? DIRECTION.RIGHT : DIRECTION.LEFT;
-            case UP -> anchorY + rootLineLength > uiEngineState.resolutionHeight - TS(rootHeight)
+            case UP -> anchorY + combinedLineLength > uiEngineState.resolutionHeight - TS(combinedHeight)
                     ? DIRECTION.DOWN : DIRECTION.UP;
-            case DOWN -> anchorY - TS(rootHeight + root.lineLength) < 0
+            case DOWN -> anchorY - TS(combinedHeight + root.lineLength) < 0
                     ? DIRECTION.UP : DIRECTION.DOWN;
             case NONE -> throw new IllegalStateException();
         };
