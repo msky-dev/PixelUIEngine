@@ -723,6 +723,11 @@ public final class MediaManager implements Disposable {
         return medias_arrays.get(cMediaArray).length - 1;
     }
 
+    public int arrayPercentIndex(CMediaArray cMediaArray, float pct) {
+        pct = Math.clamp(pct,0f,1f);
+        return MathUtils.floor(pct*(medias_arrays.get(cMediaArray).length - 1));
+    }
+
     public int arrayIndex(CMediaArray cMediaArray, float pct) {
         final int lastIndex = medias_arrays.get(cMediaArray).length - 1;
         return MathUtils.floor(Math.clamp(pct, 0f, 1f) * lastIndex);
