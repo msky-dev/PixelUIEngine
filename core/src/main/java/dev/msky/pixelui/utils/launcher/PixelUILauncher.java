@@ -82,7 +82,6 @@ public class PixelUILauncher {
         if(useVulkan){
             com.github.dgzt.gdx.lwjgl3.Lwjgl3ApplicationConfiguration config = new com.github.dgzt.gdx.lwjgl3.Lwjgl3ApplicationConfiguration();
             config.setOpenGLEmulation(com.github.dgzt.gdx.lwjgl3.Lwjgl3ApplicationConfiguration.GLEmulation.ANGLE_GLES32, 4, 5);
-
             setConfigUniversal(config, launchConfig);
             try {
                 new Lwjgl3VulkanApplication(applicationAdapter, config);
@@ -91,7 +90,6 @@ public class PixelUILauncher {
             }
         }else{
             Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
-
             config.setOpenGLEmulation(Lwjgl3ApplicationConfiguration.GLEmulation.GL32, 4, 5);
             setConfigUniversal(config, launchConfig);
             try {
@@ -109,7 +107,6 @@ public class PixelUILauncher {
             final Class c = config.getClass();
             c.getMethod("setResizable", boolean.class).invoke(config, launchConfig.resizeAble);
             c.getMethod("setDecorated", boolean.class).invoke(config, launchConfig.decorated);
-            c.getMethod("setDecorated", boolean.class).invoke(config, launchConfig.maximized);
             c.getMethod("setMaximized", boolean.class).invoke(config, launchConfig.maximized);
             c.getMethod("setWindowPosition", int.class, int.class).invoke(config, -1, -1);
             c.getMethod("setWindowSizeLimits", int.class, int.class, int.class, int.class).invoke(config, launchConfig.resolutionWidth, launchConfig.resolutionHeight, -1, -1);
