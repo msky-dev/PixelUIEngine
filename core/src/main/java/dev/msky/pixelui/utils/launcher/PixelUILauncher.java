@@ -11,9 +11,7 @@ import dev.msky.pixelui.utils.Tools;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.datatransfer.StringSelection;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.*;
 import java.lang.foreign.*;
 import java.lang.invoke.MethodHandle;
 
@@ -93,6 +91,7 @@ public class PixelUILauncher {
             }
         }else{
             Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
+
             config.setOpenGLEmulation(Lwjgl3ApplicationConfiguration.GLEmulation.GL32, 4, 5);
             setConfigUniversal(config, launchConfig);
             try {
@@ -109,7 +108,7 @@ public class PixelUILauncher {
 
             final Class c = config.getClass();
             c.getMethod("setResizable", boolean.class).invoke(config, launchConfig.resizeAble);
-            c.getMethod("setResizable", boolean.class).invoke(config, launchConfig.decorated);
+            c.getMethod("setDecorated", boolean.class).invoke(config, launchConfig.decorated);
             c.getMethod("setDecorated", boolean.class).invoke(config, launchConfig.maximized);
             c.getMethod("setMaximized", boolean.class).invoke(config, launchConfig.maximized);
             c.getMethod("setWindowPosition", int.class, int.class).invoke(config, -1, -1);

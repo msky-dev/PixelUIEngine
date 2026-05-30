@@ -16,5 +16,7 @@ replay_pid*
 /dev/**
 /desktop/target/**
 /desktop/.lwjgl/**
+/desktop/.lwjgl/**
 /core/target/**
 /buildtools/**
+/PixelUI_1.0_win_x64/**
