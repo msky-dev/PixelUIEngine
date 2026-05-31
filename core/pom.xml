@@ -14,7 +14,6 @@
 	<dependencies>
 
 		<!-- GDX -->
-
 		<dependency>
 			<groupId>com.badlogicgames.gdx</groupId>
 			<artifactId>gdx</artifactId>
