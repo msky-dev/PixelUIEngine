@@ -34,7 +34,7 @@ export WIN_X64_ICON="./buildtools/appicon.ico"
 export WIN_X64_FILE_SUFFIX="win_x64"
 
 #LINUX_X64
-export LINUX_X64_ENABLED="false"
+export LINUX_X64_ENABLED="true"
 export LINUX_X64_ROAST_BINARY="./buildtools/roast/roast-linux-x86_64"
 export LINUX_X64_JRE="C:/Program Files/Java/25/linux_x64/jdk-25.0.2+10-jre"
 export LINUX_X64_FILE_SUFFIX="linux_x64"
