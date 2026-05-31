@@ -14,7 +14,7 @@ public class ExampleLauncherMain {
         pixelUILaunchConfig.appTile = ExampleMainConstants.APP_TITLE;
         pixelUILaunchConfig.resolutionWidth = ExampleMainConstants.INTERNAL_RESOLUTION_WIDTH;
         pixelUILaunchConfig.resolutionHeight = ExampleMainConstants.INTERNAL_RESOLUTION_HEIGHT;
-        pixelUILaunchConfig.useVulkan = true;
+        pixelUILaunchConfig.useVulkan = false;
         pixelUILaunchConfig.fullScreen = false;
         PixelUILauncher.launch(new ExampleMain(), pixelUILaunchConfig);
     }
