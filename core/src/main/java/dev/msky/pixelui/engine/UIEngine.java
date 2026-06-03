@@ -72,8 +72,8 @@ public final class UIEngine<T extends UIEngineAdapter> implements Disposable {
         this.api = new API(this.uiEngineState, mediaManager);
 
         Gdx.graphics.setSystemCursor(Cursor.SystemCursor.None);
-        Gdx.gl30.glClearColor(0, 0, 0, 0);
-        Gdx.gl30.glClear(GL30.GL_COLOR_BUFFER_BIT);
+        Gdx.gl20.glClearColor(0, 0, 0, 0);
+        Gdx.gl20.glClear(GL20.GL_COLOR_BUFFER_BIT);
         /*  Call Adapter Init */
         this.uiAdapter.init(this.api, this.mediaManager);
     }
@@ -2029,8 +2029,8 @@ public final class UIEngine<T extends UIEngineAdapter> implements Disposable {
     }
 
     private void render_glClear() {
-        Gdx.gl30.glClearColor(0f, 0f, 0f, 0f);
-        Gdx.gl30.glClear(GL30.GL_COLOR_BUFFER_BIT);
+        Gdx.gl20.glClearColor(0f, 0f, 0f, 0f);
+        Gdx.gl20.glClear(GL20.GL_COLOR_BUFFER_BIT);
     }
 
     private void renderGameViewPortFrameBuffer(AppViewport appViewPort) {

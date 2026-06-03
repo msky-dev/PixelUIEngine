@@ -56,12 +56,14 @@
 
 			<!-- Vulkan -->
 
-			<dependency>
-				<groupId>com.github.Dgzt</groupId>
-				<artifactId>gdx-lwjgl3-angle-vulkan</artifactId>
-				<version>${lwjgl3-angle-vulkan.version}</version>
-			</dependency>
 
+
+			<dependency>
+				<groupId>com.badlogicgames.gdx</groupId>
+				<artifactId>gdx-lwjgl3-angle</artifactId>
+				<version>1.14.0</version>
+				<scope>compile</scope>
+			</dependency>
 
 		</dependencies>
 	</dependencyManagement>

@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.glutils.IndexBufferObject;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
+import com.badlogic.gdx.graphics.glutils.VertexBufferObject;
 import com.badlogic.gdx.graphics.glutils.VertexBufferObjectWithVAO;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.ShortArray;
@@ -33,7 +34,7 @@ public class PrimitiveRenderer extends CommonRenderer implements Disposable {
     private int idx;
     private final FloatBuffer vertexBuffer;
     private final ShortBuffer indexBuffer;
-    private final VertexBufferObjectWithVAO vertexBufferObject;
+    private final VertexBufferObject vertexBufferObject;
     private final IndexBufferObject indexBufferObject;
     private final ShortArray indexResets;
     private float vertexColor, vertexColor_save;
@@ -73,24 +74,24 @@ public class PrimitiveRenderer extends CommonRenderer implements Disposable {
         this.indexResets = new ShortArray();
         this.vertexColor = VERTEX_COLOR_RESET;
         this.vertexColor_save = this.vertexColor;
-        this.primitiveType = GL30.GL_POINTS;
+        this.primitiveType = GL20.GL_POINTS;
 
     }
 
     protected void beginImpl() {
         if (isDrawing()) throw new IllegalStateException(ERROR_END_BEGIN);
-        Gdx.gl30.glDepthMask(false);
+        Gdx.gl20.glDepthMask(false);
         this.shader.bind();
         setupMatrices();
         // Blending
         if (this.blendingEnabled) {
-            Gdx.gl30.glEnable(GL30.GL_BLEND);
-            Gdx.gl30.glBlendFuncSeparate(this.blend[RGB_SRC], this.blend[RGB_DST], this.blend[ALPHA_SRC], this.blend[ALPHA_DST]);
+            Gdx.gl20.glEnable(GL20.GL_BLEND);
+            Gdx.gl20.glBlendFuncSeparate(this.blend[RGB_SRC], this.blend[RGB_DST], this.blend[ALPHA_SRC], this.blend[ALPHA_DST]);
         } else {
-            Gdx.gl30.glDisable(GL30.GL_BLEND);
+            Gdx.gl20.glDisable(GL20.GL_BLEND);
         }
         this.setPrimitiveType(primitiveType);
-        Gdx.gl30.glEnable(GL30.GL_PRIMITIVE_RESTART_FIXED_INDEX);
+        //Gdx.gl20.glEnable(GL20.GL_PRIMITIVE_RESTART_FIXED_INDEX);
         setDrawing(true);
     }
 
@@ -103,9 +104,9 @@ public class PrimitiveRenderer extends CommonRenderer implements Disposable {
 
     protected void endImpl() {
         flush();
-        Gdx.gl30.glDepthMask(true);
+        Gdx.gl20.glDepthMask(true);
         setDrawing(false);
-        Gdx.gl30.glDisable(GL30.GL_PRIMITIVE_RESTART_FIXED_INDEX);
+        //Gdx.gl20.glDisable(GL20.GL_PRIMITIVE_RESTART_FIXED_INDEX);
     }
 
     protected IndexBufferObject createIndexBufferObject(final int size) {
@@ -173,7 +174,7 @@ public class PrimitiveRenderer extends CommonRenderer implements Disposable {
         this.indexBufferObject.bind();
 
         // Draw
-        Gdx.gl30.glDrawElements(this.primitiveType, indicesCount, GL30.GL_UNSIGNED_SHORT, 0);
+        Gdx.gl20.glDrawElements(this.primitiveType, indicesCount, GL20.GL_UNSIGNED_SHORT, 0);
 
         // reset
         this.indexBuffer.limit(this.sizeMaxIndices);
@@ -252,8 +253,8 @@ public class PrimitiveRenderer extends CommonRenderer implements Disposable {
     }
 
 
-    protected VertexBufferObjectWithVAO createVertexBufferObject(final int size) {
-        return new VertexBufferObjectWithVAO(true, size * VERTEX_SIZE,
+    protected VertexBufferObject createVertexBufferObject(final int size) {
+        return new VertexBufferObject(true, size * VERTEX_SIZE,
                 new VertexAttribute(VertexAttributes.Usage.Position, 2, POSITION_ATTRIBUTE),
                 new VertexAttribute(VertexAttributes.Usage.ColorPacked, 4, VERTEX_COLOR_ATTRIBUTE)
         );
@@ -286,12 +287,12 @@ public class PrimitiveRenderer extends CommonRenderer implements Disposable {
 
     @Override
     protected void setBlendFuncSeparateImpl(int srcColor, int dstColor, int srcAlpha, int dstAlpha) {
-        Gdx.gl30.glBlendFuncSeparate(srcColor, dstColor, srcAlpha, dstAlpha);
+        Gdx.gl20.glBlendFuncSeparate(srcColor, dstColor, srcAlpha, dstAlpha);
     }
 
     @Override
     protected void setBlendFuncImpl(int srcColor, int dstColor) {
-        Gdx.gl30.glBlendFunc(srcColor, dstColor);
+        Gdx.gl20.glBlendFunc(srcColor, dstColor);
     }
 
     @Override

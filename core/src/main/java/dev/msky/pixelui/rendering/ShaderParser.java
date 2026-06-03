@@ -2,6 +2,7 @@ package dev.msky.pixelui.rendering;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
+import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.GL30;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.utils.Array;
@@ -29,7 +30,7 @@ public class ShaderParser {
         };
 
 
-        String glVersion = Gdx.gl30.glGetString(GL30.GL_VERSION);
+        String glVersion = Gdx.gl20.glGetString(GL20.GL_VERSION);
         if (glVersion != null && glVersion.contains("OpenGL ES")) {
 
             for(int i=0;i<ES_VERSIONS.length;i++){

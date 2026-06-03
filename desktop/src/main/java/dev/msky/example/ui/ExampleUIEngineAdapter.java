@@ -1,10 +1,7 @@
 package dev.msky.example.ui;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.GL30;
-import com.badlogic.gdx.graphics.GL32;
-import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.MathUtils;
 import dev.msky.pixelui.media.MediaManager;
@@ -151,7 +148,7 @@ public class ExampleUIEngineAdapter implements UIEngineAdapter {
 
         if (Tools.Calc.randomChance(30)) {
             spriteParticleSystem.addImageParticle(api.theme().UI_CURSOR_ARROW, MathUtils.random(0, api.resolutionWidth()), api.resolutionHeight());
-            primitiveParticleSystem.addPrimitiveParticle(GL30.GL_LINES, MathUtils.random(0, api.resolutionWidth()), api.resolutionHeight(),
+            primitiveParticleSystem.addPrimitiveParticle(GL20.GL_LINES, MathUtils.random(0, api.resolutionWidth()), api.resolutionHeight(),
                     MathUtils.random(0f, 1f), MathUtils.random(0f, 1f), MathUtils.random(0f, 1f), 1f,
                     MathUtils.random(-5, 5), 10,
                     MathUtils.random(0f, 1f), MathUtils.random(0f, 1f), MathUtils.random(0f, 1f), 1f
@@ -167,7 +164,7 @@ public class ExampleUIEngineAdapter implements UIEngineAdapter {
     @Override
     public void render(OrthographicCamera camera, AppViewport appViewPort) {
         animation_timer += Gdx.graphics.getDeltaTime();
-        Gdx.gl30.glClear(GL30.GL_COLOR_BUFFER_BIT);
+        Gdx.gl20.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         // Draw app based on data
         spriteRenderer.setProjectionMatrix(camera.combined);
@@ -229,14 +226,14 @@ public class ExampleUIEngineAdapter implements UIEngineAdapter {
 
 
 
-        primitiveRenderer.setPrimitiveType(GL30.GL_LINES);
+        primitiveRenderer.setPrimitiveType(GL20.GL_LINES);
         primitiveRenderer.begin();
         primitiveRenderer.setVertexColor(Color.RED);
         primitiveRenderer.vertex(50, 60);
         primitiveRenderer.vertex(55, 60);
         primitiveRenderer.end();
 
-        primitiveRenderer.setPrimitiveType(GL30.GL_TRIANGLES);
+        primitiveRenderer.setPrimitiveType(GL20.GL_TRIANGLES);
         primitiveRenderer.begin();
         primitiveRenderer.setVertexColor(Color.YELLOW);
         primitiveRenderer.vertex(50, 70);
@@ -251,7 +248,7 @@ public class ExampleUIEngineAdapter implements UIEngineAdapter {
         primitiveRenderer.vertex(60 + 15, 70);
         primitiveRenderer.end();
 
-        primitiveRenderer.setPrimitiveType(GL30.GL_LINE_STRIP);
+        primitiveRenderer.setPrimitiveType(GL20.GL_LINE_STRIP);
         primitiveRenderer.begin();
         primitiveRenderer.setVertexColor(Color.RED);
 
@@ -338,7 +335,7 @@ public class ExampleUIEngineAdapter implements UIEngineAdapter {
         spriteRenderer.end();
 
         primitiveRenderer.setProjectionMatrix(camera.combined);
-        primitiveRenderer.setPrimitiveType(GL30.GL_TRIANGLES);
+        primitiveRenderer.setPrimitiveType(GL20.GL_TRIANGLES);
         primitiveRenderer.begin();
         primitiveRenderer.setVertexColor(Color.BLUE);
         primitiveRenderer.vertex(300,300);

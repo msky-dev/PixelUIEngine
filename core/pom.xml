@@ -41,9 +41,11 @@
 
 		<!-- Vulkan -->
 
+
 		<dependency>
-			<groupId>com.github.Dgzt</groupId>
-			<artifactId>gdx-lwjgl3-angle-vulkan</artifactId>
+			<groupId>com.badlogicgames.gdx</groupId>
+			<artifactId>gdx-lwjgl3-angle</artifactId>
+			<scope>compile</scope>
 		</dependency>
 
 	</dependencies>

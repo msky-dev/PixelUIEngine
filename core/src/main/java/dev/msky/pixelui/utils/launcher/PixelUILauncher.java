@@ -5,13 +5,14 @@ import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
 import com.badlogic.gdx.utils.Os;
 import com.badlogic.gdx.utils.SharedLibraryLoader;
-import com.github.dgzt.gdx.lwjgl3.Lwjgl3VulkanApplication;
 import dev.msky.pixelui.utils.Tools;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.datatransfer.StringSelection;
-import java.io.*;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.lang.foreign.*;
 import java.lang.invoke.MethodHandle;
 
@@ -20,18 +21,19 @@ import static java.lang.foreign.ValueLayout.JAVA_INT;
 
 public class PixelUILauncher {
 
-    private record VulkanResult(boolean vulkanAvailable, String version){
+    private record VulkanResult(boolean vulkanAvailable, String version) {
     }
 
     private static VulkanResult checkVulkan() {
         final String vulkanLibName;
-        switch (SharedLibraryLoader.os){
+        switch (SharedLibraryLoader.os) {
             case Windows -> vulkanLibName = "vulkan-1";
             case Linux -> vulkanLibName = "libvulkan.so.1";
             default -> {
                 return new VulkanResult(false, null);
             }
-        };
+        }
+        ;
 
         Linker linker = Linker.nativeLinker();
         Arena arena = Arena.ofConfined();
@@ -73,30 +75,19 @@ public class PixelUILauncher {
         boolean useVulkan = launchConfig.useVulkan;
         if (useVulkan) {
             final boolean vulkanAvailable = checkVulkan().vulkanAvailable();
-            if(!vulkanAvailable){
+            if (!vulkanAvailable) {
                 Tools.App.logError("Vulkan not available, fallback to OpenGL 4.5");
                 useVulkan = false;
             }
         }
 
-        if(useVulkan){
-            com.github.dgzt.gdx.lwjgl3.Lwjgl3ApplicationConfiguration config = new com.github.dgzt.gdx.lwjgl3.Lwjgl3ApplicationConfiguration();
-            config.setOpenGLEmulation(com.github.dgzt.gdx.lwjgl3.Lwjgl3ApplicationConfiguration.GLEmulation.ANGLE_GLES32, 4, 5);
-            setConfigUniversal(config, launchConfig);
-            try {
-                new Lwjgl3VulkanApplication(applicationAdapter, config);
-            } catch (Exception e) {
-                handleLaunchException(e, launchConfig);
-            }
-        }else{
-            Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
-            config.setOpenGLEmulation(Lwjgl3ApplicationConfiguration.GLEmulation.GL32, 4, 5);
-            setConfigUniversal(config, launchConfig);
-            try {
-                new Lwjgl3Application(applicationAdapter, config);
-            } catch (Exception e) {
-                handleLaunchException(e, launchConfig);
-            }
+        Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
+        config.setOpenGLEmulation(Lwjgl3ApplicationConfiguration.GLEmulation.ANGLE_GLES20, 2, 0);
+        setConfigUniversal(config, launchConfig);
+        try {
+            new Lwjgl3Application(applicationAdapter, config);
+        } catch (Exception e) {
+            handleLaunchException(e, launchConfig);
         }
     }
 
@@ -119,9 +110,6 @@ public class PixelUILauncher {
                 switch (config) {
                     case Lwjgl3ApplicationConfiguration libgdxConfig -> {
                         libgdxConfig.setFullscreenMode(Lwjgl3ApplicationConfiguration.getDisplayMode());
-                    }
-                    case com.github.dgzt.gdx.lwjgl3.Lwjgl3ApplicationConfiguration vulkanConfig -> {
-                        vulkanConfig.setFullscreenMode(Lwjgl3ApplicationConfiguration.getDisplayMode());
                     }
                     default -> throw new IllegalStateException("Unexpected value: " + config);
                 }

@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.g2d.BitmapFontCache;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.IndexBufferObject;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
+import com.badlogic.gdx.graphics.glutils.VertexBufferObject;
 import com.badlogic.gdx.graphics.glutils.VertexBufferObjectWithVAO;
 import com.badlogic.gdx.math.Affine2;
 import com.badlogic.gdx.math.MathUtils;
@@ -41,7 +42,7 @@ public class SpriteRenderer extends CommonRenderer implements Disposable {
     private int idx;
     private final FloatBuffer vertexBuffer;
     private final ShortBuffer indexBuffer;
-    private final VertexBufferObjectWithVAO vertexBufferObject;
+    private final VertexBufferObject vertexBufferObject;
     private final IndexBufferObject indexBufferObject;
 
     private Texture lastTexture;
@@ -121,8 +122,8 @@ public class SpriteRenderer extends CommonRenderer implements Disposable {
     }
 
 
-    private VertexBufferObjectWithVAO createVertexBufferObject(int size) {
-        return new VertexBufferObjectWithVAO(true, size,
+    private VertexBufferObject createVertexBufferObject(int size) {
+        return new VertexBufferObject(true, size,
                 new VertexAttribute(VertexAttributes.Usage.Position, 2, POSITION_ATTRIBUTE),
                 new VertexAttribute(VertexAttributes.Usage.ColorPacked, 4, COLOR_ATTRIBUTE),
                 new VertexAttribute(VertexAttributes.Usage.TextureCoordinates, 2, TEXCOORD_ATTRIBUTE),
@@ -131,15 +132,15 @@ public class SpriteRenderer extends CommonRenderer implements Disposable {
 
     protected void beginImpl() {
         if (isDrawing()) throw new IllegalStateException(ERROR_END_BEGIN);
-        Gdx.gl30.glDepthMask(false);
+        Gdx.gl20.glDepthMask(false);
         this.shader.bind();
         setupMatrices();
         // Blending
         if (this.blendingEnabled) {
-            Gdx.gl30.glEnable(GL30.GL_BLEND);
-            Gdx.gl30.glBlendFuncSeparate(this.blend[RGB_SRC], this.blend[RGB_DST], this.blend[ALPHA_SRC], this.blend[ALPHA_DST]);
+            Gdx.gl20.glEnable(GL20.GL_BLEND);
+            Gdx.gl20.glBlendFuncSeparate(this.blend[RGB_SRC], this.blend[RGB_DST], this.blend[ALPHA_SRC], this.blend[ALPHA_DST]);
         } else {
-            Gdx.gl30.glDisable(GL30.GL_BLEND);
+            Gdx.gl20.glDisable(GL20.GL_BLEND);
         }
         setDrawing(true);
     }
@@ -147,7 +148,7 @@ public class SpriteRenderer extends CommonRenderer implements Disposable {
 
     protected void endImpl() {
         flush();
-        Gdx.gl30.glDepthMask(true);
+        Gdx.gl20.glDepthMask(true);
         setDrawing(false);
         lastTexture = null;
     }
@@ -776,7 +777,7 @@ public class SpriteRenderer extends CommonRenderer implements Disposable {
         this.indexBufferObject.bind();
 
         // Draw
-        Gdx.gl30.glDrawElements(GL30.GL_TRIANGLES, indicesCount, GL30.GL_UNSIGNED_SHORT, 0);
+        Gdx.gl20.glDrawElements(GL20.GL_TRIANGLES, indicesCount, GL20.GL_UNSIGNED_SHORT, 0);
 
         // reset
         this.indexBuffer.limit(this.sizeMaxIndices);
@@ -1060,12 +1061,12 @@ public class SpriteRenderer extends CommonRenderer implements Disposable {
 
     @Override
     protected void setBlendFuncSeparateImpl(int srcColor, int dstColor, int srcAlpha, int dstAlpha) {
-        Gdx.gl30.glBlendFuncSeparate(srcColor, dstColor, srcAlpha, dstAlpha);
+        Gdx.gl20.glBlendFuncSeparate(srcColor, dstColor, srcAlpha, dstAlpha);
     }
 
     @Override
     protected void setBlendFuncImpl(int srcColor, int dstColor) {
-        Gdx.gl30.glBlendFunc(srcColor, dstColor);
+        Gdx.gl20.glBlendFunc(srcColor, dstColor);
     }
 
     @Override

@@ -2,6 +2,7 @@ package dev.msky.pixelui.rendering;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.GL30;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
@@ -24,24 +25,24 @@ abstract class CommonRenderer {
     protected static final int RGB_SRC = 0, RGB_DST = 1, ALPHA_SRC = 2, ALPHA_DST = 3;
 
     private static final int[] BLEND_LAYER = new int[]{
-            GL30.GL_SRC_ALPHA,
-            GL30.GL_ONE_MINUS_SRC_ALPHA,
-            GL30.GL_ONE,
-            GL30.GL_ONE_MINUS_SRC_ALPHA
+            GL20.GL_SRC_ALPHA,
+            GL20.GL_ONE_MINUS_SRC_ALPHA,
+            GL20.GL_ONE,
+            GL20.GL_ONE_MINUS_SRC_ALPHA
     };
 
     private static final int[] BLEND_COMPOSITE = new int[]{
-            GL30.GL_ONE,
-            GL30.GL_ONE_MINUS_SRC_ALPHA,
-            GL30.GL_ONE,
-            GL30.GL_ONE_MINUS_SRC_ALPHA
+            GL20.GL_ONE,
+            GL20.GL_ONE_MINUS_SRC_ALPHA,
+            GL20.GL_ONE,
+            GL20.GL_ONE_MINUS_SRC_ALPHA
     };
 
     private static final int[] BLEND_REMOVE = new int[]{
             GL32.GL_ZERO,
-            GL30.GL_ONE_MINUS_SRC_ALPHA,
-            GL30.GL_ZERO,
-            GL30.GL_ONE_MINUS_SRC_ALPHA
+            GL20.GL_ONE_MINUS_SRC_ALPHA,
+            GL20.GL_ZERO,
+            GL20.GL_ONE_MINUS_SRC_ALPHA
     };
 
     // -------- State --------
@@ -269,13 +270,13 @@ abstract class CommonRenderer {
     }
 
     public void bindTextureToUniform(Texture texture, String uniform, String sizeUniform) {
-        Gdx.gl30.glActiveTexture(GL30.GL_TEXTURE0 + this.nextSamplerTextureUnit);
+        Gdx.gl20.glActiveTexture(GL20.GL_TEXTURE0 + this.nextSamplerTextureUnit);
         texture.bind();
         this.shader.setUniformi(uniformLocation(uniform), this.nextSamplerTextureUnit);
         if (sizeUniform != null) {
             this.shader.setUniformf(uniformLocation(sizeUniform), texture.getWidth(), texture.getHeight());
         }
-        Gdx.gl30.glActiveTexture(GL30.GL_TEXTURE0);
+        Gdx.gl20.glActiveTexture(GL20.GL_TEXTURE0);
         this.nextSamplerTextureUnit++;
     }
 
