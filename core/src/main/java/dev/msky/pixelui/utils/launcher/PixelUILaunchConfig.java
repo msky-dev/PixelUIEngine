@@ -10,7 +10,7 @@ public final class PixelUILaunchConfig implements Copyable<PixelUILaunchConfig> 
     public int resolutionWidth = 320;
     public int resolutionHeight = 240;
     public String iconPath = null;
-    public boolean useVulkan = true;
+    public boolean useVulkan = false;
     public int fps = 60;
     public int idleFPS = 60;
     public boolean vSync = false;
