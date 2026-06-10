@@ -82,24 +82,36 @@ public class UICommonUtils {
 
     public void window_bringToFront(Window window) {
         var windows = uiEngineState.windows;
-        int size = windows.size;
-        if (size <= 1) return;
+
+        if (windows.size <= 1) {
+            return;
+        }
 
         int currentIndex = windows.indexOf(window, true);
-        if (currentIndex == -1) return; // not found
+        if (currentIndex == -1) {
+            return;
+        }
 
         int targetIndex = windows.size - 1;
 
         if (!window.alwaysOnTop) {
-            for (int i = windows.size - 1; i >= 0; i--)
-                if (windows.get(i).alwaysOnTop)
-                    targetIndex--;
+            while (targetIndex >= 0 && windows.get(targetIndex).alwaysOnTop) {
+                targetIndex--;
+            }
         }
 
-        if (currentIndex == targetIndex)
+        if (currentIndex == targetIndex) {
             return;
+        }
 
-        windows.swap(currentIndex, targetIndex);
+        windows.removeIndex(currentIndex);
+
+        // Adjust because removing shifts indices left.
+        if (currentIndex < targetIndex) {
+            targetIndex--;
+        }
+
+        windows.insert(targetIndex + 1, window);
     }
 
 
