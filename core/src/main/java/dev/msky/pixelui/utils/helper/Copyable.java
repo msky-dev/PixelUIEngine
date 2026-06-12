@@ -47,7 +47,8 @@ public interface Copyable<T> {
         IntMap.Keys keys = intMap.keys();
         while (keys.hasNext){
             final int key = keys.next();
-            copy.put(key, intMap.get(key).copy());
+            final D value = intMap.get(key);
+            copy.put(key, value != null ? value.copy() : null);
         }
         return copy;
     }
