@@ -348,7 +348,7 @@ public class UICommonUtils {
     public void notification_addToScreen(GenericNotification genericNotification, int notificationsMax) {
         if (genericNotification.addedToScreen) return;
         genericNotification.addedToScreen = true;
-
+        genericNotification.timer = System.currentTimeMillis();
         switch (genericNotification) {
             case Notification notification -> {
                 uiEngineState.notifications.add(notification);

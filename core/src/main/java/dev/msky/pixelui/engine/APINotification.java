@@ -29,26 +29,26 @@ public final class APINotification {
     public final NotificationAction DEFAULT_NOTIFICATION_ACTION = new NotificationAction() {};
 
     public Notification create(String text) {
-        return create(text, DEFAULT_NOTIFICATION_ACTION, false, uiEngineConfig.notification.defaultDisplayTime);
+        return create(text, DEFAULT_NOTIFICATION_ACTION, false, uiEngineConfig.notification.defaultDisplayTimeMS);
     }
 
     public Notification create(String text, NotificationAction notificationAction) {
-        return create(text, notificationAction, false, uiEngineConfig.notification.defaultDisplayTime);
+        return create(text, notificationAction, false, uiEngineConfig.notification.defaultDisplayTimeMS);
     }
 
     public Notification create(String text, NotificationAction notificationAction, boolean uiInteractionEnabled) {
-        return create(text, notificationAction,uiInteractionEnabled, uiEngineConfig.notification.defaultDisplayTime);
+        return create(text, notificationAction,uiInteractionEnabled, uiEngineConfig.notification.defaultDisplayTimeMS);
     }
 
     public Notification create(String text, NotificationAction notificationAction, boolean uiInteractionEnabled, int displayTime) {
         Notification notification = new Notification();
         notification.text = Tools.Text.validString(text);
         notification.uiInteractionEnabled = uiInteractionEnabled;
-        notification.displayTime = Math.max(displayTime,0);
+        notification.displayTimeMS = Math.max(displayTime,0);
         notification.color = new Color(uiEngineConfig.notification.defaultColor);
         notification.fontColor = uiEngineConfig.ui.fontDefaultColor.cpy();
         notification.notificationAction = notificationAction != null ? notificationAction : DEFAULT_NOTIFICATION_ACTION;
-        notification.timer = 0;
+        notification.timer = System.currentTimeMillis();
         int textWidth = mediaManager.fontTextWidth(uiEngineConfig.ui.font, notification.text);
         if (textWidth > uiEngineState.resolutionWidth) {
             int tooMuch = (textWidth - uiEngineState.resolutionWidth);
@@ -79,7 +79,7 @@ public final class APINotification {
 
     public void setDisplayTime(Notification notification, int displayTime) {
         if (notification == null) return;
-        notification.displayTime = Math.max(displayTime, 0);
+        notification.displayTimeMS = Math.max(displayTime, 0);
     }
 
     public void setColor(Notification notification, Color color) {
@@ -108,7 +108,7 @@ public final class APINotification {
             tooltipNotification.x = x;
             tooltipNotification.y = y;
             tooltipNotification.tooltip = tooltip;
-            tooltipNotification.displayTime = displayTime;
+            tooltipNotification.displayTimeMS = displayTime;
             tooltipNotification.timer = 0;
             tooltipNotification.state = TOOLTIP_NOTIFICATION_STATE.INIT;
             return tooltipNotification;

@@ -170,7 +170,7 @@ public final class UIEngineConfig {
     public class ComponentConfig {
         public Color defaultColor;
         public Color contextMenuDefaultColor;
-        public int appViewportDefaultUpdateTime;
+        public int appViewportDefaultUpdateTimeMS;
         public float listDragAlpha;
         public float gridDragAlpha;
         public float knobSensitivity;
@@ -181,7 +181,7 @@ public final class UIEngineConfig {
         public ComponentConfig(UIEngineTheme theme) {
             this.defaultColor = DEFAULT_COlOR.cpy();
             this.contextMenuDefaultColor = DEFAULT_COlOR_BRIGHT.cpy();
-            this.appViewportDefaultUpdateTime = 0;
+            this.appViewportDefaultUpdateTimeMS = 0;
             this.listDragAlpha = 0.8f;
             this.gridDragAlpha = 0.8f;
             this.knobSensitivity = 1f;
@@ -195,17 +195,17 @@ public final class UIEngineConfig {
 
     public class Notification {
         public int maxNotifications;
-        public int defaultDisplayTime;
+        public int defaultDisplayTimeMS;
         public Color defaultColor;
-        public int foldTime;
+        public int foldTimeMS;
         public int toolTipNotificationDefaultDisplayTime;
         public int toolTipNotificationFadeoutTime;
 
         public Notification(UIEngineTheme theme) {
             this.maxNotifications = 5;
-            this.defaultDisplayTime = 120;
+            this.defaultDisplayTimeMS = 2000;
             this.defaultColor = DEFAULT_COlOR.cpy();
-            this.foldTime = 12;
+            this.foldTimeMS = 12;
             this.toolTipNotificationDefaultDisplayTime = 140;
             this.toolTipNotificationFadeoutTime = 12;
 
@@ -215,15 +215,15 @@ public final class UIEngineConfig {
 
     public class TooltipConfig {
         public Color defaultCellColor;
-        public float fadeInSpeed;
-        public int fadeInDelay;
-        public float fadeOutSpeed;
+        public long fadeInTimeMS;
+        public long fadeInDelayMS;
+        public long fadeOutTimeMS;
 
         public TooltipConfig(UIEngineTheme theme) {
             this.defaultCellColor = DEFAULT_COlOR_BRIGHT.cpy();
-            this.fadeInSpeed = 0.2f;
-            this.fadeInDelay = 20;
-            this.fadeOutSpeed = 0.2f;
+            this.fadeInTimeMS = 150;
+            this.fadeInDelayMS = 50;
+            this.fadeOutTimeMS = 150;
         }
 
     }

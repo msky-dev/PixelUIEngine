@@ -8,7 +8,6 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.IntSet;
 import dev.msky.pixelui.engine.actions.*;
-import dev.msky.pixelui.engine.actions.*;
 import dev.msky.pixelui.engine.actions.common.UpdateAction;
 import dev.msky.pixelui.engine.constants.BUTTON_MODE;
 import dev.msky.pixelui.engine.constants.CHECKBOX_STYLE;
@@ -74,24 +73,24 @@ public final class APIComponent {
         };
 
         public AppViewport create(int x, int y, int width, int height) {
-            return create(x, y, width, height, DEFAULT_APPVIEWPORT_ACTION, 0, 0, 1f, uiEngineConfig.component.appViewportDefaultUpdateTime);
+            return create(x, y, width, height, DEFAULT_APPVIEWPORT_ACTION, 0, 0, 1f, uiEngineConfig.component.appViewportDefaultUpdateTimeMS);
         }
 
         public AppViewport create(int x, int y, int width, int height, AppViewPortAction appViewPortAction) {
-            return create(x, y, width, height, appViewPortAction, 0, 0, 1f, uiEngineConfig.component.appViewportDefaultUpdateTime);
+            return create(x, y, width, height, appViewPortAction, 0, 0, 1f, uiEngineConfig.component.appViewportDefaultUpdateTimeMS);
         }
 
         public AppViewport create(int x, int y, int width, int height, AppViewPortAction appViewPortAction, float camPositionX, float camPositionY) {
-            return create(x, y, width, height, appViewPortAction, camPositionX, camPositionY, 1f, uiEngineConfig.component.appViewportDefaultUpdateTime);
+            return create(x, y, width, height, appViewPortAction, camPositionX, camPositionY, 1f, uiEngineConfig.component.appViewportDefaultUpdateTimeMS);
         }
 
         public AppViewport create(int x, int y, int width, int height, AppViewPortAction appViewPortAction, float camPositionX, float camPositionY, float camZoom) {
-            return create(x, y, width, height, appViewPortAction, camPositionX, camPositionY, camZoom, uiEngineConfig.component.appViewportDefaultUpdateTime);
+            return create(x, y, width, height, appViewPortAction, camPositionX, camPositionY, camZoom, uiEngineConfig.component.appViewportDefaultUpdateTimeMS);
         }
 
         public AppViewport create(int x, int y, int width, int height, AppViewPortAction appViewPortAction, float camPositionX, float camPositionY, float camZoom, int updateTime) {
             AppViewport appViewPort = new AppViewport();
-            appViewPort.updateTimer = 0;
+            appViewPort.timer = System.currentTimeMillis();
             setComponentCommonInitValuesInternal(appViewPort, x, y, width, height, Color.GRAY, Color.GRAY);
             int viewportWidth = uiEngineState.theme.ts.abs(appViewPort.width);
             int viewportHeight = uiEngineState.theme.ts.abs(appViewPort.height);

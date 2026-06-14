@@ -10,7 +10,7 @@ public final class AppViewport extends Component {
     public NestedFrameBuffer frameBuffer;
     public TextureRegion textureRegion;
     public AppViewPortAction appViewPortAction;
-    public long updateTimer;
+    public long timer;
     public int updateTime;
 
     AppViewport() {

@@ -2,9 +2,10 @@ package dev.msky.pixelui.engine;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Cursor;
+import com.badlogic.gdx.graphics.GL30;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.math.*;
 import com.badlogic.gdx.utils.*;
@@ -157,7 +158,7 @@ public final class UIEngine<T extends UIEngineAdapter> implements Disposable {
         newUIEngineState.tooltip = null;
         newUIEngineState.tooltip_fadePct = 0f;
         newUIEngineState.tooltip_wait_delay = false;
-        newUIEngineState.tooltip_delay_timer = 0;
+        newUIEngineState.tooltip_timer = 0;
         newUIEngineState.pressedScrollBarVertical = null;
         newUIEngineState.pressedScrollBarHorizontal = null;
         newUIEngineState.draggedGridItem = null;
@@ -1744,7 +1745,7 @@ public final class UIEngine<T extends UIEngineAdapter> implements Disposable {
 
             if (updateComponentToolTip) {
                 uiEngineState.tooltip_wait_delay = true;
-                uiEngineState.tooltip_delay_timer = 0;
+                uiEngineState.tooltip_timer = System.currentTimeMillis();
                 if (hoverComponent instanceof List list) {
                     // check for list item tooltips
                     if (toolTipSubItem != null) {
@@ -1772,7 +1773,7 @@ public final class UIEngine<T extends UIEngineAdapter> implements Disposable {
             if (uiEngineState.lastUIMouseHover == null && uiEngineState.appToolTip != null) {
                 if (uiEngineState.tooltip != uiEngineState.appToolTip) {
                     uiEngineState.tooltip_wait_delay = true;
-                    uiEngineState.tooltip_delay_timer = 0;
+                    uiEngineState.tooltip_timer = 0;
                     uiEngineState.tooltip = uiEngineState.appToolTip;
                 }
             } else {
@@ -1785,24 +1786,26 @@ public final class UIEngine<T extends UIEngineAdapter> implements Disposable {
         // Fade In
         if (uiEngineState.tooltip != null) {
             if (uiEngineState.tooltip_wait_delay) {
-                uiEngineState.tooltip_delay_timer += uiEngineState.config.tooltip.fadeInDelay;
-                if (uiEngineState.tooltip_delay_timer >= uiEngineState.config.tooltip.fadeInDelay) {
+                if ((System.currentTimeMillis()-uiEngineState.tooltip_timer) >= uiEngineState.config.tooltip.fadeInDelayMS) {
                     uiEngineState.tooltip_wait_delay = false;
-                    uiEngineState.tooltip_delay_timer = 0;
                     uiEngineState.tooltip_fadePct = 0f;
                     uiEngineState.tooltip.toolTipAction.onDisplay();
                 }
             } else if (uiEngineState.tooltip_fadePct < 1f) {
-                uiEngineState.tooltip_fadePct = Math.clamp(uiEngineState.tooltip_fadePct + uiEngineState.config.tooltip.fadeInSpeed, 0f, 1f);
+                long diff = System.currentTimeMillis()-uiEngineState.tooltip_timer;
+                uiEngineState.tooltip_fadePct = Math.clamp((diff / (float)uiEngineState.config.tooltip.fadeInTimeMS), 0f, 1f);
             } else {
                 uiEngineState.tooltip.toolTipAction.onUpdate();
+                uiEngineState.tooltip_timer = System.currentTimeMillis();
             }
 
             uiEngineState.fadeOutTooltip = uiEngineState.tooltip;
         } else {
+
             if (uiEngineState.fadeOutTooltip != null) {
                 if (uiEngineState.tooltip_fadePct > 0f) {
-                    uiEngineState.tooltip_fadePct = Math.clamp(uiEngineState.tooltip_fadePct - uiEngineState.config.tooltip.fadeOutSpeed, 0f, 1f);
+                    long diff = System.currentTimeMillis()-uiEngineState.tooltip_timer;
+                    uiEngineState.tooltip_fadePct = Math.clamp(1f-(diff / (float) uiEngineState.config.tooltip.fadeOutTimeMS), 0f, 1f);
                 } else {
                     uiEngineState.fadeOutTooltip.toolTipAction.onRemove();
                     uiEngineState.fadeOutTooltip = null;
@@ -1818,36 +1821,34 @@ public final class UIEngine<T extends UIEngineAdapter> implements Disposable {
 
             switch (notification.state) {
                 case INIT_SCROLL -> {
-                    notification.timer = 0;
+                    notification.timer = System.currentTimeMillis();
                     notification.state = TOP_NOTIFICATION_STATE.SCROLL;
                 }
                 case INIT_DISPLAY -> {
-                    notification.timer = 0;
+                    notification.timer = System.currentTimeMillis();
                     notification.state = TOP_NOTIFICATION_STATE.DISPLAY;
                 }
                 case SCROLL -> {
-                    notification.timer++;
-                    if (notification.timer > 30) {
+                    long timeDiff = System.currentTimeMillis() - notification.timer;
+                    if (timeDiff > 500) {
+                        notification.timer = System.currentTimeMillis();
                         notification.scroll += 1;
                         if (notification.scroll >= notification.scrollMax) {
                             notification.state = TOP_NOTIFICATION_STATE.DISPLAY;
-                            notification.timer = 0;
-                        } else {
-                            notification.timer = 30;
                         }
                     }
                 }
                 case DISPLAY -> {
-                    notification.timer++;
-                    if (notification.timer > notification.displayTime) {
+                    long timeDiff = System.currentTimeMillis() - notification.timer;
+                    if (timeDiff > notification.displayTimeMS) {
+                        notification.timer = System.currentTimeMillis();
                         notification.state = TOP_NOTIFICATION_STATE.FOLD;
-                        notification.timer = 0;
                     }
                 }
                 case FOLD -> {
-                    notification.timer++;
-                    if (notification.timer > uiEngineState.config.notification.foldTime) {
-                        notification.timer = 0;
+                    long timeDiff = System.currentTimeMillis() - notification.timer;
+                    if (timeDiff > uiEngineState.config.notification.foldTimeMS) {
+                        notification.timer = System.currentTimeMillis();
                         notification.state = TOP_NOTIFICATION_STATE.FINISHED;
                         uiCommonUtils.notification_removeFromScreen(notification);
                     }
@@ -1862,17 +1863,18 @@ public final class UIEngine<T extends UIEngineAdapter> implements Disposable {
                 switch (tooltipNotification.state) {
                     case INIT -> {
                         tooltipNotification.state = TOOLTIP_NOTIFICATION_STATE.DISPLAY;
+                        tooltipNotification.timer = System.currentTimeMillis();
                     }
                     case DISPLAY -> {
-                        tooltipNotification.timer++;
-                        if (tooltipNotification.timer > tooltipNotification.displayTime) {
+                        long diff = System.currentTimeMillis()-tooltipNotification.timer;
+                        if (diff > tooltipNotification.displayTimeMS) {
                             tooltipNotification.state = TOOLTIP_NOTIFICATION_STATE.FADE;
-                            tooltipNotification.timer = 0;
+                            tooltipNotification.timer = System.currentTimeMillis();
                         }
                     }
                     case FADE -> {
-                        tooltipNotification.timer++;
-                        if (tooltipNotification.timer > api.config.notification.toolTipNotificationFadeoutTime) {
+                        long diff = System.currentTimeMillis()-tooltipNotification.timer;
+                        if (diff > api.config.notification.toolTipNotificationFadeoutTime) {
                             uiCommonUtils.notification_removeFromScreen(tooltipNotification);
                             tooltipNotification.state = TOOLTIP_NOTIFICATION_STATE.FINISHED;
                             tooltipNotification.timer = 0;
@@ -2035,13 +2037,12 @@ public final class UIEngine<T extends UIEngineAdapter> implements Disposable {
 
     private void renderGameViewPortFrameBuffer(AppViewport appViewPort) {
         if (render_isComponentNotRendered(appViewPort)) return;
-        appViewPort.updateTimer++;
-        if (appViewPort.updateTimer > appViewPort.updateTime) {
+        if ((System.currentTimeMillis() - appViewPort.timer) > appViewPort.updateTime) {
             // draw to frambuffer
             appViewPort.frameBuffer.beginGlClear();
             this.uiAdapter.render(appViewPort.camera, appViewPort);
             appViewPort.frameBuffer.end();
-            appViewPort.updateTimer = 0;
+            appViewPort.timer = System.currentTimeMillis();
         }
     }
 
@@ -2577,7 +2578,7 @@ public final class UIEngine<T extends UIEngineAdapter> implements Disposable {
         int combinedHeight = rootHeight;
         int combinedLineLength = rootLineLength;
         Tooltip additionalToolTip = root.additionalTooltip;
-        while (additionalToolTip != null){
+        while (additionalToolTip != null) {
             combinedWidth += tooltipWidth(additionalToolTip);
             combinedHeight += tooltipWidth(additionalToolTip);
             combinedLineLength += TS(additionalToolTip.lineLength);
@@ -2729,7 +2730,7 @@ public final class UIEngine<T extends UIEngineAdapter> implements Disposable {
             final float notificationAlpha = notification.color.a;
 
             if (notification.state == TOP_NOTIFICATION_STATE.FOLD) {
-                float fadeoutProgress = (notification.timer / (float) uiEngineState.config.notification.foldTime);
+                float fadeoutProgress = (notification.timer / (float) uiEngineState.config.notification.foldTimeMS);
                 yOffsetSlideFade = yOffsetSlideFade + MathUtils.round(TS() * fadeoutProgress);
             }
             spriteRenderer.saveState();
@@ -3288,7 +3289,7 @@ public final class UIEngine<T extends UIEngineAdapter> implements Disposable {
         if (commonAction.overlaySprite() != null) {
             CMediaSprite overlaySprite = commonAction.overlaySprite();
             spriteRenderer.saveState();
-            this.render_setColor(spriteRenderer, commonAction.overlaySpriteColor(), componentAlpha*commonAction.overlaySpriteColor().a, componentGrayScale);
+            this.render_setColor(spriteRenderer, commonAction.overlaySpriteColor(), componentAlpha * commonAction.overlaySpriteColor().a, componentGrayScale);
             spriteRenderer.drawCMediaSprite(overlaySprite, commonAction.overlaySpriteIndex(), uiCommonUtils.ui_getAnimationTimer(uiEngineState),
                     uiCommonUtils.component_getAbsoluteX(component),
                     uiCommonUtils.component_getAbsoluteY(component));

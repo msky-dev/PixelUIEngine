@@ -71,7 +71,7 @@ public final class UIEngineState {
     public Tooltip fadeOutTooltip;
     public float tooltip_fadePct;
     public boolean tooltip_wait_delay;
-    public float tooltip_delay_timer;
+    public long tooltip_timer;
     public Tooltip appToolTip;
     public Object tooltip_lastHoverObject;
     public Knob pressedKnob;
