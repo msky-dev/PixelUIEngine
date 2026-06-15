@@ -221,9 +221,9 @@ public final class UIEngineConfig {
 
         public TooltipConfig(UIEngineTheme theme) {
             this.defaultCellColor = DEFAULT_COlOR_BRIGHT.cpy();
-            this.fadeInTimeMS = 150;
+            this.fadeInTimeMS = 100;
             this.fadeInDelayMS = 50;
-            this.fadeOutTimeMS = 150;
+            this.fadeOutTimeMS = 100;
         }
 
     }
