@@ -1765,7 +1765,7 @@ public final class UIEngine<T extends UIEngineAdapter> implements Disposable {
                 } else {
                     // take component tooltip
                     uiEngineState.tooltip = actions_getUIObjectCommonActions(hoverComponent).onShowTooltip();
-                    uiEngineState.tooltip_lastHoverObject = hoverComponent;
+                    uiEngineState.tooltip_lastHoverObject = toolTipSubItem;
                 }
             }
         } else {
@@ -1801,7 +1801,6 @@ public final class UIEngine<T extends UIEngineAdapter> implements Disposable {
 
             uiEngineState.fadeOutTooltip = uiEngineState.tooltip;
         } else {
-
             if (uiEngineState.fadeOutTooltip != null) {
                 if (uiEngineState.tooltip_fadePct > 0f) {
                     long diff = System.currentTimeMillis()-uiEngineState.tooltip_timer;
