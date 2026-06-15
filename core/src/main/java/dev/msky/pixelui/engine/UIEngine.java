@@ -1748,24 +1748,16 @@ public final class UIEngine<T extends UIEngineAdapter> implements Disposable {
                 uiEngineState.tooltip_timer = System.currentTimeMillis();
                 if (hoverComponent instanceof List list) {
                     // check for list item tooltips
-                    if (toolTipSubItem != null) {
-                        uiEngineState.tooltip = list.listAction.onShowToolTip(toolTipSubItem);
-                    } else {
-                        uiEngineState.tooltip = null;
-                    }
+                    uiEngineState.tooltip = toolTipSubItem != null ? list.listAction.onShowToolTip(toolTipSubItem) : null;
                     uiEngineState.tooltip_lastHoverObject = toolTipSubItem;
-                } else if (hoverComponent instanceof Grid grid && toolTipSubItem != null) {
+                } else if (hoverComponent instanceof Grid grid) {
                     // check for Grid item tooltip
-                    if (toolTipSubItem != null) {
-                        uiEngineState.tooltip = grid.gridAction.toolTip(toolTipSubItem);
-                    } else {
-                        uiEngineState.tooltip = null;
-                    }
+                    uiEngineState.tooltip = toolTipSubItem != null ? grid.gridAction.toolTip(toolTipSubItem) : null;
                     uiEngineState.tooltip_lastHoverObject = toolTipSubItem;
                 } else {
                     // take component tooltip
                     uiEngineState.tooltip = actions_getUIObjectCommonActions(hoverComponent).onShowTooltip();
-                    uiEngineState.tooltip_lastHoverObject = toolTipSubItem;
+                    uiEngineState.tooltip_lastHoverObject = hoverComponent;
                 }
             }
         } else {
@@ -1786,14 +1778,14 @@ public final class UIEngine<T extends UIEngineAdapter> implements Disposable {
         // Fade In
         if (uiEngineState.tooltip != null) {
             if (uiEngineState.tooltip_wait_delay) {
-                if ((System.currentTimeMillis()-uiEngineState.tooltip_timer) >= uiEngineState.config.tooltip.fadeInDelayMS) {
+                if ((System.currentTimeMillis() - uiEngineState.tooltip_timer) >= uiEngineState.config.tooltip.fadeInDelayMS) {
                     uiEngineState.tooltip_wait_delay = false;
                     uiEngineState.tooltip_fadePct = 0f;
                     uiEngineState.tooltip.toolTipAction.onDisplay();
                 }
             } else if (uiEngineState.tooltip_fadePct < 1f) {
-                long diff = System.currentTimeMillis()-uiEngineState.tooltip_timer;
-                uiEngineState.tooltip_fadePct = Math.clamp((diff / (float)uiEngineState.config.tooltip.fadeInTimeMS), 0f, 1f);
+                long diff = System.currentTimeMillis() - uiEngineState.tooltip_timer;
+                uiEngineState.tooltip_fadePct = Math.clamp((diff / (float) uiEngineState.config.tooltip.fadeInTimeMS), 0f, 1f);
             } else {
                 uiEngineState.tooltip.toolTipAction.onUpdate();
                 uiEngineState.tooltip_timer = System.currentTimeMillis();
@@ -1803,8 +1795,8 @@ public final class UIEngine<T extends UIEngineAdapter> implements Disposable {
         } else {
             if (uiEngineState.fadeOutTooltip != null) {
                 if (uiEngineState.tooltip_fadePct > 0f) {
-                    long diff = System.currentTimeMillis()-uiEngineState.tooltip_timer;
-                    uiEngineState.tooltip_fadePct = Math.clamp(1f-(diff / (float) uiEngineState.config.tooltip.fadeOutTimeMS), 0f, 1f);
+                    long diff = System.currentTimeMillis() - uiEngineState.tooltip_timer;
+                    uiEngineState.tooltip_fadePct = Math.clamp(1f - (diff / (float) uiEngineState.config.tooltip.fadeOutTimeMS), 0f, 1f);
                 } else {
                     uiEngineState.fadeOutTooltip.toolTipAction.onRemove();
                     uiEngineState.fadeOutTooltip = null;
@@ -1865,14 +1857,14 @@ public final class UIEngine<T extends UIEngineAdapter> implements Disposable {
                         tooltipNotification.timer = System.currentTimeMillis();
                     }
                     case DISPLAY -> {
-                        long diff = System.currentTimeMillis()-tooltipNotification.timer;
+                        long diff = System.currentTimeMillis() - tooltipNotification.timer;
                         if (diff > tooltipNotification.displayTimeMS) {
                             tooltipNotification.state = TOOLTIP_NOTIFICATION_STATE.FADE;
                             tooltipNotification.timer = System.currentTimeMillis();
                         }
                     }
                     case FADE -> {
-                        long diff = System.currentTimeMillis()-tooltipNotification.timer;
+                        long diff = System.currentTimeMillis() - tooltipNotification.timer;
                         if (diff > api.config.notification.toolTipNotificationFadeoutTime) {
                             uiCommonUtils.notification_removeFromScreen(tooltipNotification);
                             tooltipNotification.state = TOOLTIP_NOTIFICATION_STATE.FINISHED;
