@@ -9,7 +9,7 @@ public class ExampleLauncherMain {
 
     static void main(String[] args) {
         PixelUILaunchConfig pixelUILaunchConfig = new PixelUILaunchConfig();
-        pixelUILaunchConfig.fps = 60;
+        pixelUILaunchConfig.fps = 0;
         pixelUILaunchConfig.idleFPS = 60;
         pixelUILaunchConfig.appTile = ExampleMainConstants.APP_TITLE;
         pixelUILaunchConfig.resolutionWidth = ExampleMainConstants.INTERNAL_RESOLUTION_WIDTH;

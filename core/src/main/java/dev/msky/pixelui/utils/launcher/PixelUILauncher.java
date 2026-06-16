@@ -7,6 +7,7 @@ import com.badlogic.gdx.utils.Os;
 import com.badlogic.gdx.utils.SharedLibraryLoader;
 import com.github.dgzt.gdx.lwjgl3.Lwjgl3VulkanApplication;
 import dev.msky.pixelui.utils.Tools;
+import org.lwjgl.glfw.GLFWNativeEGL;
 
 import javax.swing.*;
 import java.awt.*;
@@ -88,6 +89,7 @@ public class PixelUILauncher {
             } catch (Exception e) {
                 handleLaunchException(e, launchConfig);
             }
+
         }else{
             Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
             config.setOpenGLEmulation(Lwjgl3ApplicationConfiguration.GLEmulation.GL32, 4, 5);
@@ -139,7 +141,7 @@ public class PixelUILauncher {
     }
 
     private static void handleLaunchException(Exception e, PixelUILaunchConfig launchConfig) {
-        Tools.App.logException(e);
+        Tools.App.logError(e);
         launchConfig.onException.accept(e);
         if (launchConfig.showExceptionDialog) {
             StringBuilder dialogMessage = new StringBuilder();

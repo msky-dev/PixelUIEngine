@@ -43,7 +43,7 @@ public class Tools {
         public static final String WORK_DIR = System.getProperty("user.dir")+FileSystems.getDefault().getSeparator();
         public static final Path ERROR_LOG_FILE = Path.of(WORK_DIR+"error.log");
 
-        public static void logException(Exception e) {
+        public static void logError(Exception e) {
             try (PrintWriter pw = new PrintWriter(new FileWriter(ERROR_LOG_FILE.toString(), true))) {
                 pw.write("Exception \"" + (e.getClass().getSimpleName()) + "\" occured" + System.lineSeparator());
                 e.printStackTrace(pw);
