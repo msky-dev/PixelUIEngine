@@ -198,16 +198,16 @@ public final class UIEngineConfig {
         public int defaultDisplayTimeMS;
         public Color defaultColor;
         public int foldTimeMS;
-        public int toolTipNotificationDefaultDisplayTime;
-        public int toolTipNotificationFadeoutTime;
+        public int toolTipNotificationDefaultDisplayTimeMS;
+        public int toolTipNotificationFadeoutTimeMS;
 
         public Notification(UIEngineTheme theme) {
             this.maxNotifications = 5;
             this.defaultDisplayTimeMS = 2000;
             this.defaultColor = DEFAULT_COlOR.cpy();
             this.foldTimeMS = 12;
-            this.toolTipNotificationDefaultDisplayTime = 140;
-            this.toolTipNotificationFadeoutTime = 12;
+            this.toolTipNotificationDefaultDisplayTimeMS = 2200;
+            this.toolTipNotificationFadeoutTimeMS = 200;
 
         }
 

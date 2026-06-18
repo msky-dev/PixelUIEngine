@@ -100,7 +100,7 @@ public final class APINotification {
     public final class APITooltipNotification {
 
         public TooltipNotification create(int x, int y, Tooltip tooltip){
-            return create(x,y,tooltip, uiEngineConfig.notification.toolTipNotificationDefaultDisplayTime);
+            return create(x,y,tooltip, uiEngineConfig.notification.toolTipNotificationDefaultDisplayTimeMS);
         }
 
         public TooltipNotification create(int x, int y, Tooltip tooltip, int displayTime){
