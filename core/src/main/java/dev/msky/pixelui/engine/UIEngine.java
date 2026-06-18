@@ -2691,13 +2691,13 @@ public final class UIEngine<T extends UIEngineAdapter> implements Disposable {
                 case INIT -> {
                 }
                 case DISPLAY, FADE -> {
-
                 }
             }
 
             float alpha = 1f;
             if (tooltipNotification.state == TOOLTIP_NOTIFICATION_STATE.FADE) {
-                alpha = (1f - (tooltipNotification.timer / (float) api.config.notification.toolTipNotificationFadeoutTimeMS));
+                long diff = System.currentTimeMillis() - tooltipNotification.timer;
+                alpha = (1f - (diff / (float) api.config.notification.toolTipNotificationFadeoutTimeMS));
             }
 
             if (tooltipNotification.tooltip != null) {
