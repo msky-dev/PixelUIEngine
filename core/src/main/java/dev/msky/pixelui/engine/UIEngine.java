@@ -1867,8 +1867,8 @@ public final class UIEngine<T extends UIEngineAdapter> implements Disposable {
                         long diff = System.currentTimeMillis() - tooltipNotification.timer;
                         if (diff > api.config.notification.toolTipNotificationFadeoutTimeMS) {
                             uiCommonUtils.notification_removeFromScreen(tooltipNotification);
+                            tooltipNotification.timer = System.currentTimeMillis();
                             tooltipNotification.state = TOOLTIP_NOTIFICATION_STATE.FINISHED;
-                            tooltipNotification.timer = 0;
                         }
                     }
                     case FINISHED -> {
@@ -2697,7 +2697,7 @@ public final class UIEngine<T extends UIEngineAdapter> implements Disposable {
             float alpha = 1f;
             if (tooltipNotification.state == TOOLTIP_NOTIFICATION_STATE.FADE) {
                 long diff = System.currentTimeMillis() - tooltipNotification.timer;
-                alpha = (1f - (diff / (float) api.config.notification.toolTipNotificationFadeoutTimeMS));
+                alpha = Math.clamp((1f - (diff / (float) api.config.notification.toolTipNotificationFadeoutTimeMS)),0f,1f);
             }
 
             if (tooltipNotification.tooltip != null) {
