@@ -1819,7 +1819,7 @@ public final class UIEngine<T extends UIEngineAdapter> implements Disposable {
                 }
                 case SCROLL -> {
                     long timeDiff = System.currentTimeMillis() - notification.timer;
-                    if (timeDiff > 500) {
+                    if (timeDiff >= 500) {
                         notification.timer = System.currentTimeMillis();
                         notification.scroll += 1;
                         if (notification.scroll >= notification.scrollMax) {
@@ -1829,14 +1829,14 @@ public final class UIEngine<T extends UIEngineAdapter> implements Disposable {
                 }
                 case DISPLAY -> {
                     long timeDiff = System.currentTimeMillis() - notification.timer;
-                    if (timeDiff > notification.displayTimeMS) {
+                    if (timeDiff >= notification.displayTimeMS) {
                         notification.timer = System.currentTimeMillis();
                         notification.state = TOP_NOTIFICATION_STATE.FOLD;
                     }
                 }
                 case FOLD -> {
                     long timeDiff = System.currentTimeMillis() - notification.timer;
-                    if (timeDiff > uiEngineState.config.notification.foldTimeMS) {
+                    if (timeDiff >= uiEngineState.config.notification.foldTimeMS) {
                         notification.timer = System.currentTimeMillis();
                         notification.state = TOP_NOTIFICATION_STATE.FINISHED;
                         uiCommonUtils.notification_removeFromScreen(notification);
@@ -1856,14 +1856,14 @@ public final class UIEngine<T extends UIEngineAdapter> implements Disposable {
                     }
                     case DISPLAY -> {
                         long diff = System.currentTimeMillis() - tooltipNotification.timer;
-                        if (diff > tooltipNotification.displayTimeMS) {
+                        if (diff >= tooltipNotification.displayTimeMS) {
                             tooltipNotification.state = TOOLTIP_NOTIFICATION_STATE.FADE;
                             tooltipNotification.timer = System.currentTimeMillis();
                         }
                     }
                     case FADE -> {
                         long diff = System.currentTimeMillis() - tooltipNotification.timer;
-                        if (diff > api.config.notification.toolTipNotificationFadeoutTimeMS) {
+                        if (diff >= api.config.notification.toolTipNotificationFadeoutTimeMS) {
                             uiCommonUtils.notification_removeFromScreen(tooltipNotification);
                             tooltipNotification.timer = System.currentTimeMillis();
                             tooltipNotification.state = TOOLTIP_NOTIFICATION_STATE.FINISHED;
