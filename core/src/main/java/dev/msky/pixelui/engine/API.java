@@ -371,15 +371,12 @@ public final class API {
     }
 
     public void overrideCursor(CMediaSprite overrideCursor) {
-        if (overrideCursor == null) return;
         overrideCursor(overrideCursor, 0);
     }
 
-    public void overrideCursor(CMediaSprite temporaryCursor, int arrayIndex) {
-        if (temporaryCursor == null) return;
-        uiEngineState.overrideCursor = temporaryCursor;
-        uiEngineState.displayOverrideCursor = true;
-        uiEngineState.overrideCursorArrayIndex = Math.max(0, arrayIndex);
+    public void overrideCursor(CMediaSprite overrideCursor, int arrayIndex) {
+        uiEngineState.overrideCursor = overrideCursor;
+        uiEngineState.overrideCursorArrayIndex = overrideCursor != null ? Math.max(0, arrayIndex) : 0;
     }
 
     public void setAppToolTip(Tooltip toolTip) {

@@ -190,7 +190,6 @@ public final class UIEngine<T extends UIEngineAdapter> implements Disposable {
         newUIEngineState.mouseTool = null;
         newUIEngineState.overrideCursor = null;
         newUIEngineState.overrideCursorArrayIndex = 0;
-        newUIEngineState.displayOverrideCursor = false;
         newUIEngineState.fboCursorVector = new Vector3(0, 0, 0);
         newUIEngineState.unProjectVector = new Vector2(0, 0);
         newUIEngineState.emulatedMousePosition = new Vector2(newUIEngineState.resolutionWidthHalf, newUIEngineState.resolutionHeightHalf);
@@ -886,10 +885,9 @@ public final class UIEngine<T extends UIEngineAdapter> implements Disposable {
             uiEngineState.cursorArrayIndex = 0;
         } else {
             // 2. Manually overidden Cursor
-            if (uiEngineState.displayOverrideCursor) {
+            if (uiEngineState.overrideCursor != null) {
                 uiEngineState.cursor = uiEngineState.overrideCursor;
                 uiEngineState.cursorArrayIndex = uiEngineState.overrideCursorArrayIndex;
-                uiEngineState.displayOverrideCursor = false;
             } else {
                 if (uiEngineState.mouseTool != null) {
                     // 3. Mouse Tool cursor
@@ -1941,10 +1939,10 @@ public final class UIEngine<T extends UIEngineAdapter> implements Disposable {
     }
 
     private boolean actions_executeUpdateAction(UpdateAction updateAction) {
-        updateAction.timer++;
-        if (updateAction.timer >= updateAction.interval) {
+        long diff = System.currentTimeMillis()-updateAction.timer;
+        if (diff >= updateAction.intervalMS) {
             updateAction.onUpdate();
-            updateAction.timer = 0;
+            updateAction.timer = System.currentTimeMillis();
             return true;
         }
         return false;

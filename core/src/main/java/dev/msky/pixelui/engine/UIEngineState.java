@@ -124,7 +124,6 @@ public final class UIEngineState {
     public MouseTool mouseTool;
     public CMediaSprite overrideCursor;
     public int overrideCursorArrayIndex;
-    public boolean displayOverrideCursor;
     public Vector3 fboCursorVector;
     public Vector2 unProjectVector;
     public boolean[] keyBoardTranslatedKeysDown;
