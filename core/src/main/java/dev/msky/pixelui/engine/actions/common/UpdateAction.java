@@ -16,7 +16,7 @@ public abstract class UpdateAction {
 
     public UpdateAction(int intervalMS, boolean updateOnInit) {
         this.intervalMS = intervalMS;
-        this.timer = updateOnInit ? (System.currentTimeMillis()+intervalMS) : System.currentTimeMillis() ;
+        this.timer = updateOnInit ? (System.currentTimeMillis()-intervalMS) : System.currentTimeMillis() ;
     }
 
     public void onUpdate() {
