@@ -359,6 +359,14 @@ public final class API {
         return uiCommonUtils.find(uiEngineState.windows, findBy);
     }
 
+    public Component findWindowComponent(Predicate<Window> findByWindow, Predicate<Component> findByComponent){
+        if(uiCommonUtils.find(uiEngineState.windows, findByWindow) instanceof Window window) {
+            return uiCommonUtils.find(window.components, findByComponent);
+        }
+        return null;
+    }
+
+
     public Array<Window> findWindows(Predicate<Window> findBy){
         return uiCommonUtils.findMultiple(uiEngineState.windows, findBy);
     }
