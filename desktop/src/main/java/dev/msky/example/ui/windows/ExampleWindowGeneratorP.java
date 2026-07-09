@@ -116,7 +116,7 @@ public class ExampleWindowGeneratorP implements WindowGenerator.P1<MediaManager>
 
         Text text1 = api.component.text.create(1, 5, 0, "ABCDEFGHIJKLMNOPQRSTUVWXYZ");
         Text text2 = api.component.text.create(1, 4, 0, "abcdefghijklmnopqrstuvwxyz");
-        Text text3 = api.component.text.create(1, 3, 0, "0123456789");
+        Text text3 = api.component.text.create(1, 3, 0, "0123456789 ÄÖÜ äöü ß Wäre würdeßt du?");
         Text text4 = api.component.text.create(1, 2, 0, "!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~€¥£©§");
         Text text5 = api.component.text.create(1, 1, 0, "T");
 
