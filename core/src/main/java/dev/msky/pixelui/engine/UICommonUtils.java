@@ -14,6 +14,7 @@ import com.badlogic.gdx.utils.ObjectSet;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import dev.msky.pixelui.engine.actions.common.CommonActions;
 import dev.msky.pixelui.engine.constants.BUTTON_MODE;
 import dev.msky.pixelui.engine.constants.KeyCode;
 import dev.msky.pixelui.engine.constants.VIEWPORT_MODE;
@@ -78,6 +79,12 @@ public class UICommonUtils {
     public void window_receiveMessage(Window window, int type, Object... parameters) {
         if (window == null) return;
         window.windowAction.onMessageReceived(type, parameters);
+    }
+
+    public void component_receiveMessage(Component component, int type, Object... parameters) {
+        if (component == null) return;
+        CommonActions commonActions = getUIObjectCommonActions(component);
+        commonActions.onMessageReceived(type, parameters);
     }
 
     public void window_bringToFront(Window window) {
@@ -1625,6 +1632,29 @@ public class UICommonUtils {
         if (uiEngineState.pressedComboBoxItem != null) return uiEngineState.pressedComboBoxItem;
         if (uiEngineState.pressedCheckBox != null) return uiEngineState.pressedCheckBox;
         return null;
+    }
+
+    public CommonActions getUIObjectCommonActions(Object uiObject) {
+        return switch (uiObject) {
+            case Window window -> window.windowAction;
+            case Notification notification -> notification.notificationAction;
+            case Button button -> button.buttonAction;
+            case Checkbox checkbox -> checkbox.checkBoxAction;
+            case ComboBox comboBox -> comboBox.comboBoxAction;
+            case AppViewport appViewPort -> appViewPort.appViewPortAction;
+            case Image image -> image.imageAction;
+            case Grid grid -> grid.gridAction;
+            case List list -> list.listAction;
+            case FrameBufferViewport frameBufferViewport -> frameBufferViewport.frameBufferViewportAction;
+            case ScrollbarVertical scrollBarVertical -> scrollBarVertical.scrollBarAction;
+            case ScrollbarHorizontal scrollBarHorizontal -> scrollBarHorizontal.scrollBarAction;
+            case Tabbar tabBar -> tabBar.tabBarAction;
+            case Text text -> text.textAction;
+            case TextField textField -> textField.textFieldAction;
+            case Progressbar progressbar -> progressbar.progressBarAction;
+            case Knob knob -> knob.knobAction;
+            case null, default -> null;
+        };
     }
 
     public Color color_darker(Color color) {

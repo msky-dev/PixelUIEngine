@@ -35,4 +35,6 @@ public interface CommonActions {
         return 0;
     };
 
+    default void onMessageReceived(int type, Object... parameters) {
+    }
 }

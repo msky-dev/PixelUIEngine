@@ -1754,7 +1754,7 @@ public final class UIEngine<T extends UIEngineAdapter> implements Disposable {
                     uiEngineState.tooltip_lastHoverObject = toolTipSubItem;
                 } else {
                     // take component tooltip
-                    uiEngineState.tooltip = actions_getUIObjectCommonActions(hoverComponent).onShowTooltip();
+                    uiEngineState.tooltip = uiCommonUtils.getUIObjectCommonActions(hoverComponent).onShowTooltip();
                     uiEngineState.tooltip_lastHoverObject = hoverComponent;
                 }
             }
@@ -1879,7 +1879,7 @@ public final class UIEngine<T extends UIEngineAdapter> implements Disposable {
 
     private void actions_executeOnMousePressCommonAction(Object uiObject, int button) {
         if (uiObject == null) return;
-        CommonActions commonActions = actions_getUIObjectCommonActions(uiObject);
+        CommonActions commonActions = uiCommonUtils.getUIObjectCommonActions(uiObject);
         if (commonActions != null) commonActions.onMousePress(button);
         if (uiObject instanceof Component component) {
             // Execute for parent window too
@@ -1889,7 +1889,7 @@ public final class UIEngine<T extends UIEngineAdapter> implements Disposable {
 
     private void actions_executeOnMouseReleaseCommonAction(Object uiObject, int button) {
         if (uiObject == null) return;
-        CommonActions commonActions = actions_getUIObjectCommonActions(uiObject);
+        CommonActions commonActions = uiCommonUtils.getUIObjectCommonActions(uiObject);
         if (commonActions != null) commonActions.onMouseRelease(button);
         if (uiObject instanceof Component component) {
             // Execute for parent window too
@@ -1899,7 +1899,7 @@ public final class UIEngine<T extends UIEngineAdapter> implements Disposable {
 
     private void actions_executeOnMouseDoubleClickCommonAction(Object uiObject, int button) {
         if (uiObject == null) return;
-        CommonActions commonActions = actions_getUIObjectCommonActions(uiObject);
+        CommonActions commonActions = uiCommonUtils.getUIObjectCommonActions(uiObject);
         if (commonActions != null) commonActions.onMouseDoubleClick(button);
         if (uiObject instanceof Component component) {
             actions_executeOnMouseDoubleClickCommonAction(component.addedToWindow, button);
@@ -1908,34 +1908,11 @@ public final class UIEngine<T extends UIEngineAdapter> implements Disposable {
 
     private void actions_executeOnMouseScrollCommonAction(Object uiObject, float scrolled) {
         if (uiObject == null) return;
-        CommonActions commonActions = actions_getUIObjectCommonActions(uiObject);
+        CommonActions commonActions = uiCommonUtils.getUIObjectCommonActions(uiObject);
         if (commonActions != null) commonActions.onMouseScroll(scrolled);
         if (uiObject instanceof Component component) {
             actions_executeOnMouseScrollCommonAction(component.addedToWindow, scrolled);
         }
-    }
-
-    private CommonActions actions_getUIObjectCommonActions(Object uiObject) {
-        return switch (uiObject) {
-            case Window window -> window.windowAction;
-            case Notification notification -> notification.notificationAction;
-            case Button button -> button.buttonAction;
-            case Checkbox checkbox -> checkbox.checkBoxAction;
-            case ComboBox comboBox -> comboBox.comboBoxAction;
-            case AppViewport appViewPort -> appViewPort.appViewPortAction;
-            case Image image -> image.imageAction;
-            case Grid grid -> grid.gridAction;
-            case List list -> list.listAction;
-            case FrameBufferViewport frameBufferViewport -> frameBufferViewport.frameBufferViewportAction;
-            case ScrollbarVertical scrollBarVertical -> scrollBarVertical.scrollBarAction;
-            case ScrollbarHorizontal scrollBarHorizontal -> scrollBarHorizontal.scrollBarAction;
-            case Tabbar tabBar -> tabBar.tabBarAction;
-            case Text text -> text.textAction;
-            case TextField textField -> textField.textFieldAction;
-            case Progressbar progressbar -> progressbar.progressBarAction;
-            case Knob knob -> knob.knobAction;
-            case null, default -> null;
-        };
     }
 
     private boolean actions_executeUpdateAction(UpdateAction updateAction) {
@@ -3274,7 +3251,7 @@ public final class UIEngine<T extends UIEngineAdapter> implements Disposable {
         }
 
 
-        CommonActions commonAction = actions_getUIObjectCommonActions(component);
+        CommonActions commonAction = uiCommonUtils.getUIObjectCommonActions(component);
         if (commonAction.overlaySprite() != null) {
             CMediaSprite overlaySprite = commonAction.overlaySprite();
             spriteRenderer.saveState();

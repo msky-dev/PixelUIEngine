@@ -1,11 +1,11 @@
 package dev.msky.pixelui.engine;
 
 import com.badlogic.gdx.utils.Array;
+import dev.msky.pixelui.engine.actions.common.UpdateAction;
 import dev.msky.pixelui.engine.constants.TileSize;
+import dev.msky.pixelui.engine.constants.VIEWPORT_MODE;
 import dev.msky.pixelui.media.CMediaSprite;
 import dev.msky.pixelui.media.MediaManager;
-import dev.msky.pixelui.engine.constants.VIEWPORT_MODE;
-import dev.msky.pixelui.engine.actions.common.UpdateAction;
 import dev.msky.pixelui.theme.UIEngineTheme;
 
 import java.util.function.Predicate;
@@ -110,10 +110,10 @@ public final class API {
 
     public GenericNotification findNotification(Predicate<Notification> findBy) {
         GenericNotification result = uiCommonUtils.find(uiEngineState.notifications, findBy);
-        if(result != null)
+        if (result != null)
             return result;
         result = uiCommonUtils.find(uiEngineState.tooltipNotifications, findBy);
-        if(result != null)
+        if (result != null)
             return result;
         return null;
     }
@@ -130,30 +130,30 @@ public final class API {
     }
 
     public void openContextMenu(ContextMenu contextMenu) {
-        uiCommonUtils.contextMenu_openAtMousePosition(  contextMenu);
+        uiCommonUtils.contextMenu_openAtMousePosition(contextMenu);
     }
 
     public void openContextMenu(ContextMenu contextMenu, int x, int y) {
         if (contextMenu == null) return;
-        uiCommonUtils.contextMenu_open(  contextMenu, x, y);
+        uiCommonUtils.contextMenu_open(contextMenu, x, y);
     }
 
     public void closeContextMenu(ContextMenu contextMenu) {
-        uiCommonUtils.contextMenu_close( contextMenu);
+        uiCommonUtils.contextMenu_close(contextMenu);
     }
 
     public boolean isContextMenuOpen(ContextMenu contextMenu) {
-        return uiCommonUtils.contextMenu_isOpen( contextMenu);
+        return uiCommonUtils.contextMenu_isOpen(contextMenu);
     }
 
     /* #################### MouseTextInput #################### */
 
-    public void openMouseTextInput(MouseTextInput mouseTextInput){
-        if(mouseTextInput == null) return;
-        uiCommonUtils.mouseTextInput_open( mouseTextInput);
+    public void openMouseTextInput(MouseTextInput mouseTextInput) {
+        if (mouseTextInput == null) return;
+        uiCommonUtils.mouseTextInput_open(mouseTextInput);
     }
 
-    public void closeMouseTextInput(){
+    public void closeMouseTextInput() {
         uiCommonUtils.mouseTextInput_close(uiEngineState);
     }
 
@@ -165,7 +165,7 @@ public final class API {
 
     public void addWindow(Window window) {
         if (window == null) return;
-        uiCommonUtils.window_addToScreen( window);
+        uiCommonUtils.window_addToScreen(window);
     }
 
     public void addWindows(Window[] windows) {
@@ -175,7 +175,7 @@ public final class API {
 
     public void removeWindow(Window window) {
         if (window == null) return;
-        uiCommonUtils.window_removeFromScreen( window);
+        uiCommonUtils.window_removeFromScreen(window);
     }
 
     public void removeWindows(Window[] windows) {
@@ -189,7 +189,7 @@ public final class API {
 
     public boolean closeWindow(Window window) {
         if (window == null) return false;
-        return uiCommonUtils.window_close( window);
+        return uiCommonUtils.window_close(window);
     }
 
     public void closeWindows(Window[] windows) {
@@ -216,9 +216,34 @@ public final class API {
             uiCommonUtils.window_receiveMessage(uiEngineState.windows.get(i), type, parameters);
     }
 
+    public void sendMessageToComponent(Component component, int type, Object... parameters) {
+        if (component == null) return;
+        uiCommonUtils.component_receiveMessage(component, type, parameters);
+    }
+
+    public void sendMessageToComponents(Component[] components, int type, Object... parameters) {
+        if (components == null) return;
+        for (int i = 0; i < components.length; i++)
+            uiCommonUtils.component_receiveMessage(components[i], type, parameters);
+    }
+
+    public void sendMessageToAllComponents(int type, Object... parameters) {
+        for (int i = 0; i < uiEngineState.screenComponents.size; i++) {
+            final Component component = uiEngineState.screenComponents.get(i);
+            uiCommonUtils.component_receiveMessage(component, type, parameters);
+        }
+        for (int i = 0; i < uiEngineState.windows.size; i++) {
+            final Window window = uiEngineState.windows.get(i);
+            for (int i2 = 0; i2 < window.components.size; i2++) {
+                final Component component = window.components.get(i2);
+                uiCommonUtils.component_receiveMessage(component, type, parameters);
+            }
+        }
+    }
+
     public void windowsEnforceScreenBounds() {
         for (int i = 0; i < uiEngineState.windows.size; i++)
-            uiCommonUtils.window_enforceScreenBounds( uiEngineState.windows.get(i));
+            uiCommonUtils.window_enforceScreenBounds(uiEngineState.windows.get(i));
     }
 
     /* #################### Modal #################### */
@@ -229,7 +254,7 @@ public final class API {
 
     public void addWindowAsModal(Window modalWindow) {
         if (modalWindow == null) return;
-        uiCommonUtils.window_addToScreenAsModal( modalWindow);
+        uiCommonUtils.window_addToScreenAsModal(modalWindow);
     }
 
     public void removeCurrentModalWindow() {
@@ -257,7 +282,7 @@ public final class API {
         uiCommonUtils.component_addToScreen(component, uiEngineState);
     }
 
-    public void moveScreenComponentToTop(Component component){
+    public void moveScreenComponentToTop(Component component) {
         if (component == null) return;
         uiCommonUtils.component_screenMoveToTop(component, uiEngineState);
     }
@@ -286,11 +311,11 @@ public final class API {
     }
 
     public <T extends Component> Array<T> findScreenComponents(Predicate<Component> findBy, Class<T> tClass) {
-        return (Array<T>)uiCommonUtils.findMultiple(uiEngineState.screenComponents, findBy);
+        return (Array<T>) uiCommonUtils.findMultiple(uiEngineState.screenComponents, findBy);
     }
 
     public Component findScreenComponent(Predicate<Component> findBy) {
-        return  uiCommonUtils.find(uiEngineState.screenComponents, findBy);
+        return uiCommonUtils.find(uiEngineState.screenComponents, findBy);
     }
 
     public <T extends Component> T findScreenComponent(Predicate<Component> findBy, Class<T> tClass) {
@@ -347,27 +372,27 @@ public final class API {
         removeHotKeys(uiEngineState.hotKeys.toArray(HotKey[]::new));
     }
 
-    public HotKey findHotKey(Predicate<HotKey> findBy){
+    public HotKey findHotKey(Predicate<HotKey> findBy) {
         return uiCommonUtils.find(uiEngineState.hotKeys, findBy);
     }
 
-    public Array<HotKey> findHotKeys(Predicate<HotKey> findBy){
+    public Array<HotKey> findHotKeys(Predicate<HotKey> findBy) {
         return uiCommonUtils.findMultiple(uiEngineState.hotKeys, findBy);
     }
 
-    public Window findWindow(Predicate<Window> findBy){
+    public Window findWindow(Predicate<Window> findBy) {
         return uiCommonUtils.find(uiEngineState.windows, findBy);
     }
 
-    public Component findWindowComponent(Predicate<Window> findByWindow, Predicate<Component> findByComponent){
-        if(uiCommonUtils.find(uiEngineState.windows, findByWindow) instanceof Window window) {
+    public Component findWindowComponent(Predicate<Window> findByWindow, Predicate<Component> findByComponent) {
+        if (uiCommonUtils.find(uiEngineState.windows, findByWindow) instanceof Window window) {
             return uiCommonUtils.find(window.components, findByComponent);
         }
         return null;
     }
 
 
-    public Array<Window> findWindows(Predicate<Window> findBy){
+    public Array<Window> findWindows(Predicate<Window> findBy) {
         return uiCommonUtils.findMultiple(uiEngineState.windows, findBy);
     }
 
@@ -399,11 +424,11 @@ public final class API {
         return uiEngineState.appToolTip;
     }
 
-    public boolean isAppToolTipDisplayed(String name){
+    public boolean isAppToolTipDisplayed(String name) {
         return uiEngineState.appToolTip != null && uiEngineState.appToolTip.name.equals(name);
     }
 
-    public boolean isAppToolTipDisplayed(){
+    public boolean isAppToolTipDisplayed() {
         return uiEngineState.appToolTip != null;
     }
 
@@ -413,7 +438,7 @@ public final class API {
 
     public void setViewportMode(VIEWPORT_MODE viewPortMode) {
         if (viewPortMode == null) return;
-        uiCommonUtils.viewport_changeViewPortMode( viewPortMode);
+        uiCommonUtils.viewport_changeViewPortMode(viewPortMode);
     }
 
     public int resolutionWidth() {
@@ -432,7 +457,7 @@ public final class API {
         return uiEngineState.resolutionHeightHalf;
     }
 
-    public float animationTimer(){
+    public float animationTimer() {
         return uiCommonUtils.ui_getAnimationTimer(uiEngineState);
     }
 

@@ -15,7 +15,4 @@ public interface WindowAction extends CommonActions, Icon, Displayable {
     default void onUnfold() {
     }
 
-    default void onMessageReceived(int type, Object... parameters) {
-    }
-
 }
