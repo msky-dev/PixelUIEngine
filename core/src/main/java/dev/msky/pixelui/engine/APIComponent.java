@@ -353,6 +353,7 @@ public final class APIComponent {
 
         public void pressAndRelease(Button button) {
             press(button);
+            release(button);
         }
 
         public void pressAndRelease(Button[] buttons) {
