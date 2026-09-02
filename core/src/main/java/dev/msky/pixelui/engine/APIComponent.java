@@ -351,6 +351,17 @@ public final class APIComponent {
             for (int i = 0; i < buttons.length; i++) release(buttons[i]);
         }
 
+        public void pressAndRelease(Button button) {
+            press(button);
+        }
+
+        public void pressAndRelease(Button[] buttons) {
+            for (int i = 0; i < buttons.length; i++){
+                press(buttons[i]);
+                release(buttons[i]);
+            }
+        }
+
         public void toggle(Button button) {
             if (button == null) return;
             uiCommonUtils.button_toggle(button);
