@@ -932,7 +932,7 @@ public final class UIEngine<T extends UIEngineAdapter> implements Disposable {
     }
 
     private void updateUI_keyInteractions() {
-        uiCommonUtils.setKeyboardInteractedUIObject(null);
+        uiCommonUtils.setKeyboardInteractedUIObjectFrame(null);
         if (uiEngineState.config.ui.keyInteractionsDisabled)
             return;
 
@@ -952,7 +952,7 @@ public final class UIEngine<T extends UIEngineAdapter> implements Disposable {
                     char typedChar = (char) uiEngineState.inputEvents.keyTypedCharacters.get(uiEngineState.inputEvents.keyTypedCharacters.size - 1);
                     uiCommonUtils.mouseTextInput_selectCharacter(uiEngineState.openMouseTextInput, typedChar);
                 }
-                uiCommonUtils.setKeyboardInteractedUIObject(focusedTextField);
+                uiCommonUtils.setKeyboardInteractedUIObjectFrame(focusedTextField);
             }
         }
         if (uiEngineState.inputEvents.keyDown) {
@@ -992,7 +992,7 @@ public final class UIEngine<T extends UIEngineAdapter> implements Disposable {
                     }
 
 
-                    uiCommonUtils.setKeyboardInteractedUIObject(focusedTextField);
+                    uiCommonUtils.setKeyboardInteractedUIObjectFrame(focusedTextField);
                 }
             } else {
                 // Hotkeys
@@ -1093,7 +1093,7 @@ public final class UIEngine<T extends UIEngineAdapter> implements Disposable {
     }
 
     private void updateUI_mouseInteractions() {
-        uiCommonUtils.setMouseInteractedUIObject(null);
+        uiCommonUtils.setMouseInteractedUIObjectFrame(null);
         if (uiEngineState.config.ui.mouseInteractionsDisabled)
             return;
         // ------ MOUSE DOUBLE CLICK ------
@@ -1123,7 +1123,7 @@ public final class UIEngine<T extends UIEngineAdapter> implements Disposable {
                     actions_executeOnMouseDoubleClickCommonAction(lastUIMouseHover, mouseDownButton);
                 }
 
-                uiCommonUtils.setMouseInteractedUIObject(lastUIMouseHover);
+                uiCommonUtils.setMouseInteractedUIObjectFrame(lastUIMouseHover);
             }
         }
         // ------ MOUSE DOWN ------
@@ -1163,7 +1163,6 @@ public final class UIEngine<T extends UIEngineAdapter> implements Disposable {
                             uiEngineState.pressedScrollBarHorizontal = scrollBarHorizontal;
                         }
                         case ComboBoxItem comboBoxItem -> {
-                            System.out.println("x");
                             uiEngineState.pressedComboBoxItem = comboBoxItem;
                         }
                         case ComboBox comboBox -> {
@@ -1289,7 +1288,7 @@ public final class UIEngine<T extends UIEngineAdapter> implements Disposable {
                     actions_executeOnMousePressCommonAction(lastUIMouseHover, mouseDownButton);
                 }
 
-                uiCommonUtils.setMouseInteractedUIObject(lastUIMouseHover);
+                uiCommonUtils.setMouseInteractedUIObjectFrame(lastUIMouseHover);
             }
         }
         // ------ MOUSE UP ------
@@ -1413,7 +1412,7 @@ public final class UIEngine<T extends UIEngineAdapter> implements Disposable {
                     case null, default -> {
                     }
                 }
-                uiCommonUtils.setMouseInteractedUIObject(pressedUIObject);
+                uiCommonUtils.setMouseInteractedUIObjectFrame(pressedUIObject);
             }
             if (processMouseUpDragged) {
                 switch (draggedUIObject) {
@@ -1483,7 +1482,7 @@ public final class UIEngine<T extends UIEngineAdapter> implements Disposable {
                     }
                 }
 
-                uiCommonUtils.setMouseInteractedUIObject(draggedUIObject);
+                uiCommonUtils.setMouseInteractedUIObjectFrame(draggedUIObject);
             }
 
             // Execute Common Actions
@@ -1546,7 +1545,7 @@ public final class UIEngine<T extends UIEngineAdapter> implements Disposable {
                     case null, default -> {
                     }
                 }
-                uiCommonUtils.setMouseInteractedUIObject(pressedUIObject);
+                uiCommonUtils.setMouseInteractedUIObjectFrame(pressedUIObject);
             }
             if (processMouseDraggedDragged) {
                 switch (draggedUIObject) {
@@ -1560,7 +1559,7 @@ public final class UIEngine<T extends UIEngineAdapter> implements Disposable {
                     case null, default -> {
                     }
                 }
-                uiCommonUtils.setMouseInteractedUIObject(draggedUIObject);
+                uiCommonUtils.setMouseInteractedUIObjectFrame(draggedUIObject);
             }
 
         }
@@ -1601,7 +1600,7 @@ public final class UIEngine<T extends UIEngineAdapter> implements Disposable {
 
                 // Execute Common Actions
                 actions_executeOnMouseScrollCommonAction(lastUIMouseHover, uiEngineState.inputEvents.mouseScrolledAmount);
-                uiCommonUtils.setMouseInteractedUIObject(lastUIMouseHover);
+                uiCommonUtils.setMouseInteractedUIObjectFrame(lastUIMouseHover);
             }
         }
     }

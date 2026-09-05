@@ -344,13 +344,25 @@ public class UICommonUtils {
         checkBox.checkBoxAction.onCheck(false);
     }
 
-    public void setMouseInteractedUIObject(Object object) {
+    public void setMouseInteractedUIObjectFrame(Object object) {
         uiEngineState.mouseInteractedUIObjectFrame = object;
     }
 
-    public void setKeyboardInteractedUIObject(Object object) {
+    public void setKeyboardInteractedUIObjectFrame(Object object) {
         uiEngineState.keyboardInteractedUIObjectFrame = object;
     }
+
+    public Object ui_getInteractedUIObject(){
+        if( getPressedUIReference(uiEngineState) != null)
+            return getPressedUIReference(uiEngineState);
+        if(uiEngineState.mouseInteractedUIObjectFrame != null)
+            return uiEngineState.mouseInteractedUIObjectFrame;
+        if(uiEngineState.keyboardInteractedUIObjectFrame != null)
+            return uiEngineState.keyboardInteractedUIObjectFrame;
+        return null;
+    }
+
+
 
     public void notification_addToScreen(GenericNotification genericNotification, int notificationsMax) {
         if (genericNotification.addedToScreen) return;
@@ -371,6 +383,7 @@ public class UICommonUtils {
         }
 
     }
+
 
     public void notification_removeFromScreen(GenericNotification genericNotification) {
         if (!genericNotification.addedToScreen) return;
@@ -1487,7 +1500,6 @@ public class UICommonUtils {
         if (uiEngineState.pressedTextField == component) resetPressedTextFieldReference(uiEngineState);
         if (uiEngineState.focusedTextField == component) resetFocusedTextFieldReference(uiEngineState);
         if (uiEngineState.pressedCheckBox == component) resetPressedCheckBoxReference(uiEngineState);
-
         if (uiEngineState.draggedGrid == component) {
             resetDraggedGridReference(uiEngineState);
             resetPressedGridReference(uiEngineState);

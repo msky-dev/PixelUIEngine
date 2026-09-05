@@ -1,5 +1,6 @@
 package dev.msky.pixelui.engine;
 
+import com.badlogic.gdx.utils.ObjectFloatMap;
 import dev.msky.pixelui.engine.constants.INPUT_METHOD;
 import dev.msky.pixelui.engine.constants.KeyCode;
 import dev.msky.pixelui.engine.constants.MOUSE_CONTROL_MODE;
@@ -35,11 +36,26 @@ public final class APIInput {
         return inputEvents.lastUsedInputMethod;
     }
 
-    public boolean isAnyInputHoveringOrUsingUI() {
-        if (mouse.isUsingOrHoveringAnyUIObject()) return true;
-        if (keyboard.isUsingAnyUIObject()) return true;
+    public boolean isHoverOrInteractingWithUI() {
+        if (mouse.hoverUIObject() != null) return true;
+        if (interactingUIObject() != null) return true;
         return false;
     }
+
+    public Object interactingUIObject(){
+        return uiCommonUtils.ui_getInteractedUIObject();
+    }
+
+    public boolean isInteractingUIObject(Object object){
+        if(object == null) return false;
+        return uiCommonUtils.ui_getInteractedUIObject() == object;
+    }
+
+    public boolean isInteractingUIObjectName(String name){
+        if(name == null) return false;
+        return name.equals(getUIObjectName(uiCommonUtils.ui_getInteractedUIObject()));
+    }
+
 
     public final class APIMouse {
         public final APIEvent event;
@@ -61,33 +77,7 @@ public final class APIInput {
 
         public boolean isHoverUIObjectName(String name) {
             if (name == null) return false;
-            return name.equals(mouseUIObjectName(uiEngineState.lastUIMouseHover));
-        }
-
-        public Object useUIObject() {
-            return  uiEngineState.mouseInteractedUIObjectFrame;
-        }
-
-        public boolean isUseUIObject(Object object) {
-            if (object == null) return false;
-            return uiEngineState.mouseInteractedUIObjectFrame == object;
-        }
-
-        public boolean isUseUIObjectName(String name) {
-            if (name == null) return false;
-            return name.equals(mouseUIObjectName(uiEngineState.mouseInteractedUIObjectFrame));
-        }
-
-        public boolean isUsingAnyUIObject() {
-            return useUIObject() != null;
-        }
-
-        public boolean isHoveringAnyUIObject() {
-            return hoverUIObject() != null;
-        }
-
-        public boolean isUsingOrHoveringAnyUIObject() {
-            return isUsingAnyUIObject() || isHoveringAnyUIObject();
+            return name.equals(getUIObjectName(uiEngineState.lastUIMouseHover));
         }
 
         public void setEmulatedMousePosition(int x, int y){
@@ -193,17 +183,6 @@ public final class APIInput {
             }
         }
 
-        private String mouseUIObjectName(Object mouseObject) {
-            if (mouseObject != null) {
-                if (mouseObject instanceof Component component) {
-                    return component.name;
-                } else if (mouseObject instanceof Window window) {
-                    return window.name;
-                }
-            }
-            return "";
-        }
-
     }
 
     public final class APIKeyboard {
@@ -214,24 +193,6 @@ public final class APIInput {
         APIKeyboard() {
             this.event = new APIEvent();
             this.state = new APIState();
-        }
-
-        public Object useUIObject() {
-            return uiEngineState.keyboardInteractedUIObjectFrame != null ? uiEngineState.keyboardInteractedUIObjectFrame : null;
-        }
-
-        public boolean isUseUIObject(Object object) {
-            if (object == null) return false;
-            return uiEngineState.keyboardInteractedUIObjectFrame == object;
-        }
-
-        public boolean isUseUIObjectName(String name) {
-            if (name == null) return false;
-            return uiEngineState.keyboardInteractedUIObjectFrame != null && name.equals(keyboardUIObjectName(uiEngineState.keyboardInteractedUIObjectFrame));
-        }
-
-        public boolean isUsingAnyUIObject() {
-            return useUIObject() != null;
         }
 
         public final class APIEvent {
@@ -439,6 +400,17 @@ public final class APIInput {
             }
         }
 
+    }
+
+    private String getUIObjectName(Object uiObject) {
+        if (uiObject != null) {
+            if (uiObject instanceof Component component) {
+                return component.name;
+            } else if (uiObject instanceof Window window) {
+                return window.name;
+            }
+        }
+        return "";
     }
 
 
