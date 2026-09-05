@@ -61,11 +61,11 @@ public final class APIInput {
 
         public boolean isHoverUIObjectName(String name) {
             if (name == null) return false;
-            return uiEngineState.lastUIMouseHover != null && name.equals(mouseUIObjectName(uiEngineState.lastUIMouseHover));
+            return name.equals(mouseUIObjectName(uiEngineState.lastUIMouseHover));
         }
 
         public Object useUIObject() {
-            return uiEngineState.mouseInteractedUIObjectFrame != null ? uiEngineState.mouseInteractedUIObjectFrame : null;
+            return  uiEngineState.mouseInteractedUIObjectFrame;
         }
 
         public boolean isUseUIObject(Object object) {
@@ -75,7 +75,7 @@ public final class APIInput {
 
         public boolean isUseUIObjectName(String name) {
             if (name == null) return false;
-            return uiEngineState.mouseInteractedUIObjectFrame != null && name.equals(mouseUIObjectName(uiEngineState.mouseInteractedUIObjectFrame));
+            return name.equals(mouseUIObjectName(uiEngineState.mouseInteractedUIObjectFrame));
         }
 
         public boolean isUsingAnyUIObject() {

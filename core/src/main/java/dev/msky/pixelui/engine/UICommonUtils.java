@@ -1267,6 +1267,7 @@ public class UICommonUtils {
             uiEngineState.openMouseTextInput = null;
             uiEngineState.mTextInputMouse1Pressed = false;
             uiEngineState.mTextInputMouse2Pressed = false;
+            uiEngineState.mTextInputMouse3Pressed = false;
             uiEngineState.mTextInputScrollTimer = 0;
             uiEngineState.mTextInputTempHardwareMousePosition.set(0, 0);
             uiEngineState.mTextInputScrollTime = 0;

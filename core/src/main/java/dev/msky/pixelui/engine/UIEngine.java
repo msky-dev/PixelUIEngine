@@ -60,7 +60,7 @@ public final class UIEngine<T extends UIEngineAdapter> implements Disposable {
     }
 
     public UIEngine(T uiAdapter, MediaManager mediaManager, UIEngineTheme theme, int resolutionWidth, int resolutionHeight, VIEWPORT_MODE viewportMode, boolean gamePadSupport) {
-        if (uiAdapter == null || mediaManager == null | theme == null) {
+        if (uiAdapter == null || mediaManager == null || theme == null) {
             throw new RuntimeException("Cannot initialize UIEngine: missing parameters");
         }
         this.uiAdapter = uiAdapter;
@@ -86,8 +86,8 @@ public final class UIEngine<T extends UIEngineAdapter> implements Disposable {
         //  ----- Paramters
         newUIEngineState.resolutionWidth = Math.max(resolutionWidth, 16);
         newUIEngineState.resolutionHeight = Math.max(resolutionHeight, 16);
-        newUIEngineState.resolutionWidthHalf = MathUtils.round(resolutionWidth / 2f);
-        newUIEngineState.resolutionHeightHalf = MathUtils.round(resolutionHeight / 2f);
+        newUIEngineState.resolutionWidthHalf = MathUtils.floor(newUIEngineState.resolutionWidth / 2f);
+        newUIEngineState.resolutionHeightHalf = MathUtils.floor(newUIEngineState.resolutionHeight / 2f);
         newUIEngineState.viewportMode = viewportMode != null ? viewportMode : VIEWPORT_MODE.PIXEL_PERFECT;
         newUIEngineState.gamePadSupport = gamePadSupport;
         newUIEngineState.theme = theme;
@@ -115,7 +115,7 @@ public final class UIEngine<T extends UIEngineAdapter> implements Disposable {
         // ----- Screen
         newUIEngineState.camera_screen = UICommonUtils.camera_createCamera(newUIEngineState.resolutionWidth, newUIEngineState.resolutionHeight);
         newUIEngineState.viewport_screen = UICommonUtils.viewport_createViewport(newUIEngineState.viewportMode, newUIEngineState.camera_screen, newUIEngineState.resolutionWidth, newUIEngineState.resolutionHeight);
-        if (viewportMode.upscale) {
+        if (newUIEngineState.viewportMode.upscale) {
             newUIEngineState.upScaleFactor_screen = uiCommonUtils.viewport_determineUpscaleFactor(newUIEngineState.resolutionWidth, newUIEngineState.resolutionHeight);
             newUIEngineState.frameBuffer_upScaled_screen = UICommonUtils.frameBuffer_createFrameBuffer(newUIEngineState.resolutionWidth * newUIEngineState.upScaleFactor_screen, newUIEngineState.resolutionHeight * newUIEngineState.upScaleFactor_screen);
             newUIEngineState.frameBuffer_upScaled_screen.getColorBufferTexture().setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
@@ -131,6 +131,7 @@ public final class UIEngine<T extends UIEngineAdapter> implements Disposable {
         newUIEngineState.mTextInputTempHardwareMousePosition = new GridPoint2(0, 0);
         newUIEngineState.mTextInputMouse1Pressed = false;
         newUIEngineState.mTextInputMouse2Pressed = false;
+        newUIEngineState.mTextInputMouse3Pressed = false;
         newUIEngineState.mTextInputScrollTimer = 0;
         newUIEngineState.mTextInputScrollTime = 0;
         newUIEngineState.mTextInputUnlock = false;
@@ -391,7 +392,7 @@ public final class UIEngine<T extends UIEngineAdapter> implements Disposable {
         }
 
         // Scroll Forward/Backwards
-        final int charsPerRow = uiEngineState.config.mouseTextInput.charsPerRow;
+        final int charsPerRow = Math.max(uiEngineState.config.mouseTextInput.charsPerRow,1);
         int index = mouseTextInput.selectedIndex;
         int totalChars = mouseTextInput.upperCase ? mouseTextInput.charactersUC.length : mouseTextInput.charactersLC.length;
 
@@ -452,8 +453,12 @@ public final class UIEngine<T extends UIEngineAdapter> implements Disposable {
             uiEngineState.mTextInputMouse2Pressed = false;
         }
 
-        if (mouse3Pressed) {
+        if (mouse3Pressed && !uiEngineState.mTextInputMouse3Pressed) {
             changeCase = true;
+            uiEngineState.mTextInputMouse3Pressed = true;
+        }
+        if(!mouse3Pressed && uiEngineState.mTextInputMouse3Pressed) {
+            uiEngineState.mTextInputMouse3Pressed = false;
         }
 
         // Confirm Character from API Queue if nothing was pressed
@@ -1299,7 +1304,6 @@ public final class UIEngine<T extends UIEngineAdapter> implements Disposable {
             Object draggedUIObject = uiCommonUtils.getDraggedUIReference(uiEngineState);
             if (draggedUIObject == null) processMouseUpDragged = false;
 
-
             if (processMouseUpPressed) {
                 switch (pressedUIObject) {
                     case ContextMenuItem contextMenuItem -> {
@@ -1413,7 +1417,7 @@ public final class UIEngine<T extends UIEngineAdapter> implements Disposable {
             }
             if (processMouseUpDragged) {
                 switch (draggedUIObject) {
-                    case Window __ -> {
+                    case Window _ -> {
                         uiEngineState.draggedWindow_offset.set(0, 0);
                         uiEngineState.draggedWindow = null;
                     }
@@ -1470,9 +1474,7 @@ public final class UIEngine<T extends UIEngineAdapter> implements Disposable {
                                 }
                             }
                         } else if (uiCommonUtils.grid_canDragIntoScreen(grid)) {
-                            grid.gridAction.onDragIntoApp(
-                                    dragItem, dragFromX, dragFromY, uiEngineState.mouseUI.x, uiEngineState.mouseUI.y
-                            );
+                            grid.gridAction.onDragIntoApp(dragItem, dragFromX, dragFromY, uiEngineState.mouseUI.x, uiEngineState.mouseUI.y);
                         }
                         // reset
                         uiCommonUtils.resetDraggedGridReference(uiEngineState);
@@ -1492,15 +1494,15 @@ public final class UIEngine<T extends UIEngineAdapter> implements Disposable {
         }
         // ------ MOUSE DRAGGED ------
         if (uiEngineState.inputEvents.mouseDragged) {
-            Object lastUIMouseHover = uiEngineState.lastUIMouseHover;
+            final Object lastUIMouseHover = uiEngineState.lastUIMouseHover;
             boolean processMouseDraggedPressed = true;
             boolean processMouseDraggedDragged = true;
             // Press interaction
-            Object pressedUIObject = uiCommonUtils.getPressedUIReference(uiEngineState);
+            final Object pressedUIObject = uiCommonUtils.getPressedUIReference(uiEngineState);
             if (pressedUIObject == null)
                 processMouseDraggedPressed = false;
             // Drag interaction
-            Object draggedUIObject = uiCommonUtils.getDraggedUIReference(uiEngineState);
+            final Object draggedUIObject = uiCommonUtils.getDraggedUIReference(uiEngineState);
             if (draggedUIObject == null)
                 processMouseDraggedDragged = false;
 
@@ -1599,7 +1601,6 @@ public final class UIEngine<T extends UIEngineAdapter> implements Disposable {
 
                 // Execute Common Actions
                 actions_executeOnMouseScrollCommonAction(lastUIMouseHover, uiEngineState.inputEvents.mouseScrolledAmount);
-
                 uiCommonUtils.setMouseInteractedUIObject(lastUIMouseHover);
             }
         }
@@ -1893,7 +1894,7 @@ public final class UIEngine<T extends UIEngineAdapter> implements Disposable {
         if (commonActions != null) commonActions.onMouseRelease(button);
         if (uiObject instanceof Component component) {
             // Execute for parent window too
-            actions_executeOnMousePressCommonAction(component.addedToWindow, button);
+            actions_executeOnMouseReleaseCommonAction(component.addedToWindow, button);
         }
     }
 
@@ -2694,9 +2695,8 @@ public final class UIEngine<T extends UIEngineAdapter> implements Disposable {
         for (int i = 0; i < uiEngineState.notifications.size; i++) {
             Notification notification = uiEngineState.notifications.get(i);
             final float notificationAlpha = notification.color.a;
-
             if (notification.state == TOP_NOTIFICATION_STATE.FOLD) {
-                float fadeoutProgress = (notification.timer / (float) uiEngineState.config.notification.foldTimeMS);
+                final float fadeoutProgress = Math.clamp((System.currentTimeMillis() - notification.timer)/ (float) uiEngineState.config.notification.foldTimeMS, 0f, 1f);
                 yOffsetSlideFade = yOffsetSlideFade + MathUtils.round(TS() * fadeoutProgress);
             }
             spriteRenderer.saveState();
@@ -3074,7 +3074,7 @@ public final class UIEngine<T extends UIEngineAdapter> implements Disposable {
             case Grid grid -> {
                 int tileSize = grid.bigMode ? TS2() : TS();
                 int gridWidth = grid.items.length;
-                int gridHeight = grid.items[0].length;
+                int gridHeight = grid.items.length > 0 ? grid.items[0].length : 0;
 
                 boolean dragEnabled = false;
                 boolean dragValid = false;

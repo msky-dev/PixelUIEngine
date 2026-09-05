@@ -105,7 +105,7 @@ public final class UIEngineState {
 
     /* #################### MouseTextInput #################### */
     public MouseTextInput openMouseTextInput;
-    public boolean mTextInputMouse1Pressed, mTextInputMouse2Pressed;
+    public boolean mTextInputMouse1Pressed, mTextInputMouse2Pressed, mTextInputMouse3Pressed;
     public GridPoint2 mTextInputTempHardwareMousePosition;
     public int mTextInputScrollTimer;
     public int mTextInputScrollTime;
