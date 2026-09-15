@@ -1,7 +1,10 @@
 package dev.msky.pixelui.utils.sound;
 
 import com.badlogic.gdx.audio.Sound;
-import com.badlogic.gdx.utils.*;
+import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.Disposable;
+import com.badlogic.gdx.utils.LongArray;
+import com.badlogic.gdx.utils.ObjectMap;
 import dev.msky.pixelui.media.CMediaSoundEffect;
 import dev.msky.pixelui.media.MediaManager;
 import dev.msky.pixelui.utils.Tools;
@@ -10,22 +13,45 @@ import dev.msky.pixelui.utils.Tools;
  * Plays sounds and automatically adjusts volume to distance
  */
 public class SoundPlayer implements Disposable{
+    private static final int AUDIO_THROTTLING_DISABLED = -1;
     private int range;
     private float volume;
     private float camera_x, camera_y;
+    private int audioThrottlingCooldownMs;
     private final MediaManager mediaManager;
-    private final Array<CMediaSoundEffect> playedSounds;
-    private final ObjectMap<CMediaSoundEffect, LongArray> playedSoundIds;
+    private final ObjectMap<CMediaSoundEffect, PlayedSoundMetaData> playedSoundMetaData;
+
+    private final class PlayedSoundMetaData {
+        public long lastPlayed;
+        public final LongArray playedSoundIds;
+
+        public PlayedSoundMetaData() {
+            this.lastPlayed = 0;
+            this.playedSoundIds = new LongArray();
+        }
+    }
 
     public SoundPlayer(MediaManager mediaManager) {
         this(mediaManager, 0);
     }
 
+    public void endableAudioThrottling(int coolDown) {
+        this.audioThrottlingCooldownMs = Math.max(coolDown, 0);
+    }
+
+    public void disableAudioThrottling() {
+        this.audioThrottlingCooldownMs = AUDIO_THROTTLING_DISABLED;
+    }
+
+    public void setAudioThrottlingCooldownMs(int audioThrottlingCooldownMs) {
+        this.audioThrottlingCooldownMs = audioThrottlingCooldownMs;
+    }
+
     public SoundPlayer(MediaManager mediaManager, int range2D) {
         this.mediaManager = mediaManager;
         this.volume = 1f;
-        this.playedSounds = new Array<>();
-        this.playedSoundIds = new ObjectMap<>();
+        this.playedSoundMetaData = new ObjectMap<>();
+        this.audioThrottlingCooldownMs = AUDIO_THROTTLING_DISABLED;
         setRange2D(range2D);
     }
 
@@ -107,6 +133,17 @@ public class SoundPlayer implements Disposable{
     }
 
     private long playSoundInternal(CMediaSoundEffect cMediaSoundEffect,float position_x, float position_y, float volume, float pitch, float pan, boolean loop, boolean play2D) {
+        final long now = System.currentTimeMillis();
+        if (!playedSoundMetaData.containsKey(cMediaSoundEffect))
+            playedSoundMetaData.put(cMediaSoundEffect, new PlayedSoundMetaData());
+        final PlayedSoundMetaData metaData = playedSoundMetaData.get(cMediaSoundEffect);
+
+        if (this.audioThrottlingCooldownMs != AUDIO_THROTTLING_DISABLED) {
+            if ((now - metaData.lastPlayed) <= this.audioThrottlingCooldownMs) // dont play again
+                return -1;
+        }
+
+
         final Sound sound = mediaManager.sound(cMediaSoundEffect);
         final float playVolume, playPan;
         if (play2D) {
@@ -126,44 +163,36 @@ public class SoundPlayer implements Disposable{
 
         final long soundId;
         if (loop) {
-            soundId= sound.loop(playVolume, pitch, playPan);
+            soundId = sound.loop(playVolume, pitch, playPan);
         } else {
-            soundId= sound.play(playVolume, pitch, playPan);
+            soundId = sound.play(playVolume, pitch, playPan);
         }
 
         if(soundId != -1) {
-            playedSounds.add(cMediaSoundEffect);
-            if (!playedSoundIds.containsKey(cMediaSoundEffect)) {
-                playedSoundIds.put(cMediaSoundEffect, new LongArray());
-            }
-            LongArray soundIds = playedSoundIds.get(cMediaSoundEffect);
-            soundIds.add(soundId);
+            metaData.playedSoundIds.add(soundId);
+            metaData.lastPlayed = now;
         }
 
         return soundId;
     }
 
     public void stopAllSounds(){
-        this.stopSounds(this.playedSounds);
+        final ObjectMap.Keys<CMediaSoundEffect> keys = this.playedSoundMetaData.keys();
+        while (keys.hasNext)
+            this.stopSound(keys.next());
     }
 
     public void stopSounds(Array<CMediaSoundEffect> stopSounds){
-        for(int i=0;i<stopSounds.size;i++) {
-            final CMediaSoundEffect soundEffect = stopSounds.get(i);
-            stopSound(soundEffect);
-        }
+        for(int i=0;i<stopSounds.size;i++)
+            stopSound(stopSounds.get(i));
     }
 
     public void stopSound(CMediaSoundEffect soundEffect){
-        if(!this.playedSoundIds.containsKey(soundEffect))
-            return;
-        final LongArray ids = this.playedSoundIds.get(soundEffect);
-        for (int i = 0; i < ids.size; i++) {
-            long id = ids.get(i);
-            mediaManager.sound(soundEffect).stop(id);
+        if(this.playedSoundMetaData.get(soundEffect) instanceof  PlayedSoundMetaData metaData) {
+            for (int i = 0; i < metaData.playedSoundIds.size; i++)
+                mediaManager.sound(soundEffect).stop(metaData.playedSoundIds.get(i));
+            metaData.playedSoundIds.clear();
         }
-        this.playedSounds.removeValue(soundEffect, true);
-        this.playedSoundIds.remove(soundEffect);
     }
 
     public void update() {
