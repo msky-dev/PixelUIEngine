@@ -85,7 +85,7 @@ public final class UIEngineConfig {
             this.keyboardMouseButtonsScrollDown = new int[]{KeyCode.Key.PAGE_DOWN};
 
             this.gamePadMouseEnabled = false;
-            this.gamepadMouseCursorSpeed = 4.0f;
+            this.gamepadMouseCursorSpeed = 3.0f;
             this.gamePadMouseJoystickDeadZone = 0.3f;
             this.gamePadMouseStickLeftEnabled = true;
             this.gamePadMouseStickRightEnabled = true;
