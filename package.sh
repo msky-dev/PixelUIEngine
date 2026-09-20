@@ -29,14 +29,14 @@ export ADDITIONAL_FILES=(
 #WINDOWS_X64
 export WIN_X64_ENABLED="true"
 export WIN_X64_ROAST_BINARY="./buildtools/roast/roast-win-x86_64.exe"
-export WIN_X64_JRE="C:/Program Files/Java/25/windows_x64/jdk-25.0.2+10-jre"
+export WIN_X64_JRE="C:/Program Files/Java/26/windows_x64/jdk-26.0.2.1+1-jre"
 export WIN_X64_ICON="./buildtools/appicon.ico"
 export WIN_X64_FILE_SUFFIX="win_x64"
 
 #LINUX_X64
 export LINUX_X64_ENABLED="true"
 export LINUX_X64_ROAST_BINARY="./buildtools/roast/roast-linux-x86_64"
-export LINUX_X64_JRE="C:/Program Files/Java/25/linux_x64/jdk-25.0.2+10-jre"
+export LINUX_X64_JRE="C:/Program Files/Java/26/linux_x64/jdk-26.0.2.1+1-jre"
 export LINUX_X64_FILE_SUFFIX="linux_x64"
 
 #MACOS_X64_AARCH64
@@ -84,7 +84,6 @@ if [ "$WIN_X64_ENABLED" = "true" ]; then
   ],
   "mainClass": "${MAIN_CLASS}",
   "vmArgs": [
-    "--add-modules=jdk.incubator.vector"
   ],
   "args":[],
   "useMainAsContextClassLoader": false,
@@ -127,7 +126,6 @@ if [ "$LINUX_X64_ENABLED" = "true" ]; then
   ],
   "mainClass": "${MAIN_CLASS}",
   "vmArgs": [
-    "--add-modules=jdk.incubator.vector"
   ],
   "args":[],
   "useMainAsContextClassLoader": false,
