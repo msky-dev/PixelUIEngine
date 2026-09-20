@@ -12,19 +12,13 @@ public interface Copyable<T> {
 
     T copy();
 
-    // -------------------------------------------------------------------------
-    // Null safe
-    // -------------------------------------------------------------------------
-
     static <D extends Copyable<D>> D copyNullSafe(D value) {
         return value != null ? value.copy() : null;
     }
 
-    // -------------------------------------------------------------------------
-    // Array
-    // -------------------------------------------------------------------------
-
     static <D extends Copyable<D>> Array<D> copyCollection(Array<D> source) {
+        if(source == null)
+            return null;
         Array<D> copy = new Array<>(source.size);
 
         for (int i = 0; i < source.size; i++) {
@@ -34,11 +28,9 @@ public interface Copyable<T> {
         return copy;
     }
 
-    // -------------------------------------------------------------------------
-    // ObjectSet
-    // -------------------------------------------------------------------------
-
     static <D extends Copyable<D>> ObjectSet<D> copyCollection(ObjectSet<D> source) {
+        if(source == null)
+            return null;
         ObjectSet<D> copy = new ObjectSet<>(source.size);
 
         ObjectSet.ObjectSetIterator<D> iterator = source.iterator();
@@ -50,15 +42,9 @@ public interface Copyable<T> {
         return copy;
     }
 
-    // -------------------------------------------------------------------------
-    // ObjectMap
-    //
-    // Keys are NOT copied.
-    // This is especially useful for enum keys:
-    // ObjectMap<MyEnum, MyCopyable>
-    // -------------------------------------------------------------------------
-
     static <K, D extends Copyable<D>> ObjectMap<K, D> copyCollection(ObjectMap<K, D> source) {
+        if(source == null)
+            return null;
         ObjectMap<K, D> copy = new ObjectMap<>(source.size);
 
         for (ObjectMap.Entry<K, D> entry : source) {
@@ -68,11 +54,9 @@ public interface Copyable<T> {
         return copy;
     }
 
-    // -------------------------------------------------------------------------
-    // IntMap
-    // -------------------------------------------------------------------------
-
     static <D extends Copyable<D>> IntMap<D> copyCollection(IntMap<D> source) {
+        if(source == null)
+            return null;
         IntMap<D> copy = new IntMap<>(source.size);
 
         IntMap.Keys keys = source.keys();
@@ -85,11 +69,9 @@ public interface Copyable<T> {
         return copy;
     }
 
-    // -------------------------------------------------------------------------
-    // LongMap
-    // -------------------------------------------------------------------------
-
     static <D extends Copyable<D>> LongMap<D> copyCollection(LongMap<D> source) {
+        if(source == null)
+            return null;
         LongMap<D> copy = new LongMap<>(source.size);
 
         LongMap.Keys keys = source.keys();
@@ -102,11 +84,9 @@ public interface Copyable<T> {
         return copy;
     }
 
-    // -------------------------------------------------------------------------
-    // Arrays
-    // -------------------------------------------------------------------------
-
     static <D extends Copyable<D>> D[] copyCollection(D[] source) {
+        if(source == null)
+            return null;
         D[] copy = Arrays.copyOf(source, source.length);
 
         for (int i = 0; i < source.length; i++) {
@@ -116,11 +96,9 @@ public interface Copyable<T> {
         return copy;
     }
 
-    // -------------------------------------------------------------------------
-    // 2D Arrays
-    // -------------------------------------------------------------------------
-
     static <D extends Copyable<D>> D[][] copyCollection(D[][] source) {
+        if(source == null)
+            return null;
         D[][] copy = Arrays.copyOf(source, source.length);
 
         for (int i = 0; i < source.length; i++) {
@@ -144,6 +122,8 @@ public interface Copyable<T> {
     }
 
     static <D extends Copyable<D>> D[] copyArray(D[] array) {
+        if(array == null)
+            return null;
         D[] copy = Arrays.copyOf(array, array.length);
 
         for (int i = 0; i < array.length; i++) {
@@ -154,6 +134,8 @@ public interface Copyable<T> {
     }
 
     static <D extends Copyable<D>> D[][] copyArray(D[][] array) {
+        if(array == null)
+            return null;
         D[][] copy = Arrays.copyOf(array, array.length);
 
         for (int i = 0; i < array.length; i++) {
@@ -164,10 +146,14 @@ public interface Copyable<T> {
     }
 
     static boolean[] copyArray(boolean[] array) {
+        if(array == null)
+            return null;
         return Arrays.copyOf(array, array.length);
     }
 
     static boolean[][] copyArray(boolean[][] array) {
+        if(array == null)
+            return null;
         boolean[][] copy = new boolean[array.length][];
 
         for (int i = 0; i < array.length; i++) {
@@ -178,10 +164,14 @@ public interface Copyable<T> {
     }
 
     static byte[] copyArray(byte[] array) {
+        if(array == null)
+            return null;
         return Arrays.copyOf(array, array.length);
     }
 
     static byte[][] copyArray(byte[][] array) {
+        if(array == null)
+            return null;
         byte[][] copy = new byte[array.length][];
 
         for (int i = 0; i < array.length; i++) {
@@ -192,10 +182,14 @@ public interface Copyable<T> {
     }
 
     static short[] copyArray(short[] array) {
+        if(array == null)
+            return null;
         return Arrays.copyOf(array, array.length);
     }
 
     static short[][] copyArray(short[][] array) {
+        if(array == null)
+            return null;
         short[][] copy = new short[array.length][];
 
         for (int i = 0; i < array.length; i++) {
@@ -206,10 +200,14 @@ public interface Copyable<T> {
     }
 
     static char[] copyArray(char[] array) {
+        if(array == null)
+            return null;
         return Arrays.copyOf(array, array.length);
     }
 
     static char[][] copyArray(char[][] array) {
+        if(array == null)
+            return null;
         char[][] copy = new char[array.length][];
 
         for (int i = 0; i < array.length; i++) {
@@ -220,10 +218,14 @@ public interface Copyable<T> {
     }
 
     static int[] copyArray(int[] array) {
+        if(array == null)
+            return null;
         return Arrays.copyOf(array, array.length);
     }
 
     static int[][] copyArray(int[][] array) {
+        if(array == null)
+            return null;
         int[][] copy = new int[array.length][];
 
         for (int i = 0; i < array.length; i++) {
@@ -234,10 +236,14 @@ public interface Copyable<T> {
     }
 
     static long[] copyArray(long[] array) {
+        if(array == null)
+            return null;
         return Arrays.copyOf(array, array.length);
     }
 
     static long[][] copyArray(long[][] array) {
+        if(array == null)
+            return null;
         long[][] copy = new long[array.length][];
 
         for (int i = 0; i < array.length; i++) {
@@ -248,10 +254,14 @@ public interface Copyable<T> {
     }
 
     static float[] copyArray(float[] array) {
+        if(array == null)
+            return null;
         return Arrays.copyOf(array, array.length);
     }
 
     static float[][] copyArray(float[][] array) {
+        if(array == null)
+            return null;
         float[][] copy = new float[array.length][];
 
         for (int i = 0; i < array.length; i++) {
@@ -262,16 +272,17 @@ public interface Copyable<T> {
     }
 
     static double[] copyArray(double[] array) {
+        if(array == null)
+            return null;
         return Arrays.copyOf(array, array.length);
     }
 
     static double[][] copyArray(double[][] array) {
+        if(array == null)
+            return null;
         double[][] copy = new double[array.length][];
-
-        for (int i = 0; i < array.length; i++) {
+        for (int i = 0; i < array.length; i++)
             copy[i] = array[i] != null ? copyArray(array[i]) : null;
-        }
-
         return copy;
     }
 
