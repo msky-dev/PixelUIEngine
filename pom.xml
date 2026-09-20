@@ -7,7 +7,7 @@
 	<version>1.0</version>
 	<packaging>pom</packaging>
 	<properties>
-		<java.version>25</java.version>
+		<java.version>26</java.version>
 		<gdx.version>1.14.2</gdx.version>
         <lwjgl3-angle-vulkan.version>1.5.1</lwjgl3-angle-vulkan.version>
 		<gdx-controllers.version>2.2.4</gdx-controllers.version>
