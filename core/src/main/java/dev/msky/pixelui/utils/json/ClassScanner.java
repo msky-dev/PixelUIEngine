@@ -45,14 +45,19 @@ public final class ClassScanner {
     }
 
 
-    public static Array<Class<?>> findAnnotatedClasses(String packageName, Class<? extends Annotation> annotation) {
-        final Array<Class<?>> result = new Array<>();
+    public static Array<Class<?>> findAnnotatedClasses(
+            String packageName,
+            Class<? extends Annotation> annotation) {
 
+        final Array<Class<?>> result = new Array<>();
         final String packagePath = packageName.replace('.', '/');
 
+        final ClassLoader classLoader = ClassScanner.class.getClassLoader();
+
         try {
-            final ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-            final Enumeration<URL> resources = classLoader.getResources(packagePath);
+            // First try the normal classloader resource mechanism.
+            final Enumeration<URL> resources =
+                    classLoader.getResources(packagePath);
 
             while (resources.hasMoreElements()) {
                 final URL url = resources.nextElement();
@@ -66,24 +71,70 @@ public final class ClassScanner {
                             result
                     );
 
-                    case "jar" -> scanJar(
-                            classLoader,
-                            packageName,
-                            ((JarURLConnection) url.openConnection()).getJarFile(),
-                            annotation,
-                            result
-                    );
+                    case "jar" -> {
+                        final JarURLConnection connection =
+                                (JarURLConnection) url.openConnection();
+
+                        scanJar(
+                                classLoader,
+                                packageName,
+                                connection.getJarFile(),
+                                annotation,
+                                result
+                        );
+                    }
+                }
+            }
+
+            // Packaged applications can fail to expose package directories
+            // through ClassLoader.getResources(), even though the classes
+            // are inside the application JAR.
+            if (result.size == 0) {
+                final URL codeSource =
+                        ClassScanner.class
+                                .getProtectionDomain()
+                                .getCodeSource()
+                                .getLocation();
+
+                if (codeSource != null && "file".equals(codeSource.getProtocol())) {
+
+                    final File location = new File(codeSource.toURI());
+
+                    if (location.isFile()
+                            && location.getName().endsWith(".jar")) {
+
+                        try (JarFile jar = new JarFile(location)) {
+                            scanJar(
+                                    classLoader,
+                                    packageName,
+                                    jar,
+                                    annotation,
+                                    result
+                            );
+                        }
+
+                    } else if (location.isDirectory()) {
+
+                        final File packageDirectory =
+                                new File(location, packagePath);
+
+                        scanDirectory(
+                                classLoader,
+                                packageName,
+                                packageDirectory,
+                                annotation,
+                                result
+                        );
+                    }
                 }
             }
 
         } catch (Exception e) {
             Tools.App.logError(e);
-            return result;
         }
 
         return result;
     }
-
     private static void scanDirectory(
             ClassLoader classLoader,
             String packageName,
