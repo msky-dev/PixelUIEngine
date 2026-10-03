@@ -1,6 +1,5 @@
 package dev.msky.pixelui.engine;
 
-import com.badlogic.gdx.utils.ObjectFloatMap;
 import dev.msky.pixelui.engine.constants.INPUT_METHOD;
 import dev.msky.pixelui.engine.constants.KeyCode;
 import dev.msky.pixelui.engine.constants.MOUSE_CONTROL_MODE;
@@ -81,7 +80,7 @@ public final class APIInput {
         }
 
         public void setEmulatedMousePosition(int x, int y){
-            uiCommonUtils.emulatedMouse_setPosition(x, y);
+            uiCommonUtils.gamepadMouse_setPosition(x, y);
         }
 
         public MOUSE_CONTROL_MODE currentControlMode() {

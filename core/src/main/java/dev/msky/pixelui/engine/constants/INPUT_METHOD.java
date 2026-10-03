@@ -1,8 +1,7 @@
 package dev.msky.pixelui.engine.constants;
 
 public enum INPUT_METHOD {
-    HARDWARE_MOUSE("Mouse"),
-    KEYBOARD("Keyboard"),
+    MOUSE_AND_KEYBOARD("Mouse/Keyboard"),
     GAMEPAD("Gamepad"),
     NONE("None");
 

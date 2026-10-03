@@ -1,15 +1,12 @@
 package dev.msky.pixelui.engine.constants;
 
 public enum MOUSE_CONTROL_MODE {
-    HARDWARE_MOUSE("Mouse", false),
-    KEYBOARD("Keyboard", true),
-    GAMEPAD("Gamepad", true),
-    DISABLED("Disabled", false);
+    HARDWARE_MOUSE("Mouse"),
+    GAMEPAD("Gamepad"),
+    DISABLED("Disabled");
 
     public final String text;
-    public final boolean emulated;
-    MOUSE_CONTROL_MODE(String text, boolean emulated){
+    MOUSE_CONTROL_MODE(String text){
         this.text = text;
-        this.emulated = emulated;
     }
 }

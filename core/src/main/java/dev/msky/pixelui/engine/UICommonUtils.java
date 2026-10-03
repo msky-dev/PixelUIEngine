@@ -17,6 +17,7 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 import dev.msky.pixelui.engine.actions.common.CommonActions;
 import dev.msky.pixelui.engine.constants.BUTTON_MODE;
 import dev.msky.pixelui.engine.constants.KeyCode;
+import dev.msky.pixelui.engine.constants.MOUSE_CONTROL_MODE;
 import dev.msky.pixelui.engine.constants.VIEWPORT_MODE;
 import dev.msky.pixelui.media.CMediaSprite;
 import dev.msky.pixelui.media.MediaManager;
@@ -47,19 +48,19 @@ public class UICommonUtils {
         this.mediaManager = mediaManager;
     }
 
-    public void emulatedMouse_setPosition(float x, float y) {
-        if (!uiEngineState.currentControlMode.emulated)
+    public void gamepadMouse_setPosition(float x, float y) {
+        if (uiEngineState.currentControlMode == MOUSE_CONTROL_MODE.HARDWARE_MOUSE)
             return; // not possibe with hardware mouse
-        uiEngineState.emulatedMousePosition.x = Math.clamp(x, 0, uiEngineState.resolutionWidth);
-        uiEngineState.emulatedMousePosition.y = Math.clamp(y, 0, uiEngineState.resolutionHeight);
+        uiEngineState.gamepadMousePosition.x = Math.clamp(x, 0, uiEngineState.resolutionWidth);
+        uiEngineState.gamepadMousePosition.y = Math.clamp(y, 0, uiEngineState.resolutionHeight);
     }
 
-    public void emulatedMouse_setPositionComponent(Component component) {
+    public void gamepadMouse_setPositionComponent(Component component) {
         if (component == null) return;
         if (component.addedToWindow == null && !component.addedToScreen) return;
         int x = component_getAbsoluteX(component) + (uiEngineState.theme.ts.abs(component.width) / 2);
         int y = component_getAbsoluteY(component) + (uiEngineState.theme.ts.abs(component.height) / 2);
-        emulatedMouse_setPosition(x, y);
+        gamepadMouse_setPosition(x, y);
     }
 
     public boolean window_isModalOpen(UIEngineState uiEngineState) {
@@ -401,10 +402,10 @@ public class UICommonUtils {
 
     public boolean contextMenu_openAtMousePosition(ContextMenu contextMenu) {
         boolean success = contextMenu_open(contextMenu, uiEngineState.mouseUI.x, uiEngineState.mouseUI.y);
-        if (success && (uiEngineState.currentControlMode.emulated)) {
+        if (success && (uiEngineState.currentControlMode == MOUSE_CONTROL_MODE.GAMEPAD))  {
             // emulated mode: move mouse onto the opened menu
-            uiEngineState.emulatedMousePosition.x += uiEngineState.theme.ts.TS_HALF;
-            uiEngineState.emulatedMousePosition.y -= uiEngineState.theme.ts.TS_HALF;
+            uiEngineState.gamepadMousePosition.x += uiEngineState.theme.ts.TS_HALF;
+            uiEngineState.gamepadMousePosition.y -= uiEngineState.theme.ts.TS_HALF;
         }
         return success;
     }

@@ -12,8 +12,7 @@ public final class UIEngineConfig {
     private static final Color DEFAULT_COlOR_BRIGHT = Color.valueOf("FFFFFF");
     private static final Color DEFAULT_COLOR_FONT = Color.valueOf("000000");
 
-    public static final int GAMEPAD_MOUSE_BUTTONS = 6;
-    public static final int KEYBOARD_MOUSE_BUTTONS = 10;
+    public static final int GAMEPAD_MOUSE_BUTTONS_COUNT = 6;
 
     public final UIConfig ui;
     public final InputConfig input;
@@ -36,25 +35,11 @@ public final class UIEngineConfig {
     public class InputConfig {
         public boolean hardwareMouseEnabled;
 
-        public boolean keyboardMouseEnabled;
-        public float keyboardMouseCursorSpeed;
-        public float keyboardMouseCursorSpeedUpFactor;
-        public float keyboardMouseCursorSmoothing;
-        public int[] keyboardMouseButtonsUp;
-        public int[] keyboardMouseButtonsDown;
-        public int[] keyboardMouseButtonsLeft;
-        public int[] keyboardMouseButtonsRight;
-        public int[] keyboardMouseButtonsMouse1;
-        public int[] keyboardMouseButtonsMouse2;
-        public int[] keyboardMouseButtonsMouse3;
-        public int[] keyboardMouseButtonsMouse4;
-        public int[] keyboardMouseButtonsMouse5;
-        public int[] keyboardMouseButtonsScrollUp;
-        public int[] keyboardMouseButtonsScrollDown;
-
         public boolean gamePadMouseEnabled;
-        public float gamepadMouseCursorSpeed;
         public float gamePadMouseJoystickDeadZone;
+        public float gamePadMouseJoystickMaxSpeed;
+        public float gamePadMouseJoystickResponse;
+        public float gamePadMouseJoystickSmoothing;
         public boolean gamePadMouseStickLeftEnabled;
         public boolean gamePadMouseStickRightEnabled;
         public int[] gamePadMouseButtonsMouse1;
@@ -66,27 +51,12 @@ public final class UIEngineConfig {
         public int[] gamePadMouseButtonsScrollDown;
 
         public InputConfig(UIEngineTheme theme) {
-
             this.hardwareMouseEnabled = true;
-            this.keyboardMouseEnabled = false;
-            this.keyboardMouseCursorSpeed = 4.0f;
-            this.keyboardMouseCursorSpeedUpFactor = 2.0f;
-            this.keyboardMouseCursorSmoothing = 0.1f;
-            this.keyboardMouseButtonsUp = new int[]{KeyCode.Key.UP};
-            this.keyboardMouseButtonsDown = new int[]{KeyCode.Key.DOWN};
-            this.keyboardMouseButtonsLeft = new int[]{KeyCode.Key.LEFT};
-            this.keyboardMouseButtonsRight = new int[]{KeyCode.Key.RIGHT};
-            this.keyboardMouseButtonsMouse1 = new int[]{KeyCode.Key.CONTROL_LEFT};
-            this.keyboardMouseButtonsMouse2 = new int[]{KeyCode.Key.SHIFT_LEFT};
-            this.keyboardMouseButtonsMouse3 = null;
-            this.keyboardMouseButtonsMouse4 = null;
-            this.keyboardMouseButtonsMouse5 = null;
-            this.keyboardMouseButtonsScrollUp = new int[]{KeyCode.Key.PAGE_UP};
-            this.keyboardMouseButtonsScrollDown = new int[]{KeyCode.Key.PAGE_DOWN};
-
             this.gamePadMouseEnabled = false;
-            this.gamepadMouseCursorSpeed = 3.0f;
-            this.gamePadMouseJoystickDeadZone = 0.3f;
+            this.gamePadMouseJoystickMaxSpeed = 8f;
+            this.gamePadMouseJoystickDeadZone = 0.15f;
+            this.gamePadMouseJoystickResponse = 1.2f;
+            this.gamePadMouseJoystickSmoothing = 0.3f;
             this.gamePadMouseStickLeftEnabled = true;
             this.gamePadMouseStickRightEnabled = true;
             this.gamePadMouseButtonsMouse1 = new int[]{KeyCode.GamePad.A};
@@ -99,7 +69,7 @@ public final class UIEngineConfig {
         }
 
         public int[] gamepadMouseButtons(int index) {
-            index = Math.clamp(index, 0, GAMEPAD_MOUSE_BUTTONS);
+            index = Math.clamp(index, 0, GAMEPAD_MOUSE_BUTTONS_COUNT);
             return switch (index) {
                 case 0 -> this.gamePadMouseButtonsMouse1;
                 case 1 -> this.gamePadMouseButtonsMouse2;
@@ -108,24 +78,6 @@ public final class UIEngineConfig {
                 case 4 -> this.gamePadMouseButtonsMouse5;
                 case 5 -> this.gamePadMouseButtonsScrollUp;
                 case 6 -> this.gamePadMouseButtonsScrollDown;
-                default -> throw new IllegalStateException("Unexpected value: " + index);
-            };
-        }
-
-        public int[] keyboardMouseButtons(int index) {
-            index = Math.clamp(index, 0, KEYBOARD_MOUSE_BUTTONS);
-            return switch (index) {
-                case 0 -> this.keyboardMouseButtonsUp;
-                case 1 -> this.keyboardMouseButtonsDown;
-                case 2 -> this.keyboardMouseButtonsLeft;
-                case 3 -> this.keyboardMouseButtonsRight;
-                case 4 -> this.keyboardMouseButtonsMouse1;
-                case 5 -> this.keyboardMouseButtonsMouse2;
-                case 6 -> this.keyboardMouseButtonsMouse3;
-                case 7 -> this.keyboardMouseButtonsMouse4;
-                case 8 -> this.keyboardMouseButtonsMouse5;
-                case 9 -> this.keyboardMouseButtonsScrollUp;
-                case 10 -> this.keyboardMouseButtonsScrollDown;
                 default -> throw new IllegalStateException("Unexpected value: " + index);
             };
         }

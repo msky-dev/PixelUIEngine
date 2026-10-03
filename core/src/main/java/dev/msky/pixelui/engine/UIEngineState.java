@@ -7,6 +7,7 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Queue;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import dev.msky.pixelui.engine.constants.DIRECTION;
 import dev.msky.pixelui.media.CMediaSprite;
 import dev.msky.pixelui.engine.constants.MOUSE_CONTROL_MODE;
 import dev.msky.pixelui.engine.constants.VIEWPORT_MODE;
@@ -107,17 +108,19 @@ public final class UIEngineState {
     public MouseTextInput openMouseTextInput;
     public boolean mTextInputMouse1Pressed, mTextInputMouse2Pressed, mTextInputMouse3Pressed;
     public GridPoint2 mTextInputTempHardwareMousePosition;
-    public int mTextInputScrollTimer;
-    public int mTextInputScrollTime;
+    public long mTextInputScrollTimer;
+    public long mTextInputScrollTime;
     public boolean mTextInputUnlock;
+    public Array<DIRECTION> mTextInputDirectionsFrame;
 
     /* #################### Control #################### */
     public Object lastUIMouseHover; // Last GUI Element the mouse hovered over
     public MOUSE_CONTROL_MODE currentControlMode;
     public GridPoint2 mouseApp;
     public GridPoint2 mouseUI;
-    public Vector2 emulatedMousePosition; // Mouse Position for Keyboard/Gamepad mouse control
-    public Vector2 emulatedMouseDirection;
+    public Vector2 gamepadMousePosition;
+    public Vector2 gamepadMouseVelocity;
+    public Vector2 gamepadMouseDirection;
     public GridPoint2 mouseDelta;
     public CMediaSprite cursor;
     public int cursorArrayIndex;
@@ -126,13 +129,11 @@ public final class UIEngineState {
     public int overrideCursorArrayIndex;
     public Vector3 fboCursorVector;
     public Vector2 unProjectVector;
-    public boolean[] keyBoardTranslatedKeysDown;
-    public Vector2 keyBoardMouseSmoothing;
     public Vector2 gamePadTranslatedStickLeft;
     public Vector2 gamePadTranslatedStickRight;
     public boolean[] gamePadTranslatedButtonsDown;
-    public long emulatedMouseLastMouseClick;
-    public boolean[] emulatedMouseIsButtonDown;
+    public long gamepadMouseLastMouseClick;
+    public boolean[] gamepadMouseIsButtonDown;
 
     /* #################### Misc. ####################  */
 

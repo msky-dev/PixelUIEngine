@@ -31,7 +31,7 @@ public final class UIInputProcessor implements InputProcessor, ControllerListene
         this.inputEvents.keyDown = true;
         this.inputEvents.keyDownKeyCodes.add(keycode);
         this.inputEvents.keysDown[keycode] = true;
-        this.inputEvents.lastUsedInputMethod = INPUT_METHOD.KEYBOARD;
+        this.inputEvents.lastUsedInputMethod = INPUT_METHOD.MOUSE_AND_KEYBOARD;
         return false;
     }
 
@@ -40,7 +40,7 @@ public final class UIInputProcessor implements InputProcessor, ControllerListene
         this.inputEvents.keyUp = true;
         this.inputEvents.keyUpKeyCodes.add(keycode);
         this.inputEvents.keysDown[keycode] = false;
-        this.inputEvents.lastUsedInputMethod = INPUT_METHOD.KEYBOARD;
+        this.inputEvents.lastUsedInputMethod = INPUT_METHOD.MOUSE_AND_KEYBOARD;
         return false;
     }
 
@@ -48,7 +48,7 @@ public final class UIInputProcessor implements InputProcessor, ControllerListene
     public boolean keyTyped(char character) {
         this.inputEvents.keyTyped = true;
         this.inputEvents.keyTypedCharacters.add(character);
-        this.inputEvents.lastUsedInputMethod = INPUT_METHOD.KEYBOARD;
+        this.inputEvents.lastUsedInputMethod = INPUT_METHOD.MOUSE_AND_KEYBOARD;
         return false;
     }
 
@@ -61,7 +61,7 @@ public final class UIInputProcessor implements InputProcessor, ControllerListene
             this.inputEvents.mouseDoubleClick = true;
         }
         lastClickTime = System.currentTimeMillis();
-        this.inputEvents.lastUsedInputMethod = INPUT_METHOD.HARDWARE_MOUSE;
+        this.inputEvents.lastUsedInputMethod = INPUT_METHOD.MOUSE_AND_KEYBOARD;
         return false;
     }
 
@@ -70,7 +70,7 @@ public final class UIInputProcessor implements InputProcessor, ControllerListene
         this.inputEvents.mouseUp = true;
         this.inputEvents.mouseUpButtons.add(button);
         this.inputEvents.mouseButtonsDown[button] = false;
-        this.inputEvents.lastUsedInputMethod = INPUT_METHOD.HARDWARE_MOUSE;
+        this.inputEvents.lastUsedInputMethod = INPUT_METHOD.MOUSE_AND_KEYBOARD;
         return false;
     }
 
@@ -82,14 +82,14 @@ public final class UIInputProcessor implements InputProcessor, ControllerListene
     @Override
     public boolean touchDragged(int screenX, int screenY, int pointer) {
         this.inputEvents.mouseDragged = true;
-        this.inputEvents.lastUsedInputMethod = INPUT_METHOD.HARDWARE_MOUSE;
+        this.inputEvents.lastUsedInputMethod = INPUT_METHOD.MOUSE_AND_KEYBOARD;
         return false;
     }
 
     @Override
     public boolean mouseMoved(int screenX, int screenY) {
         this.inputEvents.mouseMoved = true;
-        this.inputEvents.lastUsedInputMethod = INPUT_METHOD.HARDWARE_MOUSE;
+        this.inputEvents.lastUsedInputMethod = INPUT_METHOD.MOUSE_AND_KEYBOARD;
         return false;
     }
 
@@ -97,7 +97,7 @@ public final class UIInputProcessor implements InputProcessor, ControllerListene
     public boolean scrolled(float amountX, float amountY) {
         this.inputEvents.mouseScrolled = true;
         this.inputEvents.mouseScrolledAmount = amountY;
-        this.inputEvents.lastUsedInputMethod = INPUT_METHOD.HARDWARE_MOUSE;
+        this.inputEvents.lastUsedInputMethod = INPUT_METHOD.MOUSE_AND_KEYBOARD;
         return false;
     }
 
