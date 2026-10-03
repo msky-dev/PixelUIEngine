@@ -1,6 +1,8 @@
 package dev.msky.pixelui.media;
 
+import dev.msky.pixelui.utils.json.JsonClassTag;
 
+@JsonClassTag()
 public sealed abstract class CMediaSprite extends CMedia permits CMediaAnimation, CMediaArray, CMediaImage {
 
     public CMediaSprite() {

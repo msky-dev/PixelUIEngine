@@ -2,7 +2,9 @@ package dev.msky.pixelui.media;
 
 import dev.msky.pixelui.rendering.ExtendedAnimation;
 import dev.msky.pixelui.utils.helper.Copyable;
+import dev.msky.pixelui.utils.json.JsonClassTag;
 
+@JsonClassTag()
 public final class CMediaAnimation extends CMediaSprite implements Copyable<CMediaAnimation> {
 
     public int frameWidth;

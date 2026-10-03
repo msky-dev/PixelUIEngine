@@ -1,5 +1,8 @@
 package dev.msky.pixelui.media;
 
+import dev.msky.pixelui.utils.json.JsonClassTag;
+
+@JsonClassTag()
 public sealed abstract class CMediaSound extends CMedia permits CMediaSoundEffect, CMediaMusic {
 
     public CMediaSound() {

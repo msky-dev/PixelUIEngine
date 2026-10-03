@@ -1,7 +1,9 @@
 package dev.msky.pixelui.media;
 
 import dev.msky.pixelui.utils.helper.Copyable;
+import dev.msky.pixelui.utils.json.JsonClassTag;
 
+@JsonClassTag()
 public final class CMediaFontSymbolArray extends CMediaFontSymbol implements Copyable<CMediaFontSymbolArray> {
     public int[] ids;
     public int regionWidth;

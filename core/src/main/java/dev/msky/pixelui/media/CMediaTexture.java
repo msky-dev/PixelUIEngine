@@ -3,8 +3,9 @@ package dev.msky.pixelui.media;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import dev.msky.pixelui.utils.helper.Copyable;
+import dev.msky.pixelui.utils.json.JsonClassTag;
 
-// Stored Off the atlas
+@JsonClassTag()
 public final class CMediaTexture extends CMedia implements Copyable<CMediaTexture> {
 
     public Pixmap.Format format;

@@ -1,7 +1,9 @@
 package dev.msky.pixelui.media;
 
 import dev.msky.pixelui.utils.helper.Copyable;
+import dev.msky.pixelui.utils.json.JsonClassTag;
 
+@JsonClassTag()
 public final class CMediaSoundEffect extends CMediaSound implements Copyable<CMediaSoundEffect> {
 
     public CMediaSoundEffect() {

@@ -124,7 +124,7 @@ public final class MediaManager implements Disposable {
     }
 
 
-    private Pixmap modifyPixmapAddOutline(Pixmap pixmap, CMediaFont.FontOutline outline, int symbolAreaY) {
+    private Pixmap modifyPixmapAddOutline(Pixmap pixmap, FontOutline outline, int symbolAreaY) {
         if (outline == null) return pixmap;
         pixmap.setBlending(Pixmap.Blending.None);
 
@@ -149,22 +149,22 @@ public final class MediaManager implements Disposable {
                 }
 
                 // UP/DOWN/LEFT_RIGHT
-                if ((iy + 1) < pixmap.getHeight() && getPixelAlpha(pixmap.getPixel(ix, iy + 1)) == 0f && ((outline.directions() & OUTLINE.DOWN) != 0))
+                if ((iy + 1) < pixmap.getHeight() && getPixelAlpha(pixmap.getPixel(ix, iy + 1)) == 0f && outline.directions().down)
                     outLinePoints.addLast(new GridPoint2(ix, iy + 1));
-                if ((iy - 1) >= 0 && getPixelAlpha(pixmap.getPixel(ix, iy - 1)) == 0f && ((outline.directions() & OUTLINE.UP) != 0))
+                if ((iy - 1) >= 0 && getPixelAlpha(pixmap.getPixel(ix, iy - 1)) == 0f && outline.directions().up)
                     outLinePoints.addLast(new GridPoint2(ix, iy - 1));
-                if ((ix - 1) >= 0 && getPixelAlpha(pixmap.getPixel(ix - 1, iy)) == 0f && ((outline.directions() & OUTLINE.LEFT) != 0))
+                if ((ix - 1) >= 0 && getPixelAlpha(pixmap.getPixel(ix - 1, iy)) == 0f && outline.directions().left)
                     outLinePoints.addLast(new GridPoint2(ix - 1, iy));
-                if ((ix + 1) < pixmap.getWidth() && getPixelAlpha(pixmap.getPixel(ix + 1, iy)) == 0f && ((outline.directions() & OUTLINE.RIGHT) != 0))
+                if ((ix + 1) < pixmap.getWidth() && getPixelAlpha(pixmap.getPixel(ix + 1, iy)) == 0f && outline.directions().right)
                     outLinePoints.addLast(new GridPoint2(ix + 1, iy));
                 // CORNERS
-                if ((ix - 1) >= 0 && (iy + 1) < pixmap.getHeight() && getPixelAlpha(pixmap.getPixel(ix - 1, iy + 1)) == 0f && ((outline.directions() & OUTLINE.LEFT_DOWN) != 0))
+                if ((ix - 1) >= 0 && (iy + 1) < pixmap.getHeight() && getPixelAlpha(pixmap.getPixel(ix - 1, iy + 1)) == 0f && (outline.directions().left && outline.directions().down))
                     outLinePoints.addLast(new GridPoint2(ix - 1, iy + 1));
-                if ((ix + 1) < pixmap.getWidth() && (iy + 1) < pixmap.getHeight() && getPixelAlpha(pixmap.getPixel(ix + 1, iy + 1)) == 0f && ((outline.directions() & OUTLINE.RIGHT_DOWN) != 0))
+                if ((ix + 1) < pixmap.getWidth() && (iy + 1) < pixmap.getHeight() && getPixelAlpha(pixmap.getPixel(ix + 1, iy + 1)) == 0f && (outline.directions().right && outline.directions().down))
                     outLinePoints.addLast(new GridPoint2(ix + 1, iy + 1));
-                if ((ix + 1) < pixmap.getWidth() && (iy - 1) >= 0 && getPixelAlpha(pixmap.getPixel(ix + 1, iy - 1)) == 0f && ((outline.directions() & OUTLINE.RIGHT_UP) != 0))
+                if ((ix + 1) < pixmap.getWidth() && (iy - 1) >= 0 && getPixelAlpha(pixmap.getPixel(ix + 1, iy - 1)) == 0f && (outline.directions().right && outline.directions().up))
                     outLinePoints.addLast(new GridPoint2(ix + 1, iy - 1));
-                if ((ix - 1) >= 0 && (iy - 1) >= 0 && getPixelAlpha(pixmap.getPixel(ix - 1, iy - 1)) == 0f && ((outline.directions() & OUTLINE.LEFT_UP) != 0))
+                if ((ix - 1) >= 0 && (iy - 1) >= 0 && getPixelAlpha(pixmap.getPixel(ix - 1, iy - 1)) == 0f && (outline.directions().left && outline.directions().up))
                     outLinePoints.addLast(new GridPoint2(ix - 1, iy - 1));
 
             }
@@ -195,7 +195,7 @@ public final class MediaManager implements Disposable {
         return result;
     }
 
-    private CreateFontResult createFont(BitMapFontInformation bitMapFontInformation, CMediaFontSymbol[] symbols, CMediaFont.FontOutline outline) {
+    private CreateFontResult createFont(BitMapFontInformation bitMapFontInformation, CMediaFontSymbol[] symbols, FontOutline outline) {
 
 
         // Load Original Texture

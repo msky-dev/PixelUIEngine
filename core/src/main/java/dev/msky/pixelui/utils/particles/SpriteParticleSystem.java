@@ -184,6 +184,36 @@ public final class SpriteParticleSystem<T> extends ParticleSystem<T> {
         return particle;
     }
 
+    public TextureBasedParticle<T> addSpriteParticle(CMediaSprite cMediaSprite, int arrayIndex, float animationOffset, float x, float y) {
+        return addSpriteParticle(cMediaSprite, arrayIndex, animationOffset, x, y, 0.5f, 0.5f, 0.5f, 1f, 0f, 0f, 1f,1f, 0f, true);
+    }
+
+    public TextureBasedParticle<T> addSpriteParticle(CMediaSprite cMediaSprite, int arrayIndex, float animationOffset, float x, float y, float r, float g, float b, float a) {
+        return addSpriteParticle(cMediaSprite, arrayIndex, animationOffset, x, y, r, g, b, a, 0f, 0f, 1f,1f, 0f, true);
+    }
+
+    public TextureBasedParticle<T> addSpriteParticle(CMediaSprite cMediaSprite, int arrayIndex, float animationOffset, float x, float y, float r, float g, float b, float a, float origin_x, float origin_y) {
+        return addSpriteParticle(cMediaSprite, arrayIndex, animationOffset, x, y, r, g, b, a, origin_x, origin_y, 1f,1f, 0f, true);
+    }
+
+    public TextureBasedParticle<T> addSpriteParticle(CMediaSprite cMediaSprite, int arrayIndex, float animationOffset, float x, float y, float r, float g, float b, float a, float origin_x, float origin_y, float scaleX, float scaleY) {
+        return addSpriteParticle(cMediaSprite, arrayIndex, animationOffset, x, y, r, g, b, a, origin_x, origin_y, scaleX, scaleY, 0f, true);
+    }
+
+    public TextureBasedParticle<T> addSpriteParticle(CMediaSprite cMediaSprite, int arrayIndex, float animationOffset, float x, float y, float r, float g, float b, float a, float origin_x, float origin_y, float scaleX, float scaleY, float rotation) {
+        return addSpriteParticle(cMediaSprite, arrayIndex, animationOffset, x, y, r, g, b, a, origin_x, origin_y, scaleX, scaleY, rotation, true);
+    }
+
+    public TextureBasedParticle<T> addSpriteParticle(CMediaSprite cMediaSprite, int arrayIndex, float animationOffset, float x, float y, float r, float g, float b, float a, float origin_x, float origin_y, float scaleX, float scaleY, float rotation, boolean visible) {
+        if (!canAddParticle())
+            return null;
+        return switch (cMediaSprite){
+            case CMediaImage cMediaImage -> addImageParticle(cMediaImage, x, y, r, g, b, a, origin_x, origin_y, scaleX, scaleY, rotation, visible);
+            case CMediaArray cMediaArray -> addArrayParticle(cMediaArray, arrayIndex, x, y, r, g, b, a, origin_x, origin_y, scaleX, scaleY, rotation, visible);
+            case CMediaAnimation cMediaAnimation -> addAnimationParticle(cMediaAnimation, animationOffset, x, y, r, g, b, a, origin_x, origin_y, scaleX, scaleY, rotation, visible);
+        };
+    }
+
     public TextParticle<T> addTextParticle(CMediaFont cMediaFont, String text, float x, float y) {
         return addTextParticle(cMediaFont, text, x, y, 0.5f, 0.5f, 0.5f, 1f, false, false, true);
     }

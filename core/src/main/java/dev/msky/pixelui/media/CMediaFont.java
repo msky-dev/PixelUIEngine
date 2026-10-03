@@ -1,8 +1,9 @@
 package dev.msky.pixelui.media;
 
-import com.badlogic.gdx.graphics.Color;
 import dev.msky.pixelui.utils.helper.Copyable;
+import dev.msky.pixelui.utils.json.JsonClassTag;
 
+@JsonClassTag()
 public final class CMediaFont extends CMedia implements Copyable<CMediaFont> {
     public boolean markupEnabled;
     public FontOutline outline;
@@ -54,10 +55,5 @@ public final class CMediaFont extends CMedia implements Copyable<CMediaFont> {
         return copy;
     }
 
-    public record FontOutline(Color color, int directions,boolean outlineSymbols, boolean outlineOnly) {
-        public FontOutline(FontOutline fontOutline) {
-            this(fontOutline.color(),fontOutline.directions(),fontOutline.outlineSymbols(),fontOutline.outlineOnly());
-        }
-    }
 
 }

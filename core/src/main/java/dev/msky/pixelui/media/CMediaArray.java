@@ -1,7 +1,9 @@
 package dev.msky.pixelui.media;
 
 import dev.msky.pixelui.utils.helper.Copyable;
+import dev.msky.pixelui.utils.json.JsonClassTag;
 
+@JsonClassTag()
 public final class CMediaArray extends CMediaSprite implements Copyable<CMediaArray> {
     public int frameWidth;
     public int frameHeight;

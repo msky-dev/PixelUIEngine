@@ -1,7 +1,10 @@
 package dev.msky.pixelui.media;
 
+import dev.msky.pixelui.utils.json.JsonClassTag;
+
 import java.util.Objects;
 
+@JsonClassTag()
 public sealed abstract class CMediaFontSymbol permits CMediaFontSymbolArray, CMediaFontSymbolSingle {
     private transient int cachedHashCode = 0;
     public String file;
