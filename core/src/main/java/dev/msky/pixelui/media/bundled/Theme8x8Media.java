@@ -93,7 +93,6 @@ public class Theme8x8Media extends UIEngineTheme {
 
         // Misc
         UI_PIXEL = new CMediaImage(DIR_THEME + "pixel.png",1);
-        UI_PIXEL_TRANSPARENT = new CMediaImage(DIR_THEME + "pixel_transparent.png",1);
 
     }
 

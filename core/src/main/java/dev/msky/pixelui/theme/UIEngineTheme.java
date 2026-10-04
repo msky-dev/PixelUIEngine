@@ -95,7 +95,6 @@ public abstract class UIEngineTheme {
 
     // Misc
     public CMediaImage UI_PIXEL;
-    public CMediaImage UI_PIXEL_TRANSPARENT;
 
     public CMedia[] cMedia() {
         return new CMedia[]{
@@ -175,7 +174,6 @@ public abstract class UIEngineTheme {
                 UI_ICON_KEY_CASE,
                 UI_FONT,
                 UI_PIXEL,
-                UI_PIXEL_TRANSPARENT
         };
     }
 
