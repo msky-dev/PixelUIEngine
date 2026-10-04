@@ -2047,7 +2047,7 @@ public final class UIEngine<T extends UIEngineAdapter> implements Disposable {
         float selY = mouseTextInput.y - selRow * ROW_HEIGHT;
 
         render_setColor(spriteRenderer, color2, textInputAlpha, false);
-        spriteRenderer.drawCMediaImage(uiEngineState.theme.UI_MOUSETEXTINPUT_SELECTED, selX - 2, selY - 2);
+        spriteRenderer.drawCMediaImage(uiEngineState.theme.UI_MOUSE_TEXT_INPUT_SELECTED, selX - 2, selY - 2);
         spriteRenderer.reset();
 
     }
@@ -2057,16 +2057,16 @@ public final class UIEngine<T extends UIEngineAdapter> implements Disposable {
         final int pressedIndex = pressed ? 1 : 0;
 
         render_setColor(spriteRenderer, color1, textInputAlpha, false);
-        spriteRenderer.drawCMediaArray(uiEngineState.theme.UI_MOUSETEXTINPUT_BUTTON, pressedIndex, x, y);
+        spriteRenderer.drawCMediaArray(uiEngineState.theme.UI_MOUSE_TEXT_INPUT_BUTTON, pressedIndex, x, y);
 
         switch (c) {
             case M_TEXTINPUT_CHAR_CHANGE_CASE, M_TEXTINPUT_CHAR_BACK_, M_TEXTINPUT_CHAR_ACCEPT -> {
                 render_setColor(spriteRenderer, colorFont, colorFont.a * color1.a * textInputAlpha, false);
                 CMediaImage specialCharacterSprite = switch (c) {
                     case M_TEXTINPUT_CHAR_CHANGE_CASE ->
-                            upperCase ? uiEngineState.theme.UI_MOUSETEXTINPUT_UPPERCASE : uiEngineState.theme.UI_MOUSETEXTINPUT_LOWERCASE;
-                    case M_TEXTINPUT_CHAR_BACK_ -> uiEngineState.theme.UI_MOUSETEXTINPUT_DELETE;
-                    case M_TEXTINPUT_CHAR_ACCEPT -> uiEngineState.theme.UI_MOUSETEXTINPUT_CONFIRM;
+                            upperCase ? uiEngineState.theme.UI_MOUSE_TEXT_INPUT_UPPERCASE : uiEngineState.theme.UI_MOUSE_TEXT_INPUT_LOWERCASE;
+                    case M_TEXTINPUT_CHAR_BACK_ -> uiEngineState.theme.UI_MOUSE_TEXT_INPUT_DELETE;
+                    case M_TEXTINPUT_CHAR_ACCEPT -> uiEngineState.theme.UI_MOUSE_TEXT_INPUT_CONFIRM;
                     default -> throw new IllegalStateException("Unexpected value: " + c);
                 };
                 spriteRenderer.drawCMediaImage(specialCharacterSprite, x, y);

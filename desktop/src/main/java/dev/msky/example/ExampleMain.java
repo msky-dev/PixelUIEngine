@@ -2,7 +2,7 @@ package dev.msky.example;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import dev.msky.pixelui.media.MediaManager;
-import dev.msky.pixelui.theme.Base8x8Theme;
+import dev.msky.pixelui.media.bundled.Theme8x8Media;
 import dev.msky.pixelui.utils.Tools;
 import dev.msky.pixelui.utils.concurrency.UpdateTimer;
 import dev.msky.pixelui.utils.transitions.TransitionManager;
@@ -23,7 +23,7 @@ public class ExampleMain extends ApplicationAdapter {
     private UIEngine<ExampleUIEngineAdapter> uiEngine_transition;
     private long timer_debug_info;
     private UpdateTimer updateTimer;
-    private Base8x8Theme theme8x8 = new Base8x8Theme();
+    private Theme8x8Media theme8x8 = new Theme8x8Media();
 
     public ExampleMain() {
     }

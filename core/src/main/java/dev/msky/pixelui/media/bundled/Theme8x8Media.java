@@ -1,12 +1,12 @@
-package dev.msky.pixelui.theme;
+package dev.msky.pixelui.media.bundled;
 
 import dev.msky.pixelui.media.*;
-import dev.msky.pixelui.media.*;
+import dev.msky.pixelui.theme.UIEngineTheme;
 
-public class Base8x8Theme extends UIEngineTheme {
+public class Theme8x8Media extends UIEngineTheme {
     private static final String DIR_THEME = MediaManager.DIR_GRAPHICS + "pixelui/base8x8/";
 
-    public Base8x8Theme() {
+    public Theme8x8Media() {
         super(8);
         final int TL = ts.TS;
         final int TL2 = ts.TS2;
@@ -70,12 +70,12 @@ public class Base8x8Theme extends UIEngineTheme {
         UI_CHECKBOX_CHECKBOX_CELL = new CMediaImage(DIR_THEME + "ui/checkbox_cell.png",1);
         UI_CHECKBOX_RADIO = new CMediaArray(DIR_THEME + "ui/radio.png",1, TL, TL);
         UI_CHECKBOX_RADIO_CELL = new CMediaImage(DIR_THEME + "ui/radio_cell.png",1);
-        UI_MOUSETEXTINPUT_BUTTON = new CMediaArray(DIR_THEME + "ui/mousetextinput_button.png",1, TL1_2, TL1_2);
-        UI_MOUSETEXTINPUT_CONFIRM = new CMediaImage(DIR_THEME + "ui/mousetextinput_confirm.png",1);
-        UI_MOUSETEXTINPUT_DELETE = new CMediaImage(DIR_THEME + "ui/mousetextinput_delete.png",1);
-        UI_MOUSETEXTINPUT_LOWERCASE = new CMediaImage(DIR_THEME + "ui/mousetextinput_lowercase.png",1);
-        UI_MOUSETEXTINPUT_UPPERCASE = new CMediaImage(DIR_THEME + "ui/mousetextinput_uppercase.png",1);
-        UI_MOUSETEXTINPUT_SELECTED = new CMediaImage(DIR_THEME + "ui/mousetextinput_selected.png",1);
+        UI_MOUSE_TEXT_INPUT_BUTTON = new CMediaArray(DIR_THEME + "ui/mousetextinput_button.png",1, TL1_2, TL1_2);
+        UI_MOUSE_TEXT_INPUT_CONFIRM = new CMediaImage(DIR_THEME + "ui/mousetextinput_confirm.png",1);
+        UI_MOUSE_TEXT_INPUT_DELETE = new CMediaImage(DIR_THEME + "ui/mousetextinput_delete.png",1);
+        UI_MOUSE_TEXT_INPUT_LOWERCASE = new CMediaImage(DIR_THEME + "ui/mousetextinput_lowercase.png",1);
+        UI_MOUSE_TEXT_INPUT_UPPERCASE = new CMediaImage(DIR_THEME + "ui/mousetextinput_uppercase.png",1);
+        UI_MOUSE_TEXT_INPUT_SELECTED = new CMediaImage(DIR_THEME + "ui/mousetextinput_selected.png",1);
 
         // Cursors
         UI_CURSOR_ARROW = new CMediaImage(DIR_THEME + "cursors/arrow.png",1);

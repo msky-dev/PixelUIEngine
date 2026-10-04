@@ -69,12 +69,12 @@ public abstract class UIEngineTheme {
     public CMediaImage UI_CHECKBOX_CHECKBOX_CELL;
     public CMediaArray UI_CHECKBOX_RADIO;
     public CMediaImage UI_CHECKBOX_RADIO_CELL;
-    public CMediaArray UI_MOUSETEXTINPUT_BUTTON;
-    public CMediaImage UI_MOUSETEXTINPUT_CONFIRM;
-    public CMediaImage UI_MOUSETEXTINPUT_DELETE;
-    public CMediaImage UI_MOUSETEXTINPUT_LOWERCASE;
-    public CMediaImage UI_MOUSETEXTINPUT_UPPERCASE;
-    public CMediaImage UI_MOUSETEXTINPUT_SELECTED;
+    public CMediaArray UI_MOUSE_TEXT_INPUT_BUTTON;
+    public CMediaImage UI_MOUSE_TEXT_INPUT_CONFIRM;
+    public CMediaImage UI_MOUSE_TEXT_INPUT_DELETE;
+    public CMediaImage UI_MOUSE_TEXT_INPUT_LOWERCASE;
+    public CMediaImage UI_MOUSE_TEXT_INPUT_UPPERCASE;
+    public CMediaImage UI_MOUSE_TEXT_INPUT_SELECTED;
 
     // Cursors
     public CMediaImage UI_CURSOR_ARROW;
@@ -157,12 +157,12 @@ public abstract class UIEngineTheme {
                 UI_CHECKBOX_CHECKBOX_CELL,
                 UI_CHECKBOX_RADIO,
                 UI_CHECKBOX_RADIO_CELL,
-                UI_MOUSETEXTINPUT_BUTTON,
-                UI_MOUSETEXTINPUT_CONFIRM,
-                UI_MOUSETEXTINPUT_DELETE,
-                UI_MOUSETEXTINPUT_LOWERCASE,
-                UI_MOUSETEXTINPUT_UPPERCASE,
-                UI_MOUSETEXTINPUT_SELECTED,
+                UI_MOUSE_TEXT_INPUT_BUTTON,
+                UI_MOUSE_TEXT_INPUT_CONFIRM,
+                UI_MOUSE_TEXT_INPUT_DELETE,
+                UI_MOUSE_TEXT_INPUT_LOWERCASE,
+                UI_MOUSE_TEXT_INPUT_UPPERCASE,
+                UI_MOUSE_TEXT_INPUT_SELECTED,
                 UI_CURSOR_ARROW,
                 UI_ICON_CLOSE,
                 UI_ICON_COLOR_PICKER,

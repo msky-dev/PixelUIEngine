@@ -1017,7 +1017,7 @@ public final class APIWidgets {
                 }
 
                 // Add Case Button
-                ImageButton caseButton = api.component.button.imageButton.create(ix, iy, 2, 2, uiEngineState.theme.UI_MOUSETEXTINPUT_LOWERCASE, 0, null, BUTTON_MODE.TOGGLE);
+                ImageButton caseButton = api.component.button.imageButton.create(ix, iy, 2, 2, uiEngineState.theme.UI_MOUSE_TEXT_INPUT_LOWERCASE, 0, null, BUTTON_MODE.TOGGLE);
                 api.component.setColor2(caseButton, Color.BLACK);
                 api.component.button.setButtonAction(caseButton, new ButtonAction() {
 
@@ -1029,9 +1029,9 @@ public final class APIWidgets {
                             api.component.setVisible(upperCaseButtonsList.get(i2), value);
 
                         if (value) {
-                            api.component.button.imageButton.setImage(caseButton, uiEngineState.theme.UI_MOUSETEXTINPUT_UPPERCASE);
+                            api.component.button.imageButton.setImage(caseButton, uiEngineState.theme.UI_MOUSE_TEXT_INPUT_UPPERCASE);
                         } else {
-                            api.component.button.imageButton.setImage(caseButton, uiEngineState.theme.UI_MOUSETEXTINPUT_LOWERCASE);
+                            api.component.button.imageButton.setImage(caseButton, uiEngineState.theme.UI_MOUSE_TEXT_INPUT_LOWERCASE);
 
                         }
 
@@ -1046,7 +1046,7 @@ public final class APIWidgets {
                     iy -= 2;
                 }
                 // Add Delete Button
-                ImageButton delButton = api.component.button.imageButton.create(ix, iy, 2, 2, uiEngineState.theme.UI_MOUSETEXTINPUT_DELETE, 0,
+                ImageButton delButton = api.component.button.imageButton.create(ix, iy, 2, 2, uiEngineState.theme.UI_MOUSE_TEXT_INPUT_DELETE, 0,
                         new ButtonAction() {
                             @Override
                             public void onRelease() {
@@ -1101,7 +1101,7 @@ public final class APIWidgets {
                 public void onDisplay() {
                     api.component.textfield.focus(inputTextField);
                     if (api.input.lastUsedInputMethod() == INPUT_METHOD.GAMEPAD) {
-                        api.openMouseTextInput(api.mouseTextInput.createForTextField(inputTextField));
+                        api.mouseTextInput.openForTextField(inputTextField);
                     }
                 }
             });

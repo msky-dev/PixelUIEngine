@@ -270,7 +270,7 @@ public class ExampleWindowGeneratorP implements WindowGenerator.P1<MediaManager>
         Button modal3 = api.component.button.textButton.create(28, 3, 5, 1, "Modal 3", new ButtonAction() {
             @Override
             public void onRelease() {
-                api.openMouseTextInput(api.mouseTextInput.create(200,200));
+                api.mouseTextInput.open(200,200);
             }
         });
 
@@ -309,12 +309,12 @@ public class ExampleWindowGeneratorP implements WindowGenerator.P1<MediaManager>
         api.component.textfield.setTextFieldAction(osKeyBoardTextInput, new TextFieldAction() {
             @Override
             public void onEnter(String content, boolean valid) {
-                api.closeMouseTextInput();
+                api.mouseTextInput.close();
             }
 
             @Override
             public void onFocus() {
-                api.openMouseTextInput(api.mouseTextInput.createForTextField(osKeyBoardTextInput));
+                api.mouseTextInput.openForTextField(osKeyBoardTextInput);
             }
         });
 

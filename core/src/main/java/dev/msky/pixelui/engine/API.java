@@ -146,17 +146,6 @@ public final class API {
         return uiCommonUtils.contextMenu_isOpen(contextMenu);
     }
 
-    /* #################### MouseTextInput #################### */
-
-    public void openMouseTextInput(MouseTextInput mouseTextInput) {
-        if (mouseTextInput == null) return;
-        uiCommonUtils.mouseTextInput_open(mouseTextInput);
-    }
-
-    public void closeMouseTextInput() {
-        uiCommonUtils.mouseTextInput_close(uiEngineState);
-    }
-
     /* #################### Windows #################### */
 
     public Array<Window> windows() {
