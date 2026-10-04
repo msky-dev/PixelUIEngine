@@ -195,8 +195,8 @@ public final class UIEngine<T extends UIEngineAdapter> implements Disposable {
         newUIEngineState.fboCursorVector = new Vector3(0, 0, 0);
         newUIEngineState.unProjectVector = new Vector2(0, 0);
         newUIEngineState.gamepadMousePosition = new Vector2(newUIEngineState.resolutionWidthHalf, newUIEngineState.resolutionHeightHalf);
-        newUIEngineState.gamepadMouseVelocity = new Vector2(newUIEngineState.resolutionWidthHalf, newUIEngineState.resolutionHeightHalf);
-        newUIEngineState.gamepadMouseDirection = new Vector2(newUIEngineState.resolutionWidthHalf, newUIEngineState.resolutionHeightHalf);
+        newUIEngineState.gamepadMouseVelocity = new Vector2(0,0);
+        newUIEngineState.gamepadMouseDirection = new Vector2(0,0);
         newUIEngineState.gamepadMouseLastMouseClick = 0;
         newUIEngineState.gamepadMouseIsButtonDown = new boolean[]{false, false, false, false, false};
         newUIEngineState.gamePadTranslatedButtonsDown = new boolean[15];
