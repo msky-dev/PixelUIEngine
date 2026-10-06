@@ -107,7 +107,7 @@ public final class APIWidgets {
         }
 
         public PageAbleReadOnlyGrid createPageableReadOnlyGrid(int x, int y, int width, int height, Array items, GridAction gridAction) {
-            return createPageableReadOnlyGrid(x, y, width, height, items, gridAction, false, false, true);
+            return createPageableReadOnlyGrid(x, y, width, height, items, gridAction, false, false, true,false,false);
         }
 
         private int pageAbleReadOnlyGridControlsY(int y, int height, boolean placeButtonTop, boolean doubleSized) {
@@ -115,10 +115,10 @@ public final class APIWidgets {
         }
 
 
-        public PageAbleReadOnlyGrid createPageableReadOnlyGrid(int x, int y, int width, int height, Array items, GridAction gridAction, boolean doubleSized, boolean placeButtonTop, boolean displayPagesOf) {
+        public PageAbleReadOnlyGrid createPageableReadOnlyGrid(int x, int y, int width, int height, Array items, GridAction gridAction, boolean doubleSized, boolean placeButtonTop, boolean displayPagesOf, boolean dragInEnabled, boolean dragOutEnable) {
 
             Array<Object[][]> pages = new Array<>();
-            Grid grid = api.component.grid.create(x, y + (placeButtonTop ? 0 : 1), null, null, false, false, false, false, doubleSized);
+            Grid grid = api.component.grid.create(x, y + (placeButtonTop ? 0 : 1), null, null,  false, dragInEnabled, dragOutEnable, doubleSized);
 
             int y_controls = pageAbleReadOnlyGridControlsY(y, height, placeButtonTop, doubleSized);
 
@@ -171,17 +171,17 @@ public final class APIWidgets {
             pageGrid.grid.gridAction = new GridAction() {
                 @Override
                 public boolean canDragFromGrid(Grid fromGrid) {
-                    return false;
+                    return gridAction.canDragIntoApp();
                 }
 
                 @Override
                 public boolean canDragFromList(List fromList) {
-                    return false;
+                    return gridAction.canDragFromList(fromList);
                 }
 
                 @Override
                 public boolean canDragIntoApp() {
-                    return false;
+                    return gridAction.canDragIntoApp();
                 }
 
                 @Override
@@ -206,17 +206,17 @@ public final class APIWidgets {
 
                 @Override
                 public void onDragFromGrid(Grid fromGrid, int from_x, int from_y, int to_x, int to_y) {
-                    return;
+                    gridAction.onDragFromGrid(fromGrid, from_x, from_y, to_x, to_y);
                 }
 
                 @Override
                 public void onDragFromList(List fromList, int fromIndex, int to_x, int to_y) {
-                    return;
+                    gridAction.onDragFromList(fromList, fromIndex, to_x, to_y);
                 }
 
                 @Override
                 public void onDragIntoApp(Object listItem, int from_x, int from_y, int to_x, int to_y) {
-                    return;
+                    gridAction.onDragIntoApp(listItem, from_x, from_y, to_x, to_y);
                 }
 
                 @Override

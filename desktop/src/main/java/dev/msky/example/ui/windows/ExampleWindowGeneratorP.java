@@ -552,7 +552,7 @@ public class ExampleWindowGeneratorP implements WindowGenerator.P1<MediaManager>
         Array<String> items = new Array<>();
         for (int i = 0; i < 40; i++)
             items.add("Item " + i);
-        APIWidgets.APICompositeGrid.PageAbleReadOnlyGrid pageGrid = api.widgets.grid.createPageableReadOnlyGrid(16, 4, 8, 4, items, null, false, true, false);
+        APIWidgets.APICompositeGrid.PageAbleReadOnlyGrid pageGrid = api.widgets.grid.createPageableReadOnlyGrid(16, 4, 8, 4, items, null, false, true, false, false,false);
         api.widgets.grid.pageableReadOnlyGridSetGridAction(pageGrid, new GridAction() {
             @Override
             public int iconIndex(Object listItem) {
@@ -738,7 +738,7 @@ public class ExampleWindowGeneratorP implements WindowGenerator.P1<MediaManager>
         ExampleItem[][] invItems = new ExampleItem[6][12];
         addRandomItemsToInventory(invItems, "I1");
 
-        Grid grid1 = api.component.grid.create(18, 2, invItems, null, true, true, true);
+        Grid grid1 = api.component.grid.create(18, 2, invItems, null, true, true, true, false);
 
         GridAction gridAction1 = new GridAction<ExampleItem>() {
             @Override
@@ -791,7 +791,7 @@ public class ExampleWindowGeneratorP implements WindowGenerator.P1<MediaManager>
         ExampleItem[][] invItems2 = new ExampleItem[6][12];
         addRandomItemsToInventory(invItems2, "I2");
 
-        Grid grid2 = api.component.grid.create(25, 2, invItems2, null, true, true, true);
+        Grid grid2 = api.component.grid.create(25, 2, invItems2, null, true, true, true, false);
 
         GridAction gridAction2 = new GridAction<ExampleItem>() {
             @Override
@@ -844,7 +844,7 @@ public class ExampleWindowGeneratorP implements WindowGenerator.P1<MediaManager>
         ExampleItem[][] invItems3 = new ExampleItem[3][5];
         addRandomItemsToBigInventory(invItems3, "I3");
 
-        Grid grid3 = api.component.grid.create(32, 2, invItems3, null, false, true, true, false, true);
+        Grid grid3 = api.component.grid.create(32, 2, invItems3, null, false,  true, false, true);
 
         GridAction gridAction3 = new GridAction<ExampleItem>() {
             @Override

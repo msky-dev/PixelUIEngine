@@ -1137,7 +1137,7 @@ public final class UIEngine<T extends UIEngineAdapter> implements Disposable {
                             int inv_y = (uiEngineState.mouseUI.y - y_grid) / tileSize;
                             if (uiCommonUtils.grid_positionValid(grid, inv_x, inv_y)) {
                                 Object pressedGridItem = grid.items[inv_x][inv_y];
-                                if (pressedGridItem != null && grid.dragEnabled) {
+                                if (pressedGridItem != null && grid.dragOutEnabled) {
                                     uiEngineState.draggedGridFrom.set(inv_x, inv_y);
                                     uiEngineState.draggedGridOffset.set(uiEngineState.mouseUI.x - (x_grid + (inv_x * tileSize)), uiEngineState.mouseUI.y - (y_grid + (inv_y * tileSize)));
                                     uiEngineState.draggedGridItem = grid.items[inv_x][inv_y];
@@ -1366,7 +1366,7 @@ public final class UIEngine<T extends UIEngineAdapter> implements Disposable {
                                     }
                                 }
                             }
-                        } else if (uiCommonUtils.list_canDragIntoScreen(list)) {
+                        } else if (uiCommonUtils.list_canDragIntoApp(list)) {
                             list.listAction.onDragIntoApp(
                                     dragItem, uiEngineState.mouseUI.x, uiEngineState.mouseUI.y
                             );
@@ -1397,7 +1397,7 @@ public final class UIEngine<T extends UIEngineAdapter> implements Disposable {
                                     }
                                 }
                             }
-                        } else if (uiCommonUtils.grid_canDragIntoScreen(grid)) {
+                        } else if (uiCommonUtils.grid_canDragIntoApp(grid)) {
                             grid.gridAction.onDragIntoApp(dragItem, dragFromX, dragFromY, uiEngineState.mouseUI.x, uiEngineState.mouseUI.y);
                         }
                         // reset

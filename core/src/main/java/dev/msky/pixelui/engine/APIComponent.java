@@ -782,31 +782,15 @@ public final class APIComponent {
         private final GridAction DEFAULT_GRID_ACTION = new GridAction() {
         };
 
-        public Grid create(int x, int y, Object[][] items) {
-            return create(x, y, items, DEFAULT_GRID_ACTION, false, false, false, false, false);
-        }
-
         public Grid create(int x, int y, Object[][] items, GridAction gridAction) {
-            return create(x, y, items, gridAction, false, false, false, false, false);
+            return create(x, y, items, gridAction, false, false, false, false);
         }
 
         public Grid create(int x, int y, Object[][] items, GridAction gridAction, boolean multiSelect) {
-            return create(x, y, items, gridAction, multiSelect, false, false, false, false);
+            return create(x, y, items, gridAction,  multiSelect, false, false, false);
         }
 
-        public Grid create(int x, int y, Object[][] items, GridAction gridAction, boolean multiSelect, boolean dragEnabled) {
-            return create(x, y, items, gridAction, multiSelect, dragEnabled, false, false, false);
-        }
-
-        public Grid create(int x, int y, Object[][] items, GridAction gridAction, boolean multiSelect, boolean dragEnabled, boolean dragOutEnabled) {
-            return create(x, y, items, gridAction, multiSelect, dragEnabled, dragOutEnabled, false, false);
-        }
-
-        public Grid create(int x, int y, Object[][] items, GridAction gridAction, boolean multiSelect, boolean dragEnabled, boolean dragOutEnabled, boolean dragInEnabled) {
-            return create(x, y, items, gridAction, multiSelect, dragEnabled, dragOutEnabled, dragInEnabled, false);
-        }
-
-        public Grid create(int x, int y, Object[][] items, GridAction gridAction, boolean multiSelect, boolean dragEnabled, boolean dragOutEnabled, boolean dragInEnabled, boolean doubleSized) {
+        public Grid create(int x, int y, Object[][] items, GridAction gridAction, boolean multiSelect, boolean dragInEnabled, boolean dragOutEnabled, boolean doubleSized) {
             Grid grid = new Grid();
             int width = 1;
             int height = 1;
@@ -822,7 +806,6 @@ public final class APIComponent {
                 for (int iy = 0; iy < grid.items[0].length; iy++)
                     grid.items[ix][iy] = items[ix][iy];
             grid.gridAction = gridAction != null ? gridAction : DEFAULT_GRID_ACTION;
-            grid.dragEnabled = dragEnabled;
             grid.dragInEnabled = dragInEnabled;
             grid.dragOutEnabled = dragOutEnabled;
             grid.bigMode = doubleSized;
@@ -848,11 +831,6 @@ public final class APIComponent {
         public void setDragOutEnabled(Grid grid, boolean dragOutEnabled) {
             if (grid == null) return;
             grid.dragOutEnabled = dragOutEnabled;
-        }
-
-        public void setDragEnabled(Grid grid, boolean dragEnabled) {
-            if (grid == null) return;
-            grid.dragEnabled = dragEnabled;
         }
 
         public void setGridAction(Grid grid, GridAction gridAction) {

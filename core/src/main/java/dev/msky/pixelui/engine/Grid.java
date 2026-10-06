@@ -9,9 +9,8 @@ public final class Grid<T> extends Component {
     public T selectedItem;
     public boolean multiSelect;
     public Array<T> selectedItems;
-    public boolean dragEnabled;
-    public boolean dragOutEnabled;
     public boolean dragInEnabled;
+    public boolean dragOutEnabled;
     public boolean bigMode;
 
     Grid() {

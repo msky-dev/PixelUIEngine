@@ -1079,12 +1079,12 @@ public class UICommonUtils {
         knob.knobAction.onTurned(knob.turned, (newValue - oldValue));
     }
 
-    public boolean list_canDragIntoScreen(List list) {
+    public boolean list_canDragIntoApp(List list) {
         return list.dragEnabled && list.dragOutEnabled && list.listAction.canDragIntoApp();
     }
 
-    public boolean grid_canDragIntoScreen(Grid grid) {
-        return grid.dragEnabled && grid.dragOutEnabled && grid.gridAction.canDragIntoApp();
+    public boolean grid_canDragIntoApp(Grid grid) {
+        return grid.dragOutEnabled && grid.gridAction.canDragIntoApp();
     }
 
     public boolean list_canDragIntoList(List list) {
@@ -1223,7 +1223,7 @@ public class UICommonUtils {
         List draggedList = uiEngineState.draggedList;
         Grid draggedGrid = uiEngineState.draggedGrid;
 
-        if (draggedGrid != null && draggedGrid == grid && draggedGrid.dragEnabled) return true; // Into itself
+        if (draggedGrid != null && draggedGrid == grid && grid.dragInEnabled) return true; // Into itself
 
         if (grid.dragInEnabled && !grid.disabled) {
             if (uiEngineState.draggedGridItem != null) {
