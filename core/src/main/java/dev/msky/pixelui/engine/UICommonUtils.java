@@ -241,6 +241,13 @@ public class UICommonUtils {
         return mouse_ui_y - component_getAbsoluteY(component);
     }
 
+    public static int gameMouseTranslateZoom(int xy, int widthOrHeight, float zoom) {
+        if(zoom == 1f)
+            return xy;
+        final float center = widthOrHeight / 2f;
+        return MathUtils.round(center + (xy - center) * zoom);
+    }
+
     public Object component_getUIObjectAtPosition(int x, int y) {
         // Notification Collision
         for (int i = 0; i < uiEngineState.notifications.size; i++) {

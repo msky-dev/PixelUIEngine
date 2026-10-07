@@ -186,6 +186,7 @@ public final class UIEngine<T extends UIEngineAdapter> implements Disposable {
         newUIEngineState.mouseUI = new GridPoint2(newUIEngineState.resolutionWidthHalf, newUIEngineState.resolutionHeightHalf);
         newUIEngineState.mouseApp = new GridPoint2(0, 0);
         newUIEngineState.mouseDelta = new GridPoint2(0, 0);
+        newUIEngineState.mouseAppZoomTranslation = 1f;
         newUIEngineState.lastUIMouseHover = null;
         newUIEngineState.cursor = null;
         newUIEngineState.cursorArrayIndex = 0;
@@ -259,6 +260,47 @@ public final class UIEngine<T extends UIEngineAdapter> implements Disposable {
         mouseControl_enforceUIMouseBounds(); // Enforce UI mouse screen bounds
         mouseControl_updateGameMouseXY(); // Translate UI mouse x,y to Game mouse x,y
         mouseControl_updateLastUIMouseHover(); // Determine object that is below the cursor
+
+    }
+
+    private void mouseControl_enforceUIMouseBounds() {
+        uiEngineState.mouseUI.x = Math.clamp(uiEngineState.mouseUI.x, 0, uiEngineState.resolutionWidth);
+        uiEngineState.mouseUI.y = Math.clamp(uiEngineState.mouseUI.y, 0, uiEngineState.resolutionHeight);
+    }
+
+    private void mouseControl_updateGameMouseXY() {
+        // MouseXGUI/MouseYGUI -> To MouseX/MouseY
+        float translateX = UICommonUtils.gameMouseTranslateZoom(uiEngineState.mouseUI.x, uiEngineState.resolutionWidth, uiEngineState.mouseAppZoomTranslation);
+        float translateY = UICommonUtils.gameMouseTranslateZoom(uiEngineState.mouseUI.y, uiEngineState.resolutionHeight, uiEngineState.mouseAppZoomTranslation);
+
+        uiEngineState.fboCursorVector.x = translateX;
+        uiEngineState.fboCursorVector.y = Gdx.graphics.getHeight() - translateY;
+        uiEngineState.fboCursorVector.z = 1;
+        uiEngineState.camera_app.unproject(uiEngineState.fboCursorVector, 0, 0, uiEngineState.resolutionWidth, uiEngineState.resolutionHeight);
+        uiEngineState.mouseApp.x = MathUtils.round(uiEngineState.fboCursorVector.x);
+        uiEngineState.mouseApp.y = MathUtils.round(uiEngineState.fboCursorVector.y);
+
+    }
+
+    private void mouseControl_updateHardwareMouse() {
+        // --- GUI CURSOR ---
+        // ScreenCursor To WorldCursor
+        uiEngineState.unProjectVector.x = Gdx.input.getX();
+        uiEngineState.unProjectVector.y = Gdx.input.getY();
+
+        uiEngineState.viewport_screen.unproject(uiEngineState.unProjectVector);
+        // WorldCursor to  FBOCursor
+        uiEngineState.fboCursorVector.x = uiEngineState.unProjectVector.x;
+        uiEngineState.fboCursorVector.y = Gdx.graphics.getHeight() - uiEngineState.unProjectVector.y;
+        uiEngineState.fboCursorVector.z = 1;
+        uiEngineState.camera_ui.unproject(uiEngineState.fboCursorVector, 0, 0, uiEngineState.resolutionWidth, uiEngineState.resolutionHeight);
+
+        // Set to final
+        uiEngineState.mouseDelta.x = MathUtils.round(uiEngineState.fboCursorVector.x - uiEngineState.mouseUI.x);
+        uiEngineState.mouseDelta.y = MathUtils.round(uiEngineState.fboCursorVector.y - uiEngineState.mouseUI.y);
+        uiEngineState.mouseUI.x = MathUtils.round(uiEngineState.fboCursorVector.x);
+        uiEngineState.mouseUI.y = MathUtils.round(uiEngineState.fboCursorVector.y);
+
     }
 
     private void mouseControl_setNextMouseControlMode(MOUSE_CONTROL_MODE nextControlMode) {
@@ -692,8 +734,10 @@ public final class UIEngine<T extends UIEngineAdapter> implements Disposable {
 
             uiEngineState.gamepadMouseDirection.set(stickX, stickY);
 
-            int xNew = MathUtils.round(uiEngineState.gamepadMousePosition.x);
-            int yNew = MathUtils.round(uiEngineState.gamepadMousePosition.y);
+
+
+            int xNew = MathUtils.floor(uiEngineState.gamepadMousePosition.x);
+            int yNew = MathUtils.floor(uiEngineState.gamepadMousePosition.y);
 
             uiEngineState.mouseDelta.x = xNew - uiEngineState.mouseUI.x;
             uiEngineState.mouseDelta.y = yNew - uiEngineState.mouseUI.y;
@@ -767,40 +811,7 @@ public final class UIEngine<T extends UIEngineAdapter> implements Disposable {
 
     }
 
-    private void mouseControl_enforceUIMouseBounds() {
-        uiEngineState.mouseUI.x = Math.clamp(uiEngineState.mouseUI.x, 0, uiEngineState.resolutionWidth);
-        uiEngineState.mouseUI.y = Math.clamp(uiEngineState.mouseUI.y, 0, uiEngineState.resolutionHeight);
-    }
 
-    private void mouseControl_updateGameMouseXY() {
-        // MouseXGUI/MouseYGUI -> To MouseX/MouseY
-        uiEngineState.fboCursorVector.x = uiEngineState.mouseUI.x;
-        uiEngineState.fboCursorVector.y = Gdx.graphics.getHeight() - uiEngineState.mouseUI.y;
-        uiEngineState.fboCursorVector.z = 1;
-        uiEngineState.camera_app.unproject(uiEngineState.fboCursorVector, 0, 0, uiEngineState.resolutionWidth, uiEngineState.resolutionHeight);
-        this.uiEngineState.mouseApp.x = (int) uiEngineState.fboCursorVector.x;
-        this.uiEngineState.mouseApp.y = (int) uiEngineState.fboCursorVector.y;
-    }
-
-    private void mouseControl_updateHardwareMouse() {
-        // --- GUI CURSOR ---
-        // ScreenCursor To WorldCursor
-        uiEngineState.unProjectVector.x = Gdx.input.getX();
-        uiEngineState.unProjectVector.y = Gdx.input.getY();
-
-        uiEngineState.viewport_screen.unproject(uiEngineState.unProjectVector);
-        // WorldCursor to  FBOCursor
-        uiEngineState.fboCursorVector.x = uiEngineState.unProjectVector.x;
-        uiEngineState.fboCursorVector.y = Gdx.graphics.getHeight() - uiEngineState.unProjectVector.y;
-        uiEngineState.fboCursorVector.z = 1;
-        uiEngineState.camera_ui.unproject(uiEngineState.fboCursorVector, 0, 0, uiEngineState.resolutionWidth, uiEngineState.resolutionHeight);
-
-        // Set to final
-        uiEngineState.mouseDelta.x = MathUtils.round(uiEngineState.fboCursorVector.x - uiEngineState.mouseUI.x);
-        uiEngineState.mouseDelta.y = MathUtils.round(uiEngineState.fboCursorVector.y - uiEngineState.mouseUI.y);
-        uiEngineState.mouseUI.x = Math.clamp(MathUtils.round(uiEngineState.fboCursorVector.x), 0, uiEngineState.resolutionWidth);
-        uiEngineState.mouseUI.y = Math.clamp(MathUtils.round(uiEngineState.fboCursorVector.y), 0, uiEngineState.resolutionHeight);
-    }
 
     private void mouseControl_updateLastUIMouseHover() {
         uiEngineState.lastUIMouseHover = uiCommonUtils.component_getUIObjectAtPosition(uiEngineState.mouseUI.x, uiEngineState.mouseUI.y);

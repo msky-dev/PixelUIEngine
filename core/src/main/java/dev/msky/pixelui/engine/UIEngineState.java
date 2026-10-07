@@ -118,6 +118,7 @@ public final class UIEngineState {
     public MOUSE_CONTROL_MODE currentControlMode;
     public GridPoint2 mouseApp;
     public GridPoint2 mouseUI;
+    public float mouseAppZoomTranslation;
     public Vector2 gamepadMousePosition;
     public Vector2 gamepadMouseVelocity;
     public Vector2 gamepadMouseDirection;

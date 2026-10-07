@@ -65,6 +65,11 @@ public final class APIInput {
             state = new APIState();
         }
 
+
+        public void setMouseAppZoomTranslation(float zoomTranslation){
+            uiEngineState.mouseAppZoomTranslation = Math.max(zoomTranslation,0f);
+        }
+
         public Object hoverUIObject() {
             return uiEngineState.lastUIMouseHover;
         }
