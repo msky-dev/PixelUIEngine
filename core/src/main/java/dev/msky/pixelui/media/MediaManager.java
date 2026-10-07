@@ -17,6 +17,7 @@ import dev.msky.pixelui.utils.Tools;
 
 import java.io.*;
 import java.nio.charset.Charset;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -46,13 +47,13 @@ public final class MediaManager implements Disposable {
     private static final String FONT_FILE_DATA = "char id=%d      x=%d   y=%d   width=%d   height=%d   xoffset=%d   yoffset=%d   xadvance=%d    page=0   chnl=0" + System.lineSeparator();
     private boolean loaded = false;
 
-    private final ObjectMap<CMediaSound, Sound> medias_sounds = new ObjectMap<>();
-    private final ObjectMap<CMediaMusic, Music> medias_music = new ObjectMap<>();
-    private final ObjectMap<CMediaImage, TextureRegion> medias_images = new ObjectMap<>();
-    private final ObjectMap<CMediaFont, BitmapFont> medias_fonts = new ObjectMap<>();
-    private final ObjectMap<CMediaArray, TextureRegion[]> medias_arrays = new ObjectMap<>();
-    private final ObjectMap<CMediaTexture, Texture> medias_textures = new ObjectMap<>();
-    private final ObjectMap<CMediaAnimation, ExtendedAnimation> medias_animations = new ObjectMap<>();
+    private final ObjectMap<CMediaSound, Sound> mediasSounds = new ObjectMap<>();
+    private final ObjectMap<CMediaMusic, Music> mediasMusic = new ObjectMap<>();
+    private final ObjectMap<CMediaImage, TextureRegion> mediasImages = new ObjectMap<>();
+    private final ObjectMap<CMediaFont, BitmapFont> mediasFonts = new ObjectMap<>();
+    private final ObjectMap<CMediaArray, TextureRegion[]> mediasArrays = new ObjectMap<>();
+    private final ObjectMap<CMediaTexture, Texture> mediasTextures = new ObjectMap<>();
+    private final ObjectMap<CMediaAnimation, ExtendedAnimation> mediasAnimations = new ObjectMap<>();
 
     private final Queue<CMedia> loadMediaQueue = new Queue<>();
     private final ObjectSet<CMedia> loadedMediaSet = new ObjectSet<>();
@@ -382,13 +383,13 @@ public final class MediaManager implements Disposable {
             duplicateSet.add(loadMedia);
             stepsMax++;
         }
-        medias_images.clear();
-        medias_arrays.clear();
-        medias_textures.clear();
-        medias_animations.clear();
-        medias_fonts.clear();
-        medias_sounds.clear();
-        medias_music.clear();
+        mediasImages.clear();
+        mediasArrays.clear();
+        mediasTextures.clear();
+        mediasAnimations.clear();
+        mediasFonts.clear();
+        mediasSounds.clear();
+        mediasMusic.clear();
 
         // Load Sprite Data Into Pixmap Packer
         for (int i = 0; i < spriteCMediaLoadStack.size; i++) {
@@ -446,10 +447,10 @@ public final class MediaManager implements Disposable {
             final TextureRegion textureRegion = textureAtlas.findRegion(cMediaSprite.file);
             switch (cMediaSprite) {
                 case CMediaImage cMediaImage -> {
-                    medias_images.put(cMediaImage, textureRegion);
+                    mediasImages.put(cMediaImage, textureRegion);
                 }
                 case CMediaArray cMediaArray -> {
-                    medias_arrays.put(cMediaArray, splitFrames( textureRegion, cMediaArray.frameWidth, cMediaArray.frameHeight, cMediaArray.frameOffset, cMediaArray.frameLength).toArray(TextureRegion[]::new));
+                    mediasArrays.put(cMediaArray, splitFrames( textureRegion, cMediaArray.frameWidth, cMediaArray.frameHeight, cMediaArray.frameOffset, cMediaArray.frameLength).toArray(TextureRegion[]::new));
                 }
                 case CMediaAnimation cMediaAnimation -> {
                     ExtendedAnimation extendedAnimation = new ExtendedAnimation(cMediaAnimation.animationSpeed, splitFrames( textureRegion, cMediaAnimation.frameWidth, cMediaAnimation.frameHeight, cMediaAnimation.frameOffset, cMediaAnimation.frameLength), cMediaAnimation.playMode);
@@ -458,7 +459,7 @@ public final class MediaManager implements Disposable {
                     } catch (ArithmeticException e) {
                         handleError(cMediaAnimation, ERROR_ANIMATION_INVALID);
                     }
-                    medias_animations.put(cMediaAnimation, extendedAnimation);
+                    mediasAnimations.put(cMediaAnimation, extendedAnimation);
                 }
             }
             loadedMediaSet.add(cMediaSprite);
@@ -474,12 +475,12 @@ public final class MediaManager implements Disposable {
             bitmapFont.setColor(Color.GRAY);
             bitmapFont.getData().markupEnabled = cMediaFont.markupEnabled;
 
-            medias_fonts.put(cMediaFont, bitmapFont);
+            mediasFonts.put(cMediaFont, bitmapFont);
         }
         // Fill medias_textures
         for (int i = 0; i < textureCMediaLoadStack.size; i++) {
             CMediaTexture cMediaTexture = textureCMediaLoadStack.get(i);
-            medias_textures.put(cMediaTexture, offAtlasTextures.get(cMediaTexture));
+            mediasTextures.put(cMediaTexture, offAtlasTextures.get(cMediaTexture));
         }
 
         // Fill medias_sounds, medias_music
@@ -487,10 +488,10 @@ public final class MediaManager implements Disposable {
             CMediaSound soundMedia = soundCMediaLoadStack.get(i);
             switch (soundMedia) {
                 case CMediaSoundEffect cMediaSoundEffect -> {
-                    medias_sounds.put(cMediaSoundEffect, Gdx.audio.newSound(Tools.File.findResource(cMediaSoundEffect.file)));
+                    mediasSounds.put(cMediaSoundEffect, Gdx.audio.newSound(Tools.File.findResource(cMediaSoundEffect.file)));
                 }
                 case CMediaMusic cMediaMusic -> {
-                    medias_music.put(cMediaMusic, Gdx.audio.newMusic(Tools.File.findResource(soundMedia.file)));
+                    mediasMusic.put(cMediaMusic, Gdx.audio.newMusic(Tools.File.findResource(soundMedia.file)));
                 }
             }
             loadedMediaSet.add(soundMedia);
@@ -573,18 +574,38 @@ public final class MediaManager implements Disposable {
         textureAtlas = null;
 
         // Dispose and null
-        medias_textures.values().forEach(texture -> texture.dispose());
-        medias_sounds.values().forEach(sound -> sound.dispose());
-        medias_music.values().forEach(music -> music.dispose());
-        medias_fonts.values().forEach(bitmapFont -> bitmapFont.dispose());
+        final ObjectMap.Keys<CMediaTexture> textureKeys = mediasTextures.keys();
+        while (textureKeys.hasNext){
+            final CMediaTexture cMediaTexture = textureKeys.next();
+            mediasTextures.get(cMediaTexture).dispose();
+        }
 
-        this.medias_textures.clear();
-        this.medias_images.clear();
-        this.medias_arrays.clear();
-        this.medias_animations.clear();
-        this.medias_sounds.clear();
-        this.medias_music.clear();
-        this.medias_fonts.clear();
+        final ObjectMap.Keys<CMediaSound> soundKeys = mediasSounds.keys();
+        while (soundKeys.hasNext){
+            final CMediaSound cMediaSound = soundKeys.next();
+            mediasSounds.get(cMediaSound).dispose();
+        }
+
+        final ObjectMap.Keys<CMediaMusic> musicKeys = mediasMusic.keys();
+        while (musicKeys.hasNext){
+            final CMediaMusic cMediaMusic = musicKeys.next();
+            mediasMusic.get(cMediaMusic).dispose();
+        }
+
+        final ObjectMap.Keys<CMediaFont> fontKeys = mediasFonts.keys();
+        while (musicKeys.hasNext){
+            final CMediaFont cMediaFont = fontKeys.next();
+            mediasFonts.get(cMediaFont).dispose();
+        }
+
+
+        this.mediasTextures.clear();
+        this.mediasImages.clear();
+        this.mediasArrays.clear();
+        this.mediasAnimations.clear();
+        this.mediasSounds.clear();
+        this.mediasMusic.clear();
+        this.mediasFonts.clear();
 
         // Reset lists
         this.loadedMediaSet.clear();
@@ -595,39 +616,39 @@ public final class MediaManager implements Disposable {
 
     public TextureRegion sprite(CMediaSprite cMediaSprite, int arrayIndex, float animationTimer) {
         return switch (cMediaSprite) {
-            case CMediaImage cMediaImage -> medias_images.get(cMediaImage);
-            case CMediaAnimation cMediaAnimation -> medias_animations.get(cMediaAnimation).getKeyFrame(animationTimer);
-            case CMediaArray cMediaArray -> medias_arrays.get(cMediaArray)[arrayIndex];
+            case CMediaImage cMediaImage -> mediasImages.get(cMediaImage);
+            case CMediaAnimation cMediaAnimation -> mediasAnimations.get(cMediaAnimation).getKeyFrame(animationTimer);
+            case CMediaArray cMediaArray -> mediasArrays.get(cMediaArray)[arrayIndex];
         };
     }
 
     public Texture texture(CMediaTexture cMediaTexture) {
-        return medias_textures.get(cMediaTexture);
+        return mediasTextures.get(cMediaTexture);
     }
 
     public TextureRegion image(CMediaImage cMediaImage) {
-        return medias_images.get(cMediaImage);
+        return mediasImages.get(cMediaImage);
     }
 
     public ExtendedAnimation animation(CMediaAnimation cMediaAnimation) {
-        return medias_animations.get(cMediaAnimation);
+        return mediasAnimations.get(cMediaAnimation);
     }
 
     public TextureRegion array(CMediaArray cMediaArray, int arrayIndex) {
-        return medias_arrays.get(cMediaArray)[arrayIndex];
+        return mediasArrays.get(cMediaArray)[arrayIndex];
     }
 
     public Sound sound(CMediaSoundEffect cMediaSoundEffect) {
-        return medias_sounds.get(cMediaSoundEffect);
+        return mediasSounds.get(cMediaSoundEffect);
     }
 
     public Music music(CMediaMusic cMediaMusic) {
-        return medias_music.get(cMediaMusic);
+        return mediasMusic.get(cMediaMusic);
     }
 
     public int spriteWidth(CMediaSprite cMediaSprite) {
         return switch (cMediaSprite) {
-            case CMediaImage cMediaImage -> medias_images.get(cMediaImage).getRegionWidth();
+            case CMediaImage cMediaImage -> mediasImages.get(cMediaImage).getRegionWidth();
             case CMediaArray cMediaArray -> cMediaArray.frameWidth;
             case CMediaAnimation cMediaAnimation -> cMediaAnimation.frameWidth;
             default -> throw new IllegalStateException("Unexpected value: " + cMediaSprite);
@@ -635,16 +656,16 @@ public final class MediaManager implements Disposable {
     }
 
     public int textureWidth(CMediaTexture cMediaTexture) {
-        return medias_textures.get(cMediaTexture).getWidth();
+        return mediasTextures.get(cMediaTexture).getWidth();
     }
 
     public int textureHeight(CMediaTexture cMediaTexture) {
-        return medias_textures.get(cMediaTexture).getWidth();
+        return mediasTextures.get(cMediaTexture).getWidth();
     }
 
 
     public int imageWidth(CMediaImage cMediaImage) {
-        return medias_images.get(cMediaImage).getRegionWidth();
+        return mediasImages.get(cMediaImage).getRegionWidth();
     }
 
     public int arrayWidth(CMediaArray cMediaArray) {
@@ -657,14 +678,14 @@ public final class MediaManager implements Disposable {
 
     public int spriteHeight(CMediaSprite cMedia) {
         return switch (cMedia) {
-            case CMediaImage cMediaImage -> medias_images.get(cMediaImage).getRegionHeight();
+            case CMediaImage cMediaImage -> mediasImages.get(cMediaImage).getRegionHeight();
             case CMediaArray cMediaArray -> cMediaArray.frameHeight;
             case CMediaAnimation cMediaAnimation -> cMediaAnimation.frameHeight;
         };
     }
 
     public int imageHeight(CMediaImage cMediaImage) {
-        return medias_images.get(cMediaImage).getRegionHeight();
+        return mediasImages.get(cMediaImage).getRegionHeight();
     }
 
     public int arrayHeight(CMediaArray cMediaArray) {
@@ -716,25 +737,25 @@ public final class MediaManager implements Disposable {
     }
 
     public int arraySize(CMediaArray cMediaArray) {
-        return medias_arrays.get(cMediaArray).length;
+        return mediasArrays.get(cMediaArray).length;
     }
 
     public int arrayLastIndex(CMediaArray cMediaArray) {
-        return medias_arrays.get(cMediaArray).length - 1;
+        return mediasArrays.get(cMediaArray).length - 1;
     }
 
     public int arrayPercentIndex(CMediaArray cMediaArray, float pct) {
         pct = Math.clamp(pct,0f,1f);
-        return MathUtils.floor(pct*(medias_arrays.get(cMediaArray).length - 1));
+        return MathUtils.floor(pct*(mediasArrays.get(cMediaArray).length - 1));
     }
 
     public int arrayIndex(CMediaArray cMediaArray, float pct) {
-        final int lastIndex = medias_arrays.get(cMediaArray).length - 1;
+        final int lastIndex = mediasArrays.get(cMediaArray).length - 1;
         return MathUtils.floor(Math.clamp(pct, 0f, 1f) * lastIndex);
     }
 
     public BitmapFont font(CMediaFont cMediaFont) {
-        return medias_fonts.get(cMediaFont);
+        return mediasFonts.get(cMediaFont);
     }
 
     public int fontTextWidthHalf(final CMediaFont cMediaFont, final CharSequence text) {
