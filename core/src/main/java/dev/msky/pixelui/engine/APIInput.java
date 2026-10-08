@@ -66,6 +66,10 @@ public final class APIInput {
         }
 
 
+        public boolean isDragging(){
+            return uiEngineState.draggedGrid != null || uiEngineState.draggedList != null;
+        }
+
         public void setMouseAppZoomTranslation(float zoomTranslation){
             uiEngineState.mouseAppZoomTranslation = Math.max(zoomTranslation,0f);
         }
