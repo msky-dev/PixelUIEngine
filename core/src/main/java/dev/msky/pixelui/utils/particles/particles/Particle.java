@@ -4,5 +4,6 @@ public abstract sealed class Particle<D> permits EmptyParticle, PrimitiveParticl
     public float x, y;
     public float r, g, b, a;
     public boolean visible;
+    public volatile boolean deletionQueued;
     public D data;
 }

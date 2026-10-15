@@ -6,19 +6,23 @@ import com.badlogic.gdx.controllers.Controller;
 import com.badlogic.gdx.controllers.ControllerListener;
 import com.badlogic.gdx.controllers.ControllerMapping;
 import com.badlogic.gdx.controllers.Controllers;
+import com.badlogic.gdx.utils.Disposable;
 import com.studiohartman.jamepad.ControllerAxis;
 import dev.msky.pixelui.engine.constants.INPUT_METHOD;
 import dev.msky.pixelui.engine.constants.KeyCode;
 
-public final class UIInputProcessor implements InputProcessor, ControllerListener {
+import java.util.Arrays;
+
+public final class UIInputProcessor implements InputProcessor, ControllerListener, Disposable {
     public static final int DOUBLE_CLICK_TIME = 180;
     private final UIInputEvents inputEvents;
     private final boolean gamePadSupport;
-    private long lastClickTime;
+    private long lastLeftClickTimeMillis;
+    private boolean hasPreviousLeftClick;
+    private boolean disposed;
 
     UIInputProcessor(UIInputEvents uiInputEvents, boolean gamePadSupport) {
         this.inputEvents = uiInputEvents;
-        this.lastClickTime = System.currentTimeMillis();
         this.gamePadSupport = gamePadSupport;
         Gdx.input.setInputProcessor(this);
         if (gamePadSupport) {
@@ -57,10 +61,14 @@ public final class UIInputProcessor implements InputProcessor, ControllerListene
         this.inputEvents.mouseDown = true;
         this.inputEvents.mouseDownButtons.add(button);
         this.inputEvents.mouseButtonsDown[button] = true;
-        if (button == 0 && (System.currentTimeMillis() - lastClickTime) < DOUBLE_CLICK_TIME) {
-            this.inputEvents.mouseDoubleClick = true;
+        if (button == 0) {
+            long now = System.currentTimeMillis();
+            if (hasPreviousLeftClick && now - lastLeftClickTimeMillis < DOUBLE_CLICK_TIME) {
+                this.inputEvents.mouseDoubleClick = true;
+            }
+            lastLeftClickTimeMillis = now;
+            hasPreviousLeftClick = true;
         }
-        lastClickTime = System.currentTimeMillis();
         this.inputEvents.lastUsedInputMethod = INPUT_METHOD.MOUSE_AND_KEYBOARD;
         return false;
     }
@@ -113,7 +121,39 @@ public final class UIInputProcessor implements InputProcessor, ControllerListene
     public void disconnected(Controller controller) {
         if (!gamePadSupport) return;
         this.inputEvents.gamePadDisconnected = true;
+        this.inputEvents.gamePadButtonUpKeyCodes.clear();
+        for (int keyCode = 0; keyCode < this.inputEvents.gamePadButtonsDown.length; keyCode++) {
+            if (this.inputEvents.gamePadButtonsDown[keyCode]) {
+                this.inputEvents.gamePadButtonUpKeyCodes.add(keyCode);
+            }
+        }
+        this.inputEvents.gamePadButtonUp = !this.inputEvents.gamePadButtonUpKeyCodes.isEmpty();
+        Arrays.fill(this.inputEvents.gamePadButtonsDown, false);
+        this.inputEvents.gamePadLeftX = 0f;
+        this.inputEvents.gamePadLeftY = 0f;
+        this.inputEvents.gamePadRightX = 0f;
+        this.inputEvents.gamePadRightY = 0f;
+        this.inputEvents.gamePadLeftTrigger = 0f;
+        this.inputEvents.gamePadRightTrigger = 0f;
+        this.inputEvents.gamePadLeftXMoved = true;
+        this.inputEvents.gamePadLeftYMoved = true;
+        this.inputEvents.gamePadRightXMoved = true;
+        this.inputEvents.gamePadRightYMoved = true;
+        this.inputEvents.gamePadLeftTriggerMoved = true;
+        this.inputEvents.gamePadRightTriggerMoved = true;
         this.inputEvents.lastUsedInputMethod = INPUT_METHOD.GAMEPAD;
+    }
+
+    @Override
+    public void dispose() {
+        if (disposed) return;
+        disposed = true;
+        if (Gdx.input.getInputProcessor() == this) {
+            Gdx.input.setInputProcessor(null);
+        }
+        if (gamePadSupport) {
+            Controllers.removeListener(this);
+        }
     }
 
     @Override

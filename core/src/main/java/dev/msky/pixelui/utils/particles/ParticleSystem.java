@@ -16,7 +16,6 @@ public sealed abstract class ParticleSystem<T> implements Disposable permits Pri
     protected int maxParticles;
     protected int numParticles;
     protected final ObjectMap<Class, Queue<Particle<T>>> particlePools;
-    protected final Queue<Particle<T>> deleteQueue;
     protected final Consumer<Particle<T>> parallelConsumer;
     protected final ParticleUpdater<T> particleUpdater;
     protected final Array<Particle<T>> particles;
@@ -26,18 +25,15 @@ public sealed abstract class ParticleSystem<T> implements Disposable permits Pri
         this.dataClass = dataClass;
         this.numParticles = 0;
         this.maxParticles = Math.max(maxParticles, 0);
-        this.deleteQueue = new Queue<>();
         this.particlePools = new ObjectMap<>();
         this.particles = new Array<>();
         this.parallelExecutor = parallelExecutor;
         this.particleUpdater = particleUpdater != null ? particleUpdater : new ParticleUpdater<T>() {
         };
         this.parallelConsumer = particle -> {
-            boolean remove = !particleUpdater.updateParticle(particle);
+            boolean remove = !this.particleUpdater.updateParticle(particle);
             if (particle != null && remove) {
-                synchronized (deleteQueue) {
-                    deleteQueue.addLast(particle);
-                }
+                queueParticleRemoval(particle);
             }
         };
     }
@@ -53,7 +49,7 @@ public sealed abstract class ParticleSystem<T> implements Disposable permits Pri
             for (int i = 0; i < this.particles.size; i++) {
                 Particle<T> particle = particles.get(i);
                 if (!particleUpdater.updateParticle(particle))
-                    deleteQueue.addLast(particle);
+                    queueParticleRemoval(particle);
             }
         }
 
@@ -76,7 +72,7 @@ public sealed abstract class ParticleSystem<T> implements Disposable permits Pri
 
     public void removeAllParticles() {
         for (int i = 0; i < this.particles.size; i++)
-            this.deleteQueue.addLast(this.particles.get(i));
+            queueParticleRemoval(this.particles.get(i));
         deleteQueuedParticles();
     }
 
@@ -103,13 +99,6 @@ public sealed abstract class ParticleSystem<T> implements Disposable permits Pri
         if (!this.particlePools.containsKey(particleClass))
             this.particlePools.put(particleClass, new Queue<>());
         this.particlePools.get(particleClass).addLast(particle);
-    }
-
-    protected void removeParticleFromSystem(Particle<T> particle) {
-        if (particle == null) return;
-        this.particles.removeValue(particle, true);
-        addParticleToPool(particle.getClass(), particle);
-        this.numParticles--;
     }
 
     protected void addParticleToSystem(Particle<T> particle) {
@@ -201,10 +190,28 @@ public sealed abstract class ParticleSystem<T> implements Disposable permits Pri
     }
 
     private void deleteQueuedParticles() {
-        while (!deleteQueue.isEmpty()) {
-            final Particle<T> deleteParticle = deleteQueue.removeFirst();
-            removeParticleFromSystem(deleteParticle);
+        Object[] particleItems = (Object[]) particles.items;
+        int originalSize = particles.size;
+        int writeIndex = 0;
+        for (int readIndex = 0; readIndex < originalSize; readIndex++) {
+            Particle<T> particle = (Particle<T>) particleItems[readIndex];
+            if (particle.deletionQueued) {
+                particle.deletionQueued = false;
+                addParticleToPool(particle.getClass(), particle);
+                numParticles--;
+            } else {
+                particleItems[writeIndex++] = particle;
+            }
         }
+        for (int i = writeIndex; i < originalSize; i++) {
+            particleItems[i] = null;
+        }
+        particles.size = writeIndex;
+    }
+
+    private void queueParticleRemoval(Particle<T> particle) {
+        if (particle == null) return;
+        particle.deletionQueued = true;
     }
 
 }

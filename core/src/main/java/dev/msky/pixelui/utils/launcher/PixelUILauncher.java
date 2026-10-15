@@ -34,35 +34,30 @@ public class PixelUILauncher {
             }
         };
 
-        Linker linker = Linker.nativeLinker();
-        Arena arena = Arena.ofConfined();
-        SymbolLookup lib = SymbolLookup.libraryLookup(vulkanLibName, arena);
-        MemorySegment func = lib.find("vkEnumerateInstanceVersion")
-                .orElseThrow();
-        MethodHandle vkEnumerateInstanceVersion =
-                linker.downcallHandle(
+        try {
+            Linker linker = Linker.nativeLinker();
+            try (Arena arena = Arena.ofConfined()) {
+                SymbolLookup lib = SymbolLookup.libraryLookup(vulkanLibName, arena);
+                MemorySegment func = lib.find("vkEnumerateInstanceVersion").orElseThrow();
+                MethodHandle vkEnumerateInstanceVersion = linker.downcallHandle(
                         func,
                         FunctionDescriptor.of(JAVA_INT, ADDRESS)
                 );
-        MemorySegment versionPtr = arena.allocate(JAVA_INT);
-        int result = 0;
-        try {
-            result = (int) vkEnumerateInstanceVersion.invoke(versionPtr);
+                MemorySegment versionPtr = arena.allocate(JAVA_INT);
+                int result = (int) vkEnumerateInstanceVersion.invoke(versionPtr);
+                if (result != 0) {
+                    return new VulkanResult(false, null);
+                }
+
+                int version = versionPtr.get(JAVA_INT, 0);
+                int major = (version >> 22) & 0x3FF;
+                int minor = (version >> 12) & 0x3FF;
+                int patch = version & 0xFFF;
+                return new VulkanResult(true, major + "." + minor + "." + patch);
+            }
         } catch (Throwable e) {
             return new VulkanResult(false, null);
         }
-
-        if (result != 0) {
-            return new VulkanResult(false, null);
-        }
-
-        int version = versionPtr.get(JAVA_INT, 0);
-
-        int major = (version >> 22) & 0x3FF;
-        int minor = (version >> 12) & 0x3FF;
-        int patch = version & 0xFFF;
-
-        return new VulkanResult(true, major + "." + minor + "." + patch);
     }
 
 
@@ -169,6 +164,6 @@ public class PixelUILauncher {
             final String stackTraceFinal = stackTrace;
             Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(stackTraceFinal), null);
         }
-        System.exit(0);
+        System.exit(1);
     }
 }

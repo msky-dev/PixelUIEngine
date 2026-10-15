@@ -237,6 +237,14 @@ public final class UIEngine<T extends UIEngineAdapter> implements Disposable {
         final boolean hardwareMouseEnabled = uiEngineState.config.input.hardwareMouseEnabled;
         final boolean gamepadMouseEnabled = uiEngineState.config.input.gamePadMouseEnabled;
 
+        if (uiEngineState.inputEvents.gamePadDisconnected) {
+            Arrays.fill(uiEngineState.gamePadTranslatedButtonsDown, false);
+            uiEngineState.gamePadTranslatedStickLeft.setZero();
+            uiEngineState.gamePadTranslatedStickRight.setZero();
+            uiEngineState.gamepadMouseDirection.setZero();
+            uiEngineState.gamepadMouseVelocity.setZero();
+        }
+
         if (!hardwareMouseEnabled && !gamepadMouseEnabled) {
             mouseControl_setNextMouseControlMode(MOUSE_CONTROL_MODE.DISABLED);
             mouseControl_chokeAllMouseEvents();
@@ -3315,7 +3323,11 @@ public final class UIEngine<T extends UIEngineAdapter> implements Disposable {
 
     @Override
     public void dispose() {
+        uiEngineState.inputProcessor.dispose();
         this.uiAdapter.dispose();
+
+        // Input Handler
+        uiEngineState.inputProcessor.dispose();
 
         // Renderers
         uiEngineState.spriteRenderer_ui.dispose();

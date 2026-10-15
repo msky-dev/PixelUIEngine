@@ -51,6 +51,7 @@ abstract class CommonRenderer {
     private int nextSamplerTextureUnit;
 
     private boolean drawing = false;
+    private final boolean ownsDefaultShader;
 
     // -------- Matrices --------
     protected final Matrix4 projectionMatrix = new Matrix4();
@@ -77,6 +78,7 @@ abstract class CommonRenderer {
         this.blend = Arrays.copyOf(BLEND_LAYER, BLEND_LAYER.length);
         this.blend_save = Arrays.copyOf(this.blend, this.blend.length);
 
+        this.ownsDefaultShader = defaultShader == null;
         this.defaultShader = defaultShader != null ? defaultShader : provideDefaultShader();
         this.shader = this.defaultShader;
         this.nextSamplerTextureUnit = 1;
@@ -255,6 +257,12 @@ abstract class CommonRenderer {
         this.drawing = drawing;
     }
 
+    protected final void disposeDefaultShader() {
+        if (ownsDefaultShader) {
+            defaultShader.dispose();
+        }
+    }
+
     protected static float colorPackedRGBA(float r, float g, float b, float a) {
         return NumberUtils.intBitsToFloat(
                 ((int) (a * 255) << 24 & 0xFE000000) |
@@ -284,10 +292,12 @@ abstract class CommonRenderer {
         ShaderProgram next = shader != null ? shader : defaultShader;
         if (this.shader == next) return;
 
+        if (drawing) {
+            flush();
+        }
         this.shader = next;
 
         if (drawing) {
-            flush();
             this.shader.bind();
             setupMatrices();
         }

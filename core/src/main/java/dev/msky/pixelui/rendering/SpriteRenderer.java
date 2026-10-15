@@ -2,7 +2,9 @@ package dev.msky.pixelui.rendering;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.*;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.BitmapFontCache;
+import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.IndexBufferObject;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
@@ -16,6 +18,7 @@ import dev.msky.pixelui.utils.Tools;
 
 import java.nio.FloatBuffer;
 import java.nio.ShortBuffer;
+import java.util.Objects;
 
 public class SpriteRenderer extends CommonRenderer implements Disposable {
 
@@ -32,7 +35,7 @@ public class SpriteRenderer extends CommonRenderer implements Disposable {
     private static final int INDICES_SIZE = 6;
     private static final int VERTEXES_INDICES_RATIO = 4;
     private static final int SPRITE_SIZE_VERTEXES = 4;
-    public static final int MAX_VERTEXES_DEFAULT = 65532 * SPRITE_SIZE_VERTEXES; // 65532 sprites
+    public static final int MAX_VERTEXES_DEFAULT = 65532; // Maximum number of vertices addressable by unsigned short indices.
 
     private final int sizeMaxVertexes;
     private final int sizeMaxIndices;
@@ -43,6 +46,7 @@ public class SpriteRenderer extends CommonRenderer implements Disposable {
     private final ShortBuffer indexBuffer;
     private final VertexBufferObjectWithVAO vertexBufferObject;
     private final IndexBufferObject indexBufferObject;
+    private final GlyphLayout glyphLayout = new GlyphLayout();
 
     private Texture lastTexture;
     private float invTexWidth, invTexHeight;
@@ -69,9 +73,8 @@ public class SpriteRenderer extends CommonRenderer implements Disposable {
     }
 
     public SpriteRenderer(final MediaManager mediaManager, final ShaderProgram defaultShader, final int maxVertexes) {
-        int vertexAbsoluteLimit = Integer.MAX_VALUE / (VERTEX_SIZE * 4);
-        if (maxVertexes > vertexAbsoluteLimit)
-            throw new IllegalArgumentException("size " + maxVertexes + " bigger than mix allowed size " + vertexAbsoluteLimit);
+        if (maxVertexes < SPRITE_SIZE_VERTEXES || maxVertexes > 65532)
+            throw new IllegalArgumentException("size must be between 4 and 65532 vertices");
         if (maxVertexes % VERTEXES_INDICES_RATIO != 0)
             throw new IllegalArgumentException("size is not multiple of ratio " + VERTEXES_INDICES_RATIO);
         super(defaultShader);
@@ -83,7 +86,7 @@ public class SpriteRenderer extends CommonRenderer implements Disposable {
 
         this.sizeMaxVertexes = maxVertexes;
         this.sizeMaxVertexesFloats = this.sizeMaxVertexes * VERTEX_SIZE;
-        this.sizeMaxIndices = this.sizeMaxVertexes / VERTEXES_INDICES_RATIO;
+        this.sizeMaxIndices = (this.sizeMaxVertexes / VERTEXES_INDICES_RATIO) * INDICES_SIZE;
         this.vertexBufferObject = createVertexBufferObject(this.sizeMaxVertexes);
         this.vertexBuffer = this.vertexBufferObject.getBuffer(true);
         this.vertexBuffer.limit(this.sizeMaxVertexesFloats);
@@ -114,7 +117,7 @@ public class SpriteRenderer extends CommonRenderer implements Disposable {
             indices[i + 5] = (short) (j);
         }
 
-        IndexBufferObject indexBufferObject = new IndexBufferObject(true, size * INDICES_SIZE);
+        IndexBufferObject indexBufferObject = new IndexBufferObject(true, len);
         indexBufferObject.setIndices(indices, 0, indices.length);
 
         return indexBufferObject;
@@ -403,62 +406,68 @@ public class SpriteRenderer extends CommonRenderer implements Disposable {
 
     public void draw(final Texture texture, final float[] spriteVertices, int offset, int count) {
         if (!isDrawing()) throw new IllegalStateException(ERROR_BEGIN_END);
+        validateSpriteVertexRange(spriteVertices, offset, count, 5);
+        if (count == 0) return;
+        switchTextureIfNeeded(texture);
 
-        count = (count / 5) * 6;
-        final int verticesLength = sizeMaxVertexesFloats;
-
-        int remainingVertices = verticesLength;
-        if (texture != lastTexture)
-            switchTexture(texture);
-        else {
-            remainingVertices -= this.idx;
-            if (remainingVertices == 0) {
+        int sourceOffset = offset;
+        int spritesRemaining = count / (5 * SPRITE_SIZE_VERTEXES);
+        while (spritesRemaining > 0) {
+            int spritesAvailable = (sizeMaxVertexesFloats - idx) / (VERTEX_SIZE * SPRITE_SIZE_VERTEXES);
+            if (spritesAvailable == 0) {
                 flush();
-                remainingVertices = verticesLength;
+                spritesAvailable = sizeMaxVertexesFloats / (VERTEX_SIZE * SPRITE_SIZE_VERTEXES);
             }
-        }
-        int copyCount = Math.min(remainingVertices, count);
-        final float tweak = this.tweak;
-
-        for (int s = offset, i = 0; i < copyCount; i += 6) {
-            vertexPush(spriteVertices[s++], spriteVertices[s++], spriteVertices[s++], spriteVertices[s++], spriteVertices[s++], this.tweak);
-        }
-        count -= copyCount;
-        while (count > 0) {
-            offset += (copyCount / 6) * 5;
-            flush();
-            copyCount = Math.min(verticesLength, count);
-            for (int s = offset, v = 0, i = 0; i < copyCount; i += 6) {
-                vertexPush(spriteVertices[s++], spriteVertices[s++], spriteVertices[s++], spriteVertices[s++], spriteVertices[s++], this.tweak);
+            int spritesToCopy = Math.min(spritesAvailable, spritesRemaining);
+            int sourceEnd = sourceOffset + spritesToCopy * 5 * SPRITE_SIZE_VERTEXES;
+            while (sourceOffset < sourceEnd) {
+                vertexPush(spriteVertices[sourceOffset++], spriteVertices[sourceOffset++],
+                        spriteVertices[sourceOffset++], spriteVertices[sourceOffset++],
+                        spriteVertices[sourceOffset++], tweak);
             }
-            count -= copyCount;
+            spritesRemaining -= spritesToCopy;
         }
     }
 
 
     public void drawExactly(final Texture texture, final float[] spriteVertices, int offset, int count) {
         if (!isDrawing()) throw new IllegalStateException(ERROR_BEGIN_END);
-
-        int remainingVertices = sizeMaxVertexesFloats;
-        if (texture != lastTexture)
-            switchTexture(texture);
-        else {
-            remainingVertices -= this.idx;
-            if (remainingVertices == 0) {
-                flush();
-                remainingVertices = sizeMaxVertexesFloats;
-            }
+        validateSpriteVertexRange(spriteVertices, offset, count, VERTEX_SIZE);
+        if (count % (VERTEX_SIZE * SPRITE_SIZE_VERTEXES) != 0) {
+            throw new IllegalArgumentException("count must contain complete sprites");
         }
-        int copyCount = Math.min(remainingVertices, count);
+        if (count == 0) return;
+        switchTextureIfNeeded(texture);
 
-        vertexPush(spriteVertices, offset, copyCount);
-        count -= copyCount;
-        while (count > 0) {
-            offset += copyCount;
-            flush();
-            copyCount = Math.min(sizeMaxVertexes, count);
-            vertexPush(spriteVertices, offset, copyCount);
-            count -= copyCount;
+        int sourceOffset = offset;
+        int spritesRemaining = count / (VERTEX_SIZE * SPRITE_SIZE_VERTEXES);
+        while (spritesRemaining > 0) {
+            int spritesAvailable = (sizeMaxVertexesFloats - idx) / (VERTEX_SIZE * SPRITE_SIZE_VERTEXES);
+            if (spritesAvailable == 0) {
+                flush();
+                spritesAvailable = sizeMaxVertexesFloats / (VERTEX_SIZE * SPRITE_SIZE_VERTEXES);
+            }
+            int spritesToCopy = Math.min(spritesAvailable, spritesRemaining);
+            int floatsToCopy = spritesToCopy * VERTEX_SIZE * SPRITE_SIZE_VERTEXES;
+            vertexPush(spriteVertices, sourceOffset, floatsToCopy);
+            sourceOffset += floatsToCopy;
+            spritesRemaining -= spritesToCopy;
+        }
+    }
+
+    private void validateSpriteVertexRange(float[] spriteVertices, int offset, int count, int stride) {
+        Objects.requireNonNull(spriteVertices, "spriteVertices");
+        if (offset < 0 || count < 0 || offset > spriteVertices.length - count) {
+            throw new IndexOutOfBoundsException("Invalid sprite vertex range");
+        }
+        if (count % (stride * SPRITE_SIZE_VERTEXES) != 0) {
+            throw new IllegalArgumentException("count must contain complete sprites");
+        }
+    }
+
+    private void switchTextureIfNeeded(Texture texture) {
+        if (texture != lastTexture) {
+            switchTexture(texture);
         }
     }
 
@@ -1032,13 +1041,16 @@ public class SpriteRenderer extends CommonRenderer implements Disposable {
 
     public void drawCMediaFont(final CMediaFont cMediaFont, final float x, final float y, CharSequence text, final int start, final int end, final boolean centerX, final boolean centerY, final int maxWidth) {
         if (cMediaFont == null) return;
-        final float x_draw = centerX ? (x - MathUtils.round(mediaManager.fontTextWidth(cMediaFont, text) / 2f)) : x;
-        final float y_draw = centerY ? (y - MathUtils.round(mediaManager.fontTextHeight(cMediaFont, text) / 2f)) : y;
-        final BitmapFontCache fontCache = mediaManager.font(cMediaFont).getCache();
+        final BitmapFont font = mediaManager.font(cMediaFont);
+        final BitmapFontCache fontCache = font.getCache();
         final String truncate = maxWidth > 0 ? "" : null;
+        glyphLayout.setText(font, text, Math.min(start, end), Math.min(end, text.length()),
+                font.getColor(), maxWidth, Align.left, false, truncate);
+        final float x_draw = centerX ? x - MathUtils.round(glyphLayout.width / 2f) : x;
+        final float y_draw = centerY ? y - MathUtils.round(glyphLayout.height / 2f) : y;
 
         fontCache.clear();
-        fontCache.addText(text, x_draw, y_draw, Math.min(start, end), Math.min(end, text.length()), maxWidth, Align.left, false, truncate);
+        fontCache.setText(glyphLayout, x_draw, y_draw);
 
         // Multiply by Batch Color
         Color.abgr8888ToColor(this.tempColor, this.color);
@@ -1136,7 +1148,6 @@ public class SpriteRenderer extends CommonRenderer implements Disposable {
     public void dispose() {
         vertexBufferObject.dispose();
         indexBufferObject.dispose();
-        if (this.shader == this.defaultShader)
-            this.shader.dispose();
+        disposeDefaultShader();
     }
 }

@@ -14,7 +14,7 @@ public final class PixelUILaunchConfig implements Copyable<PixelUILaunchConfig> 
     public int fps = 60;
     public int idleFPS = 60;
     public boolean vSync = false;
-    public int r, g, b, a = 8;
+    public int r = 8, g = 8, b = 8, a = 8;
     public int depth = 16;
     public int stencil = 0;
     public int samples = 0;
@@ -51,6 +51,8 @@ public final class PixelUILaunchConfig implements Copyable<PixelUILaunchConfig> 
         copy.decorated = this.decorated;
         copy.maximized = this.maximized;
         copy.fullScreen = this.fullScreen;
+        copy.showExceptionDialog = this.showExceptionDialog;
+        copy.onException = this.onException;
         return copy;
     }
 

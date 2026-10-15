@@ -6,7 +6,7 @@ import com.badlogic.gdx.graphics.glutils.IndexBufferObject;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.graphics.glutils.VertexBufferObjectWithVAO;
 import com.badlogic.gdx.utils.Disposable;
-import com.badlogic.gdx.utils.ShortArray;
+import com.badlogic.gdx.utils.IntArray;
 import dev.msky.pixelui.utils.Tools;
 
 import java.nio.FloatBuffer;
@@ -22,7 +22,7 @@ public class PrimitiveRenderer extends CommonRenderer implements Disposable {
     private static final int VERTEX_SIZE = 3;
     private static final int INDICES_SIZE = 1;
     private static final int VERTEXES_INDICES_RATIO = 1;
-    public static final int MAX_VERTEXES_DEFAULT = 65534;
+    public static final int MAX_VERTEXES_DEFAULT = 65532;
     private static final float[] DUMMY_VERTEX = new float[]{0f, 0f, 0f};
     private static final short PRIMITIVE_RESTART = -1;
 
@@ -35,7 +35,7 @@ public class PrimitiveRenderer extends CommonRenderer implements Disposable {
     private final ShortBuffer indexBuffer;
     private final VertexBufferObjectWithVAO vertexBufferObject;
     private final IndexBufferObject indexBufferObject;
-    private final ShortArray indexResets;
+    private final IntArray indexResets;
     private float vertexColor, vertexColor_save;
     private int primitiveType;
 
@@ -52,11 +52,10 @@ public class PrimitiveRenderer extends CommonRenderer implements Disposable {
     }
 
     public PrimitiveRenderer(final ShaderProgram defaultShader, final int maxVertexes) {
-        int vertexAbsoluteLimit = Integer.MAX_VALUE / (VERTEX_SIZE * 4);
-        if (maxVertexes > vertexAbsoluteLimit)
-            throw new IllegalArgumentException("size " + maxVertexes + " bigger than mix allowed size " + vertexAbsoluteLimit);
-        if (maxVertexes % VERTEXES_INDICES_RATIO != 0)
-            throw new IllegalArgumentException("size is not multiple of ratio " + VERTEXES_INDICES_RATIO);
+        if (maxVertexes < 6 || maxVertexes > 65532)
+            throw new IllegalArgumentException("size must be between 6 and 65532 vertices");
+        if (maxVertexes % 6 != 0)
+            throw new IllegalArgumentException("size must be a multiple of 6 vertices");
         super(defaultShader);
 
         this.sizeMaxVertexes = maxVertexes;
@@ -70,7 +69,7 @@ public class PrimitiveRenderer extends CommonRenderer implements Disposable {
         this.indexBufferObject = createIndexBufferObject(this.sizeMaxVertexes);
         this.indexBuffer = this.indexBufferObject.getBuffer(true);
 
-        this.indexResets = new ShortArray();
+        this.indexResets = new IntArray();
         this.vertexColor = VERTEX_COLOR_RESET;
         this.vertexColor_save = this.vertexColor;
         this.primitiveType = GL30.GL_POINTS;
@@ -123,9 +122,7 @@ public class PrimitiveRenderer extends CommonRenderer implements Disposable {
     public void primitiveRestart() {
         if (!isDrawing()) throw new IllegalStateException(ERROR_BEGIN_END);
 
-        if (this.idx >= sizeMaxVertexesFloats) {
-            flush();
-        }
+        ensureVertexCapacity(1);
 
         // Insert Restart Index
         final int currentIndex = this.idx / VERTEX_SIZE;
@@ -148,10 +145,6 @@ public class PrimitiveRenderer extends CommonRenderer implements Disposable {
     private void vertexPush(float[] value, int offset, int count) {
         System.arraycopy(value, offset, this.vertices, idx, count);
         idx += count;
-    }
-
-    private boolean isVertexBufferLimitReached() {
-        return this.idx >= this.sizeMaxVertexesFloats;
     }
 
     public void flush() {
@@ -181,8 +174,8 @@ public class PrimitiveRenderer extends CommonRenderer implements Disposable {
 
         if (!indexResets.isEmpty()) {
             for (int i = indexResets.size - 1; i >= 0; i--) {
-                final short resetIndex = indexResets.items[i];
-                indexBufferObject.getBuffer(true).put(resetIndex, resetIndex);
+                final int resetIndex = indexResets.items[i];
+                indexBufferObject.getBuffer(true).put(resetIndex, (short) resetIndex);
                 indexResets.removeIndex(i);
             }
         }
@@ -193,8 +186,7 @@ public class PrimitiveRenderer extends CommonRenderer implements Disposable {
         if (!isDrawing()) throw new IllegalStateException(ERROR_BEGIN_END);
 
         // Vertex 1
-        if (isVertexBufferLimitReached())
-            flush();
+        ensureVertexCapacity(1);
 
         vertexPush((x + 0.5f), (y + 0.5f), this.vertexColor);
 
@@ -202,49 +194,78 @@ public class PrimitiveRenderer extends CommonRenderer implements Disposable {
 
     public void vertex(final float x1, final float y1, final float x2, final float y2) {
         if (!isDrawing()) throw new IllegalStateException(ERROR_BEGIN_END);
-
-        // Vertex 1
-        if (isVertexBufferLimitReached())
-            flush();
-
+        ensureVertexCapacity(2);
 
         vertexPush((x1 + 0.5f), (y1 + 0.5f), this.vertexColor);
-
-
-        // Vertex 2
-        if (this.idx >= this.sizeMaxVertexesFloats) {
-            flush();
-        }
-
         vertexPush((x2 + 0.5f), (y2 + 0.5f), this.vertexColor);
 
     }
 
     public void vertex(final float x1, final float y1, final float x2, final float y2, final float x3, final float y3) {
         if (!isDrawing()) throw new IllegalStateException(ERROR_BEGIN_END);
-
-        // Vertex 1
-        if (isVertexBufferLimitReached())
-            flush();
-
-
+        ensureVertexCapacity(3);
         vertexPush((x1 + 0.5f), (y1 + 0.5f), this.vertexColor);
-
-
-        // Vertex 2
-        if (this.idx >= this.sizeMaxVertexesFloats) {
-            flush();
-        }
-
         vertexPush((x2 + 0.5f), (y2 + 0.5f), this.vertexColor);
-
-        // Vertex 3
-        if (this.idx >= this.sizeMaxVertexesFloats) {
-            flush();
-        }
-
         vertexPush((x3 + 0.5f), (y3 + 0.5f), this.vertexColor);
 
+    }
+
+    private void ensureVertexCapacity(int requiredVertices) {
+        if (idx + requiredVertices * VERTEX_SIZE <= sizeMaxVertexesFloats) return;
+        if (primitiveType == GL30.GL_LINE_LOOP) {
+            throw new IllegalStateException("GL_LINE_LOOP cannot exceed the PrimitiveRenderer batch capacity");
+        }
+
+        int verticesCount = idx / VERTEX_SIZE;
+        int segmentStart = 0;
+        for (int i = 0; i < indexResets.size; i++) {
+            segmentStart = Math.max(segmentStart, indexResets.items[i] + 1);
+        }
+
+        int carryVertices = 0;
+        boolean duplicateFirstCarry = false;
+        boolean carryFanCenter = false;
+        switch (primitiveType) {
+            case GL30.GL_LINE_STRIP -> carryVertices = verticesCount > segmentStart ? 1 : 0;
+            case GL30.GL_TRIANGLE_STRIP -> {
+                int segmentLength = verticesCount - segmentStart;
+                carryVertices = segmentLength >= 2 ? 2 : 0;
+                duplicateFirstCarry = carryVertices == 2 && (segmentLength & 1) != 0;
+            }
+            case GL30.GL_TRIANGLE_FAN -> {
+                carryVertices = verticesCount - segmentStart >= 2 ? 2 : 0;
+                carryFanCenter = carryVertices == 2;
+            }
+        }
+
+        float firstX = 0, firstY = 0, firstColor = 0;
+        float secondX = 0, secondY = 0, secondColor = 0;
+        if (carryVertices == 1) {
+            int offset = idx - VERTEX_SIZE;
+            firstX = vertices[offset];
+            firstY = vertices[offset + 1];
+            firstColor = vertices[offset + 2];
+        } else if (carryVertices == 2) {
+            int firstOffset = (carryFanCenter ? segmentStart : verticesCount - 2) * VERTEX_SIZE;
+            int secondOffset = (verticesCount - 1) * VERTEX_SIZE;
+            firstX = vertices[firstOffset];
+            firstY = vertices[firstOffset + 1];
+            firstColor = vertices[firstOffset + 2];
+            secondX = vertices[secondOffset];
+            secondY = vertices[secondOffset + 1];
+            secondColor = vertices[secondOffset + 2];
+        }
+
+        flush();
+        if (carryVertices == 1) {
+            vertexPush(firstX, firstY, firstColor);
+        } else if (carryVertices == 2) {
+            vertexPush(firstX, firstY, firstColor);
+            if (duplicateFirstCarry) {
+                vertexPush(firstX, firstY, firstColor);
+            }
+            vertexPush(secondX, secondY, secondColor);
+        }
     }
 
     protected ShaderProgram provideDefaultShader() {
@@ -317,8 +338,7 @@ public class PrimitiveRenderer extends CommonRenderer implements Disposable {
     public void dispose() {
         vertexBufferObject.dispose();
         indexBufferObject.dispose();
-        if (this.shader == this.defaultShader)
-            this.shader.dispose();
+        disposeDefaultShader();
     }
 
 

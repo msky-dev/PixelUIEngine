@@ -5,6 +5,7 @@ import dev.msky.pixelui.utils.Tools;
 import dev.msky.pixelui.utils.settings.persistor.PropertiesFilePersistor;
 import dev.msky.pixelui.utils.settings.validator.StringValueValidator;
 
+import java.util.ArrayList;
 import java.util.Properties;
 
 public class SettingsManager {
@@ -197,13 +198,48 @@ public class SettingsManager {
 
     public void setStringList(String name, String[] values) {
         SettingsEntry settingsEntry = entries.get(name);
-        if (settingsEntry != null) setString(name, String.join(STRING_LIST_DELIMITER, values));
+        if (settingsEntry != null) {
+            StringBuilder encoded = new StringBuilder();
+            for (int i = 0; i < values.length; i++) {
+                if (i > 0) encoded.append(STRING_LIST_DELIMITER);
+                String value = String.valueOf(values[i]);
+                for (int j = 0; j < value.length(); j++) {
+                    char character = value.charAt(j);
+                    if (character == '\\' || character == ';') encoded.append('\\');
+                    encoded.append(character);
+                }
+            }
+            setString(name, encoded.toString());
+        }
     }
 
     public String[] getStringList(String name) {
         String value = getString(name);
-        if (value != null) return value.split(STRING_LIST_DELIMITER);
-        return null;
+        if (value == null) return null;
+        ArrayList<String> result = new ArrayList<>();
+        StringBuilder item = new StringBuilder();
+        boolean escaped = false;
+        for (int i = 0; i < value.length(); i++) {
+            char character = value.charAt(i);
+            if (escaped) {
+                if (character == '\\' || character == ';') {
+                    item.append(character);
+                } else {
+                    item.append('\\').append(character);
+                }
+                escaped = false;
+            } else if (character == '\\') {
+                escaped = true;
+            } else if (character == ';') {
+                result.add(item.toString());
+                item.setLength(0);
+            } else {
+                item.append(character);
+            }
+        }
+        if (escaped) item.append('\\');
+        result.add(item.toString());
+        return result.toArray(String[]::new);
     }
 
     public static boolean isValidString(String value) {
