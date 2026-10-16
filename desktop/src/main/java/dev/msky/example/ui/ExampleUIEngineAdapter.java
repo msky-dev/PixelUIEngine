@@ -3,26 +3,21 @@ package dev.msky.example.ui;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL30;
-import com.badlogic.gdx.graphics.GL32;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.MathUtils;
-import dev.msky.pixelui.media.MediaManager;
-import dev.msky.pixelui.rendering.PrimitiveRenderer;
-import dev.msky.pixelui.utils.Tools;
-import dev.msky.pixelui.engine.API;
-import dev.msky.pixelui.engine.APIInput;
-import dev.msky.pixelui.engine.UIEngineAdapter;
-import dev.msky.pixelui.engine.constants.BUTTON_MODE;
-import dev.msky.pixelui.engine.constants.KeyCode;
-import dev.msky.pixelui.rendering.ShaderParser;
-import dev.msky.pixelui.rendering.SpriteRenderer;
-import dev.msky.pixelui.engine.actions.ButtonAction;
-import dev.msky.pixelui.engine.actions.HotKeyAction;
-import dev.msky.pixelui.engine.TextButton;
-import dev.msky.pixelui.engine.AppViewport;
 import dev.msky.example.ui.media.ExampleBaseMedia;
 import dev.msky.example.ui.windows.ExampleWindowGeneratorP;
+import dev.msky.pixelui.engine.*;
+import dev.msky.pixelui.engine.actions.ButtonAction;
+import dev.msky.pixelui.engine.actions.HotKeyAction;
+import dev.msky.pixelui.engine.constants.BUTTON_MODE;
+import dev.msky.pixelui.engine.constants.KeyCode;
+import dev.msky.pixelui.media.MediaManager;
+import dev.msky.pixelui.rendering.PrimitiveRenderer;
+import dev.msky.pixelui.rendering.ShaderParser;
+import dev.msky.pixelui.rendering.SpriteRenderer;
+import dev.msky.pixelui.utils.Tools;
 import dev.msky.pixelui.utils.concurrency.ParallelExecutor;
 import dev.msky.pixelui.utils.particles.ParticleUpdater;
 import dev.msky.pixelui.utils.particles.PrimitiveParticleSystem;
@@ -146,6 +141,9 @@ public class ExampleUIEngineAdapter implements UIEngineAdapter {
     public void update() {
         APIInput.APIKeyboard keyBoard = api.input.keyboard;
 
+        if(api.input.mouse.event.buttonDown()) {
+            api.forceAppTooltipUpdate();
+        }
 
         if (Tools.Calc.randomChance(30)) {
             spriteParticleSystem.addImageParticle(api.theme().UI_CURSOR_ARROW, MathUtils.random(0, api.resolutionWidth()), api.resolutionHeight());

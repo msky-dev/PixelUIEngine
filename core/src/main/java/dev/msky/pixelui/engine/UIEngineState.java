@@ -7,6 +7,7 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Queue;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import dev.msky.pixelui.engine.actions.AppTooltipAction;
 import dev.msky.pixelui.engine.constants.DIRECTION;
 import dev.msky.pixelui.media.CMediaSprite;
 import dev.msky.pixelui.engine.constants.MOUSE_CONTROL_MODE;
@@ -73,7 +74,9 @@ public final class UIEngineState {
     public float tooltip_fadePct;
     public boolean tooltip_wait_delay;
     public long tooltip_timer;
-    public Tooltip appToolTip;
+    public AppTooltipAction appToolTipAction;
+    public Tooltip displayedAppToolTip;
+    public boolean forceAppTooltipUpdate;
     public Object tooltip_lastHoverObject;
     public Knob pressedKnob;
     public AppViewport pressedAppViewPort;

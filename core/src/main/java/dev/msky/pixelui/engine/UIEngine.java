@@ -161,6 +161,9 @@ public final class UIEngine<T extends UIEngineAdapter> implements Disposable {
         newUIEngineState.tooltip_fadePct = 0f;
         newUIEngineState.tooltip_wait_delay = false;
         newUIEngineState.tooltip_timer = 0;
+        newUIEngineState.appToolTipAction = null;
+        newUIEngineState.displayedAppToolTip = null;
+        newUIEngineState.forceAppTooltipUpdate = false;
         newUIEngineState.pressedScrollBarVertical = null;
         newUIEngineState.pressedScrollBarHorizontal = null;
         newUIEngineState.draggedGridItem = null;
@@ -1704,15 +1707,20 @@ public final class UIEngine<T extends UIEngineAdapter> implements Disposable {
             }
         } else {
             // Set App Tooltip
-            if (uiEngineState.lastUIMouseHover == null && uiEngineState.appToolTip != null) {
-                if (uiEngineState.tooltip != uiEngineState.appToolTip) {
+            if (uiEngineState.lastUIMouseHover == null && uiEngineState.appToolTipAction != null) {
+                final boolean forceUpdate = uiEngineState.forceAppTooltipUpdate;
+                if (uiEngineState.displayedAppToolTip == null || forceUpdate) {
+                    final Tooltip appTooltip = uiEngineState.appToolTipAction.onShowTooltip();
                     uiEngineState.tooltip_wait_delay = true;
                     uiEngineState.tooltip_timer = 0;
-                    uiEngineState.tooltip = uiEngineState.appToolTip;
+                    uiEngineState.tooltip = appTooltip;
+                    uiEngineState.displayedAppToolTip = appTooltip;
+                    uiEngineState.forceAppTooltipUpdate = false;
                 }
             } else {
                 uiEngineState.tooltip = null;
                 uiEngineState.tooltip_lastHoverObject = null;
+                uiEngineState.displayedAppToolTip = null;
             }
         }
 
@@ -3350,8 +3358,8 @@ public final class UIEngine<T extends UIEngineAdapter> implements Disposable {
         ObjectSet<Tooltip> toolTips = new ObjectSet<>();
         if (uiEngineState.tooltip != null)
             toolTips.add(uiEngineState.tooltip);
-        if (uiEngineState.appToolTip != null)
-            toolTips.add(uiEngineState.appToolTip);
+        if (uiEngineState.displayedAppToolTip != null)
+            toolTips.add(uiEngineState.displayedAppToolTip);
         if (uiEngineState.fadeOutTooltip != null)
             toolTips.add(uiEngineState.fadeOutTooltip);
 

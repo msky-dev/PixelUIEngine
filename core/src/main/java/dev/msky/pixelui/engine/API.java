@@ -1,6 +1,8 @@
 package dev.msky.pixelui.engine;
 
 import com.badlogic.gdx.utils.Array;
+import dev.msky.pixelui.engine.actions.AppTooltipAction;
+import dev.msky.pixelui.engine.actions.ToolTipAction;
 import dev.msky.pixelui.engine.actions.common.UpdateAction;
 import dev.msky.pixelui.engine.constants.TileSize;
 import dev.msky.pixelui.engine.constants.VIEWPORT_MODE;
@@ -404,24 +406,29 @@ public final class API {
         uiEngineState.overrideCursorArrayIndex = overrideCursor != null ? Math.max(0, arrayIndex) : 0;
     }
 
-    public void setAppToolTip(Tooltip toolTip) {
-        uiEngineState.appToolTip = toolTip;
+    public void forceAppTooltipUpdate(){
+        uiEngineState.forceAppTooltipUpdate = true;
+    }
+
+    public void setAppToolTipAction(AppTooltipAction appToolTipAction) {
+        uiEngineState.appToolTipAction = appToolTipAction;
+        uiEngineState.forceAppTooltipUpdate = true;
     }
 
     public boolean isAnyAppToolTipDisplayed() {
-        return uiEngineState.appToolTip != null;
+        return uiEngineState.displayedAppToolTip != null;
     }
 
     public Tooltip appToolTip() {
-        return uiEngineState.appToolTip;
+        return uiEngineState.displayedAppToolTip;
     }
 
     public boolean isAppToolTipDisplayed(String name) {
-        return uiEngineState.appToolTip != null && uiEngineState.appToolTip.name.equals(name);
+        return uiEngineState.displayedAppToolTip != null && uiEngineState.displayedAppToolTip.name.equals(name);
     }
 
     public boolean isAppToolTipDisplayed() {
-        return uiEngineState.appToolTip != null;
+        return uiEngineState.displayedAppToolTip != null;
     }
 
     public VIEWPORT_MODE viewportMode() {

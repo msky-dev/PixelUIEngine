@@ -382,7 +382,12 @@ public class ExampleWindowGeneratorP implements WindowGenerator.P1<MediaManager>
                                     @Override
                                     public void onSelect() {
                                         api.addNotification(api.notification.create("3"));
-                                        api.setAppToolTip(null);
+                                        api.setAppToolTipAction(new AppTooltipAction() {
+                                            @Override
+                                            public Tooltip onShowTooltip() {
+                                                return api.toolTip.create("App Tooltip");
+                                            }
+                                        });
                                         api.removeAllWindows();
                                     }
                                 }),
