@@ -1098,7 +1098,7 @@ public final class APIWidgets {
             api.window.addComponents(modalWnd, componentsList.toArray(Component[]::new));
             api.window.setWindowAction(modalWnd, new WindowAction() {
                 @Override
-                public void onDisplay() {
+                public void onAdd() {
                     api.component.textfield.focus(inputTextField);
                     if (api.input.lastUsedInputMethod() == INPUT_METHOD.GAMEPAD) {
                         api.mouseTextInput.openForTextField(inputTextField);

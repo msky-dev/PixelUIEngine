@@ -1748,7 +1748,7 @@ public final class UIEngine<T extends UIEngineAdapter> implements Disposable {
                     long diff = System.currentTimeMillis() - uiEngineState.tooltip_timer;
                     uiEngineState.tooltip_fadePct = Math.clamp(1f - (diff / (float) uiEngineState.config.tooltip.fadeOutTimeMS), 0f, 1f);
                 } else {
-                    uiEngineState.fadeOutTooltip.toolTipAction.onRemove();
+                    uiEngineState.fadeOutTooltip.toolTipAction.onHide();
                     uiEngineState.fadeOutTooltip = null;
                 }
             }
@@ -3332,7 +3332,7 @@ public final class UIEngine<T extends UIEngineAdapter> implements Disposable {
     @Override
     public void dispose() {
         uiEngineState.inputProcessor.dispose();
-        this.uiAdapter.dispose();
+        uiAdapter.dispose();
 
         // Input Handler
         uiEngineState.inputProcessor.dispose();
@@ -3352,60 +3352,73 @@ public final class UIEngine<T extends UIEngineAdapter> implements Disposable {
         uiEngineState.frameBuffer_composite.dispose();
         if (uiEngineState.frameBuffer_upScaled_screen != null) {
             uiEngineState.frameBuffer_upScaled_screen.dispose();
+            uiEngineState.frameBuffer_upScaled_screen = null;
         }
 
         // Tooltips
-        ObjectSet<Tooltip> toolTips = new ObjectSet<>();
-        if (uiEngineState.tooltip != null)
+        Array<Tooltip> toolTips = new Array<>();
+        if (uiEngineState.tooltip != null) {
             toolTips.add(uiEngineState.tooltip);
-        if (uiEngineState.displayedAppToolTip != null)
-            toolTips.add(uiEngineState.displayedAppToolTip);
-        if (uiEngineState.fadeOutTooltip != null)
-            toolTips.add(uiEngineState.fadeOutTooltip);
-
-        ObjectSet.ObjectSetIterator<Tooltip> iterator = toolTips.iterator();
-        while (iterator.hasNext) {
-            final Tooltip tooltip = iterator.next();
-            if (tooltip.toolTipAction != null)
-                tooltip.toolTipAction.onRemove();
+            uiEngineState.tooltip = null;
         }
+        if (uiEngineState.displayedAppToolTip != null) {
+            toolTips.add(uiEngineState.displayedAppToolTip);
+            uiEngineState.displayedAppToolTip = null;
+        }
+        if (uiEngineState.fadeOutTooltip != null) {
+            toolTips.add(uiEngineState.fadeOutTooltip);
+            uiEngineState.fadeOutTooltip = null;
+        }
+        // Tooltip cleanup
+        for(int i=0;i<toolTips.size;i++)
+            toolTips.get(i).toolTipAction.onHide();
+        toolTips.clear();
 
-        // Notifications
+        // Notifications cleanup
         for (int i = uiEngineState.notifications.size - 1; i >= 0; i--) {
             if (uiEngineState.notifications.get(i).notificationAction != null)
-                uiEngineState.notifications.get(i).notificationAction.onRemove();
+                uiEngineState.notifications.get(i).notificationAction.onHide();
             uiEngineState.notifications.removeIndex(i);
         }
 
         for (int i = uiEngineState.tooltipNotifications.size - 1; i >= 0; i--) {
             if (uiEngineState.tooltipNotifications.get(i).tooltip.toolTipAction != null)
-                uiEngineState.tooltipNotifications.get(i).tooltip.toolTipAction.onRemove();
+                uiEngineState.tooltipNotifications.get(i).tooltip.toolTipAction.onHide();
             uiEngineState.tooltipNotifications.removeIndex(i);
         }
 
-        // Windows
-        for (int i = uiEngineState.windows.size - 1; i >= 0; i--) {
-            if (uiEngineState.windows.get(i).windowAction != null)
-                uiEngineState.windows.get(i).windowAction.onRemove();
-            uiEngineState.windows.removeIndex(i);
+        // Windows cleanup
+        for(int i=0;i<uiEngineState.windows.size;i++) {
+            final Window window = uiEngineState.windows.get(i);
+            for(int i2=0;i2<window.components.size;i2++)
+                uiCommonUtils.component_removeFromWindow(window.components.get(i),window, uiEngineState);
+            uiCommonUtils.window_removeFromScreen(window);
         }
-        for (int i = uiEngineState.modalWindowQueue.size - 1; i >= 0; i--) {
-            if (uiEngineState.modalWindowQueue.get(i).windowAction != null)
-                uiEngineState.modalWindowQueue.get(i).windowAction.onRemove();
-            uiEngineState.modalWindowQueue.removeIndex(i);
-        }
+        uiEngineState.windows.clear();
 
+        // Modal Windows cleanup
+        for(int i=0;i<uiEngineState.modalWindowQueue.size;i++) {
+            final Window window = uiEngineState.modalWindowQueue.get(i);
+            for(int i2=0;i2<window.components.size;i2++)
+                uiCommonUtils.component_removeFromWindow(window.components.get(i),window, uiEngineState);
+            uiCommonUtils.window_removeFromScreen(window);
+        }
+        uiEngineState.modalWindowQueue.clear();
+
+        // Screen components cleanup
+        for(int i=0;i<uiEngineState.screenComponents.size;i++)
+            uiCommonUtils.component_removeFromScreen(uiEngineState.screenComponents.get(i), uiEngineState);
 
         // Misc
         uiCommonUtils.resetAllReferences(uiEngineState);
-
         uiEngineState.screenComponents.clear();
         uiEngineState.hotKeys.clear();
         uiEngineState.singleUpdateActions.clear();
         uiEngineState.forceTooltipUpdateComponents.clear();
-
         System.gc();
     }
+
+
 
 
     public int getResolutionWidth() {

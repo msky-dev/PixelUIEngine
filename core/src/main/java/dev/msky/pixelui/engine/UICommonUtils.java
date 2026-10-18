@@ -168,9 +168,9 @@ public class UICommonUtils {
         if (window.addedToScreen) return;
         window.addedToScreen = true;
         uiEngineState.windows.add(window);
-        window.windowAction.onDisplay();
         window_enforceScreenBounds(window);
         window_bringToFront(window);
+        window.windowAction.onAdd();
     }
 
     public boolean window_close(Window window) {
@@ -201,11 +201,11 @@ public class UICommonUtils {
         // Remove
         window.addedToScreen = false;
         uiEngineState.windows.removeValue(window, true);
-        window.windowAction.onRemove();
-
         // Add Next Modal from Queue queue
         if (!uiEngineState.modalWindowQueue.isEmpty())
             window_addToScreenAsModal(uiEngineState.modalWindowQueue.removeLast());
+
+        window.windowAction.onRemove();
     }
 
     public void component_setSize(Component component, int width, int height) {
@@ -399,7 +399,7 @@ public class UICommonUtils {
         switch (genericNotification) {
             case Notification notification -> {
                 uiEngineState.notifications.removeValue(notification, true);
-                notification.notificationAction.onRemove();
+                notification.notificationAction.onHide();
             }
             case TooltipNotification tooltipNotification -> {
                 uiEngineState.tooltipNotifications.removeValue(tooltipNotification, true);
@@ -805,6 +805,7 @@ public class UICommonUtils {
         if (component instanceof AppViewport appViewPort) uiEngineState.appViewPorts.add(appViewPort);
         component.addedToWindow = window;
         window.components.add(component);
+        getUIObjectCommonActions(component).onAdd();
     }
 
     public void component_addToScreen(Component component, UIEngineState uiEngineState) {
@@ -813,6 +814,7 @@ public class UICommonUtils {
         if (component instanceof AppViewport appViewPort) uiEngineState.appViewPorts.add(appViewPort);
         component.addedToScreen = true;
         uiEngineState.screenComponents.add(component);
+        getUIObjectCommonActions(component).onAdd();
     }
 
     public void component_screenMoveToTop(Component component, UIEngineState uiEngineState) {
@@ -849,6 +851,7 @@ public class UICommonUtils {
         // Remove
         component.addedToScreen = true;
         uiEngineState.screenComponents.removeValue(component, true);
+        getUIObjectCommonActions(component).onRemove();
     }
 
     public void component_removeFromWindow(Component component, Window window, UIEngineState uiEngineState) {
@@ -864,6 +867,7 @@ public class UICommonUtils {
         // Remove
         component.addedToWindow.components.removeValue(component, true);
         component.addedToWindow = null;
+        getUIObjectCommonActions(component).onRemove();
     }
 
     public void tab_removeComponent(Tab tab, Component component) {
@@ -997,7 +1001,7 @@ public class UICommonUtils {
     public void comboBox_close(ComboBox comboBox) {
         if (comboBox_isOpen(comboBox)) {
             resetOpenComboBoxReference(uiEngineState);
-            comboBox.comboBoxAction.onRemove();
+            comboBox.comboBoxAction.onHide();
         }
     }
 
@@ -1293,7 +1297,7 @@ public class UICommonUtils {
             uiEngineState.mTextInputTempHardwareMousePosition.set(0, 0);
             uiEngineState.mTextInputScrollTime = 0;
             uiEngineState.mTextInputUnlock = false;
-            mouseTextInput.mouseTextInputAction.onRemove();
+            mouseTextInput.mouseTextInputAction.onHide();
         }
     }
 
@@ -1545,7 +1549,7 @@ public class UICommonUtils {
             resetPressedContextMenuItemReference(uiEngineState);
             uiEngineState.openContextMenu = null;
             uiEngineState.displayedContextMenuWidth = 0;
-            contextMenu.contextMenuAction.onRemove();
+            contextMenu.contextMenuAction.onHide();
         }
     }
 
@@ -1593,7 +1597,7 @@ public class UICommonUtils {
             resetPressedComboBoxItemReference(uiEngineState);
             final ComboBox combobox = uiEngineState.openComboBox;
             uiEngineState.openComboBox = null;
-            combobox.comboBoxAction.onRemove();
+            combobox.comboBoxAction.onHide();
         }
     }
 

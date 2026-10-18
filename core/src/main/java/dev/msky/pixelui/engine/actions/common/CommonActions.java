@@ -37,4 +37,10 @@ public interface CommonActions {
 
     default void onMessageReceived(int type, Object... parameters) {
     }
+
+    default void onAdd() {
+    }
+
+    default void onRemove() {
+    }
 }

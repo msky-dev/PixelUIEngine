@@ -4,6 +4,6 @@ public interface Displayable {
     default void onDisplay() {
     }
 
-    default void onRemove() {
+    default void onHide() {
     }
 }

@@ -532,7 +532,7 @@ public class ExampleWindowGeneratorP implements WindowGenerator.P1<MediaManager>
                             }
 
                             @Override
-                            public void onRemove() {
+                            public void onHide() {
                             }
                         }, 0, Color.RED, Color.BLUE, 2, DIRECTION.RIGHT
 
