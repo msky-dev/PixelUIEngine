@@ -139,30 +139,50 @@ public class PixelUILauncher {
         Tools.App.logError(e);
         launchConfig.onException.accept(e);
         if (launchConfig.showExceptionDialog) {
-            StringBuilder dialogMessage = new StringBuilder();
-            dialogMessage.append("Error occurred: \"" + e.getMessage() + "\"" + System.lineSeparator());
-            dialogMessage.append("Details can be found in \"" + Tools.App.ERROR_LOG_FILE.toAbsolutePath() + "\"" + System.lineSeparator());
-            dialogMessage.append(System.lineSeparator()).append("Press OK to copy to Clipboard" + System.lineSeparator());
-            JOptionPane.showMessageDialog(
-                    null,
-                    dialogMessage,
-                    "Error",
-                    JOptionPane.ERROR_MESSAGE
-            );
+            StringWriter stackTraceWriter = new StringWriter();
+            e.printStackTrace(new PrintWriter(stackTraceWriter));
+            String stackTrace = stackTraceWriter.toString();
 
-            // Stacktrace to clipboard
-            String stackTrace;
-            try (ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream()) {
-                try (PrintWriter printWriter = new PrintWriter(byteArrayOutputStream)) {
-                    e.printStackTrace(printWriter);
-                    printWriter.flush();
-                    stackTrace = byteArrayOutputStream.toString();
+            Runnable showErrorWindow = () -> {
+                JDialog dialog = new JDialog((Frame) null, "Error", Dialog.ModalityType.APPLICATION_MODAL);
+                dialog.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+                dialog.setLayout(new BorderLayout(8, 8));
+
+                JTextArea details = new JTextArea(stackTrace);
+                details.setEditable(false);
+                details.setCaretPosition(0);
+                details.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 12));
+                dialog.add(new JLabel("Error occurred: \"" + e.getMessage() + "\" - Details are also available in \""
+                        + Tools.App.ERROR_LOG_FILE.toAbsolutePath() + "\""), BorderLayout.NORTH);
+                dialog.add(new JScrollPane(details), BorderLayout.CENTER);
+
+                JButton copyButton = new JButton("Copy to clipboard");
+                copyButton.addActionListener(event -> Toolkit.getDefaultToolkit().getSystemClipboard()
+                        .setContents(new StringSelection(stackTrace), null));
+                JButton okButton = new JButton("OK");
+                okButton.addActionListener(event -> dialog.dispose());
+
+                JPanel buttons = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+                buttons.add(copyButton);
+                buttons.add(okButton);
+                dialog.add(buttons, BorderLayout.SOUTH);
+
+                dialog.setSize(800, 600);
+                dialog.setLocationRelativeTo(null);
+                dialog.setVisible(true);
+            };
+            try {
+                if (SwingUtilities.isEventDispatchThread()) {
+                    showErrorWindow.run();
+                } else {
+                    SwingUtilities.invokeAndWait(showErrorWindow);
                 }
-            } catch (IOException ex) {
-                stackTrace = ex.getMessage();
+            } catch (InterruptedException ex) {
+                Thread.currentThread().interrupt();
+                Tools.App.logError(ex);
+            } catch (java.lang.reflect.InvocationTargetException ex) {
+                Tools.App.logError(ex);
             }
-            final String stackTraceFinal = stackTrace;
-            Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(stackTraceFinal), null);
         }
         System.exit(1);
     }
