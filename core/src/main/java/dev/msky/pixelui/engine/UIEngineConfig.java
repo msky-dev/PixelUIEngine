@@ -159,7 +159,7 @@ public final class UIEngineConfig {
             this.defaultColor = DEFAULT_COlOR.cpy();
             this.foldTimeMS = 12;
             this.toolTipNotificationDefaultDisplayTimeMS = 2500;
-            this.toolTipNotificationFadeoutTimeMS = 200;
+            this.toolTipNotificationFadeoutTimeMS = 100;
         }
 
     }
@@ -172,9 +172,9 @@ public final class UIEngineConfig {
 
         public TooltipConfig(UIEngineTheme theme) {
             this.defaultCellColor = DEFAULT_COlOR_BRIGHT.cpy();
-            this.fadeInTimeMS = 80;
-            this.fadeInDelayMS = 40;
-            this.fadeOutTimeMS = 80;
+            this.fadeInTimeMS = 40;
+            this.fadeInDelayMS = 20;
+            this.fadeOutTimeMS = 40;
         }
 
     }
