@@ -4,10 +4,9 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>dev.msky</groupId>
 	<artifactId>pixeluiengine</artifactId>
-	<version>${revision}</version>
+	<version>1.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<properties>
-		<revision>1.0-SNAPSHOT</revision>
 		<java.version>27</java.version>
 		<gdx.version>1.14.2</gdx.version>
         <lwjgl3-angle-vulkan.version>1.5.1</lwjgl3-angle-vulkan.version>

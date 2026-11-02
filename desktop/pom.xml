@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>dev.msky</groupId>
 		<artifactId>pixeluiengine</artifactId>
-		<version>${revision}</version>
+		<version>1.0-SNAPSHOT</version>
 	</parent>
 	<artifactId>pixeluiengine-desktop</artifactId>
 	<packaging>jar</packaging>
@@ -15,7 +15,7 @@
 		<dependency>
 			<groupId>dev.msky</groupId>
 			<artifactId>pixeluiengine-core</artifactId>
-			<version>${revision}</version>
+			<version>${project.version}</version>
 		</dependency>
     </dependencies>
 
