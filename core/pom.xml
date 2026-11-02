@@ -5,7 +5,7 @@
 	<parent>
         <groupId>dev.msky</groupId>
 		<artifactId>pixeluiengine</artifactId>
-		<version>1.0</version>
+		<version>${revision}</version>
 	</parent>
 
 	<artifactId>pixeluiengine-core</artifactId>
