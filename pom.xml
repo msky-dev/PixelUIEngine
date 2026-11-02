@@ -123,7 +123,7 @@
         <repository>
             <id>github</id>
             <name>GitHub Packages</name>
-            <url>https://maven.pkg.github.com/mslivo/PixelUIEngine</url>
+            <url>https://maven.pkg.github.com/msky-dev/PixelUIEngine</url>
         </repository>
     </distributionManagement>
 
