@@ -83,8 +83,6 @@ public final class APIMouseTextInput {
     }
 
     public void close() {
-        if(uiEngineState.openMouseTextInput != null)
-            return;
         uiCommonUtils.mouseTextInput_close(uiEngineState);
     }
 
