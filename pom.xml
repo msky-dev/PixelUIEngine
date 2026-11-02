@@ -119,6 +119,13 @@
 		</pluginManagement>
 	</build>
 
+    <distributionManagement>
+        <repository>
+            <id>github</id>
+            <name>GitHub Packages</name>
+            <url>https://maven.pkg.github.com/mslivo/PixelUIEngine</url>
+        </repository>
+    </distributionManagement>
 
 	<modules>
 		<module>core</module>
