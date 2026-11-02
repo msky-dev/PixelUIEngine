@@ -1,5 +1,6 @@
 package dev.msky.pixelui.utils.particles;
 
+import com.badlogic.gdx.graphics.GL30;
 import com.badlogic.gdx.math.MathUtils;
 import dev.msky.pixelui.rendering.PrimitiveRenderer;
 import dev.msky.pixelui.utils.concurrency.ParallelExecutor;
@@ -21,7 +22,7 @@ public final class PrimitiveParticleSystem<T> extends ParticleSystem<T> {
         default void renderPrimitiveParticle(PrimitiveRenderer primitiveRenderer, PrimitiveParticle<T> particle) {
             if (primitiveRenderer.getPrimitiveType() != particle.primitiveType) {
                 primitiveRenderer.end();
-                primitiveRenderer.setPrimitiveType(GL32.GL_POINT);
+                primitiveRenderer.setPrimitiveType(GL30.GL_POINTS);
                 primitiveRenderer.begin();
             }
             primitiveRenderer.setVertexColor(particle.r, particle.g, particle.b, particle.a);

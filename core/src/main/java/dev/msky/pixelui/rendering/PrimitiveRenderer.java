@@ -68,12 +68,10 @@ public class PrimitiveRenderer extends CommonRenderer implements Disposable {
         this.idx = 0;
         this.indexBufferObject = createIndexBufferObject(this.sizeMaxVertexes);
         this.indexBuffer = this.indexBufferObject.getBuffer(true);
-
         this.indexResets = new IntArray();
         this.vertexColor = VERTEX_COLOR_RESET;
         this.vertexColor_save = this.vertexColor;
         this.primitiveType = GL30.GL_POINTS;
-
     }
 
     protected void beginImpl() {
@@ -93,9 +91,20 @@ public class PrimitiveRenderer extends CommonRenderer implements Disposable {
         setDrawing(true);
     }
 
+    private boolean isValidPrimitiveType(int primitiveType){
+        return primitiveType == GL30.GL_LINES
+                || primitiveType == GL30.GL_LINE_LOOP
+                || primitiveType == GL30.GL_LINE_STRIP
+                || primitiveType == GL30.GL_TRIANGLES
+                || primitiveType == GL30.GL_TRIANGLE_STRIP
+                || primitiveType == GL30.GL_TRIANGLE_FAN;
+    }
+
     public void setPrimitiveType(int primitiveType) {
         if (primitiveType == this.primitiveType)
             return;
+        if(!isValidPrimitiveType(primitiveType))
+            throw new IllegalArgumentException("Invalid primitive type: " + primitiveType);
         this.flush();
         this.primitiveType = primitiveType;
     }
