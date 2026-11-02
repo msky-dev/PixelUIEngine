@@ -1020,7 +1020,7 @@ public final class APIComponent {
 
         public Text create(int x, int y, int width, String text, TextAction textAction) {
             Text textC = new Text();
-            width = text != null && width <= 0 ? Math.max(MathUtils.ceil(mediaManager.fontTextWidth(uiEngineConfig.ui.font, text) / uiEngineState.theme.ts.TSF), 1) : width; // autowidth
+            width = width <= 0 ? autoWidth(text) : width;
             setComponentCommonInitValuesInternal(textC, x, y, width, 1);
             textC.fontColor = uiEngineConfig.ui.fontDefaultColor.cpy();
             textC.text = Tools.Text.validString(text);
@@ -1036,6 +1036,17 @@ public final class APIComponent {
         public void setText(Text textC, String text) {
             if (textC == null) return;
             uiCommonUtils.text_setText(textC, text);
+        }
+
+        public void setTextAndResize(Text textC, String text) {
+            if (textC == null) return;
+            uiCommonUtils.text_setText(textC, text);
+            api.component.setWidth(textC,autoWidth(text));
+
+        }
+
+        private int autoWidth(String text){
+            return text != null ? Math.max(MathUtils.ceil(mediaManager.fontTextWidth(uiEngineConfig.ui.font, text) / uiEngineState.theme.ts.TSF), 1) : 1;
         }
 
         public void setFontColor(Text text, Color color) {
