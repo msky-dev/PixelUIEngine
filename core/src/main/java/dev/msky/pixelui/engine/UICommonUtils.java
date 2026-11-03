@@ -134,9 +134,9 @@ public class UICommonUtils {
         int wndWidth = uiEngineState.theme.ts.abs(window.width);
         window.x = Math.clamp(window.x, 0, Math.max(uiEngineState.resolutionWidth - wndWidth,0));
         if (window.folded) {
-            window.y = Math.clamp(window.y, -(uiEngineState.theme.ts.abs(window.height - 1)), uiEngineState.resolutionHeight - uiEngineState.theme.ts.abs(window.height));
+            window.y = Math.clamp(window.y, -(uiEngineState.theme.ts.abs(window.height - 1)), Math.max(uiEngineState.resolutionHeight - uiEngineState.theme.ts.abs(window.height),0));
         } else {
-            window.y = Math.clamp(window.y, 0, uiEngineState.resolutionHeight - uiEngineState.theme.ts.abs(window.height));
+            window.y = Math.clamp(window.y, 0, Math.max(uiEngineState.resolutionHeight - uiEngineState.theme.ts.abs(window.height),0));
         }
     }
 
