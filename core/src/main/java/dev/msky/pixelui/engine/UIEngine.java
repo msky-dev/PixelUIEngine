@@ -1656,6 +1656,8 @@ public final class UIEngine<T extends UIEngineAdapter> implements Disposable {
             showComponentToolTip = uiEngineState.modalWindow == null || ((Component) uiEngineState.lastUIMouseHover).addedToWindow == uiEngineState.modalWindow;
         }
         if (showComponentToolTip) {
+            boolean wasAppToolTipDisplayed = uiEngineState.displayedAppToolTip != null;
+            uiEngineState.displayedAppToolTip = null;
             Component hoverComponent = (Component) uiEngineState.lastUIMouseHover;
             Object toolTipSubItem = null;
             if (hoverComponent instanceof List list) {
@@ -1678,6 +1680,8 @@ public final class UIEngine<T extends UIEngineAdapter> implements Disposable {
             if (uiEngineState.forceTooltipUpdateComponents.contains(hoverComponent, true)) {
                 updateComponentToolTip = true;
                 uiEngineState.forceTooltipUpdateComponents.removeValue(hoverComponent, true);
+            } else if (wasAppToolTipDisplayed) {
+                updateComponentToolTip = true;
             } else {
                 if (hoverComponent instanceof List || hoverComponent instanceof Grid) {
                     // Check on subitem change
@@ -1708,6 +1712,7 @@ public final class UIEngine<T extends UIEngineAdapter> implements Disposable {
         } else {
             // Set App Tooltip
             if (uiEngineState.lastUIMouseHover == null && uiEngineState.appToolTipAction != null) {
+                uiEngineState.tooltip_lastHoverObject = null;
                 final boolean forceUpdate = uiEngineState.forceAppTooltipUpdate;
                 if (uiEngineState.displayedAppToolTip == null || forceUpdate) {
                     final Tooltip appTooltip = uiEngineState.appToolTipAction.onShowTooltip();
