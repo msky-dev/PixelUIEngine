@@ -459,10 +459,6 @@ public final class API {
         return uiCommonUtils.ui_getAnimationTimer(uiEngineState);
     }
 
-    public int tileSize() {
-        return uiEngineState.theme.tileSize;
-    }
-
     public UIEngineTheme theme() {
         return uiEngineState.theme;
     }

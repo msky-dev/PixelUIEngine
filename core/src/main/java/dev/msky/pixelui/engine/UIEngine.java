@@ -2053,8 +2053,8 @@ public final class UIEngine<T extends UIEngineAdapter> implements Disposable {
 
         // ===== Layout constants =====
         final int CHARS_PER_ROW = uiEngineState.config.mouseTextInput.charsPerRow; // how many characters before wrapping
-        final int ROW_HEIGHT = uiEngineState.theme.oneAndHalfTileSize; // vertical spacing between rows
-        final int CHAR_SPACING_X = uiEngineState.theme.oneAndHalfTileSize; // horizontal spacing between characters
+        final int ROW_HEIGHT = uiEngineState.theme.ts +uiEngineState.theme.tsHalf; // vertical spacing between rows
+        final int CHAR_SPACING_X = uiEngineState.theme.ts +uiEngineState.theme.tsHalf; // horizontal spacing between characters
 
         final int totalChars = chars.length;
 
@@ -2229,10 +2229,10 @@ public final class UIEngine<T extends UIEngineAdapter> implements Disposable {
                     for (int i = 0; i < comboBox.items.size; i++) {
                         int itemWidth = mediaManager.fontTextWidth(uiEngineState.config.ui.font, comboBox.items.get(i).text) + 2;
                         if (comboBox.items.get(i).comboBoxItemAction.icon() != null)
-                            itemWidth += uiEngineState.theme.tileSize;
+                            itemWidth += uiEngineState.theme.ts;
                         widthPx = Math.max(widthPx, itemWidth);
                     }
-                    int width = MathUtils.ceil((widthPx) / uiEngineState.theme.tileSizeFloat);
+                    int width = MathUtils.ceil((widthPx) / uiEngineState.theme.tsF);
                     int height = comboBox.items.size;
 
                     /* Menu */
@@ -2784,8 +2784,8 @@ public final class UIEngine<T extends UIEngineAdapter> implements Disposable {
                     final int srcWidth, srcHeight, width, height;
                     srcWidth = mediaManager.spriteWidth(image.image);
                     srcHeight = mediaManager.spriteHeight(image.image);
-                    width = image.stretchToSize ? uiEngineState.theme.tilesToPixels(image.width) : srcWidth;
-                    height = image.stretchToSize ? uiEngineState.theme.tilesToPixels(image.height) : srcHeight;
+                    width = image.stretchToSize ? uiEngineState.theme.toPixels(image.width) : srcWidth;
+                    height = image.stretchToSize ? uiEngineState.theme.toPixels(image.height) : srcHeight;
                     spriteRenderer.drawCMediaSprite(image.image, image.arrayIndex, uiCommonUtils.ui_getAnimationTimer(uiEngineState),
                             uiCommonUtils.component_getAbsoluteX(image), uiCommonUtils.component_getAbsoluteY(image),
                             width, height, 0, 0, srcWidth, srcHeight,
@@ -2799,8 +2799,8 @@ public final class UIEngine<T extends UIEngineAdapter> implements Disposable {
                     final Texture texture = frameBufferViewport.frameBuffer.getColorBufferTexture();
                     srcWidth = texture.getWidth();
                     srcHeight = texture.getHeight();
-                    width = frameBufferViewport.stretchToSize ? uiEngineState.theme.tilesToPixels(frameBufferViewport.width) : srcWidth;
-                    height = frameBufferViewport.stretchToSize ? uiEngineState.theme.tilesToPixels(frameBufferViewport.height) : srcHeight;
+                    width = frameBufferViewport.stretchToSize ? uiEngineState.theme.toPixels(frameBufferViewport.width) : srcWidth;
+                    height = frameBufferViewport.stretchToSize ? uiEngineState.theme.toPixels(frameBufferViewport.height) : srcHeight;
 
                     spriteRenderer.draw(texture, uiCommonUtils.component_getAbsoluteX(frameBufferViewport), uiCommonUtils.component_getAbsoluteY(frameBufferViewport),
                             width, height, 0, 0, width, height, frameBufferViewport.flipX, !frameBufferViewport.flipY
@@ -3476,19 +3476,19 @@ public final class UIEngine<T extends UIEngineAdapter> implements Disposable {
 
 
     private int TS(int size) {
-        return uiEngineState.theme.tilesToPixels(size);
+        return uiEngineState.theme.toPixels(size);
     }
 
     private int TS() {
-        return uiEngineState.theme.tileSize;
+        return uiEngineState.theme.ts;
     }
 
     private int TS_HALF() {
-        return uiEngineState.theme.halfTileSize;
+        return uiEngineState.theme.tsHalf;
     }
 
     private int TS2() {
-        return uiEngineState.theme.twoTileSize;
+        return uiEngineState.theme.ts2;
     }
 
 

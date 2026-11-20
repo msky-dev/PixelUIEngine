@@ -4,30 +4,33 @@ import dev.msky.pixelui.media.*;
 
 public abstract class UIEngineTheme {
 
-    public final int tileSize;
-    public final int halfTileSize;
-    public final int oneAndHalfTileSize;
-    public final int twoTileSize;
-    public final int threeTileSize;
-    public final int fourTileSize;
-    public final float tileSizeFloat;
+    public final int tsHalf;
+    public final int ts;
+    public final int ts2;
+    public final int ts3;
+    public final int ts4;
+    public final float tsFHalf;
+    public final float tsF;
+    public final float tsF2;
+    public final float tsF3;
+    public final float tsF4;
 
-    public UIEngineTheme(int tileSize) {
-        this.tileSize = tileSize;
-        this.halfTileSize = tileSize / 2;
-        this.oneAndHalfTileSize = tileSize + halfTileSize;
-        this.twoTileSize = tileSize * 2;
-        this.threeTileSize = tileSize * 3;
-        this.fourTileSize = tileSize * 4;
-        this.tileSizeFloat = tileSize;
+    public UIEngineTheme(int ts) {
+        this.ts = ts;
+        this.ts2 = ts * 2;
+        this.ts3 = ts * 3;
+        this.ts4 = ts * 4;
+        this.tsHalf = ts / 2;
+        this.tsF = (float) ts;
+        this.tsF2 = (float) ts2;
+        this.tsF3 = (float) ts3;
+        this.tsF4 = (float) ts4;
+        this.tsFHalf = (float) tsHalf;
+
     }
 
-    public int tilesToPixels(int tiles) {
-        return tiles * tileSize;
-    }
-
-    public float tilesToPixels(float tiles) {
-        return tiles * tileSize;
+    public int toPixels(int tiles) {
+        return tiles * ts;
     }
 
     public abstract CMediaArray window();

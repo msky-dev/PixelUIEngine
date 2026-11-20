@@ -213,7 +213,7 @@ public final class APIMouseTextInput {
             allowedUpperCaseCharacters[i] = filteredUpper.get(i);
         }
 
-        int xOffset = (uiEngineState.theme.tilesToPixels(textfield.width) / 2)+6;
+        int xOffset = (uiEngineState.theme.toPixels(textfield.width) / 2)+6;
         api.mouseTextInput.open(api.component.absoluteX(textfield) + xOffset, api.component.absoluteY(textfield), new MouseTextInputAction() {
             @Override
             public boolean onConfirm() {
