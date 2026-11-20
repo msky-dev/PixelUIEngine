@@ -4,7 +4,6 @@ import com.badlogic.gdx.utils.Array;
 import dev.msky.pixelui.engine.actions.AppTooltipAction;
 import dev.msky.pixelui.engine.actions.ToolTipAction;
 import dev.msky.pixelui.engine.actions.common.UpdateAction;
-import dev.msky.pixelui.engine.constants.TileSize;
 import dev.msky.pixelui.engine.constants.VIEWPORT_MODE;
 import dev.msky.pixelui.media.CMediaSprite;
 import dev.msky.pixelui.media.MediaManager;
@@ -460,8 +459,8 @@ public final class API {
         return uiCommonUtils.ui_getAnimationTimer(uiEngineState);
     }
 
-    public TileSize tileSize() {
-        return uiEngineState.theme.ts;
+    public int tileSize() {
+        return uiEngineState.theme.tileSize;
     }
 
     public UIEngineTheme theme() {

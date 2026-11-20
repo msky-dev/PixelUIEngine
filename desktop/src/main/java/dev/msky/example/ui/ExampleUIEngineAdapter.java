@@ -104,7 +104,7 @@ public class ExampleUIEngineAdapter implements UIEngineAdapter {
                 api.closeAllWindows();
             }
         }));
-        api.setMouseTool(api.mouseTool.create("Pointer", null, api.theme().UI_CURSOR_ARROW));
+        api.setMouseTool(api.mouseTool.create("Pointer", null, api.theme().cursorArrow()));
 
 
         api.config.input.hardwareMouseEnabled = true;
@@ -146,7 +146,7 @@ public class ExampleUIEngineAdapter implements UIEngineAdapter {
         }
 
         if (Tools.Calc.randomChance(30)) {
-            spriteParticleSystem.addImageParticle(api.theme().UI_CURSOR_ARROW, MathUtils.random(0, api.resolutionWidth()), api.resolutionHeight());
+            spriteParticleSystem.addImageParticle(api.theme().cursorArrow(), MathUtils.random(0, api.resolutionWidth()), api.resolutionHeight());
             primitiveParticleSystem.addPrimitiveParticle(GL30.GL_LINES, MathUtils.random(0, api.resolutionWidth()), api.resolutionHeight(),
                     MathUtils.random(0f, 1f), MathUtils.random(0f, 1f), MathUtils.random(0f, 1f), 1f,
                     MathUtils.random(-5, 5), 10,
@@ -278,11 +278,11 @@ public class ExampleUIEngineAdapter implements UIEngineAdapter {
         spriteRenderer.begin();
 
         spriteRenderer.setColor(0.5f, 0.5f, 0.5f, 1f);
-        mediaManager.font(api.theme().UI_FONT).setColor(new Color(0.5f, 0.5f, 0.5f, 1f));
-        spriteRenderer.drawCMediaFont(api.theme().UI_FONT, 4, 310, "SYMBOL: " + Tools.Text.fontSymbol(1));
-        spriteRenderer.drawCMediaFont(api.theme().UI_FONT, 4, 300, "Text[#ff00ff]Text2");
-        spriteRenderer.drawCMediaFont(api.theme().UI_FONT, 4, 290, "Text[#00ffff]Text2");
-        spriteRenderer.drawCMediaFont(api.theme().UI_FONT, 4, 280, "Text[#ff00ff]Text2");
+        mediaManager.font(api.theme().font()).setColor(new Color(0.5f, 0.5f, 0.5f, 1f));
+        spriteRenderer.drawCMediaFont(api.theme().font(), 4, 310, "SYMBOL: " + Tools.Text.fontSymbol(1));
+        spriteRenderer.drawCMediaFont(api.theme().font(), 4, 300, "Text[#ff00ff]Text2");
+        spriteRenderer.drawCMediaFont(api.theme().font(), 4, 290, "Text[#00ffff]Text2");
+        spriteRenderer.drawCMediaFont(api.theme().font(), 4, 280, "Text[#ff00ff]Text2");
 
 
         spriteRenderer.loadState();
@@ -299,14 +299,14 @@ public class ExampleUIEngineAdapter implements UIEngineAdapter {
             for (int i = 0; i < amount; i++) {
                 for (int ix = 0; ix < 64; ix++) {
                     for (int iy = 0; iy < 64; iy++) {
-                        spriteRenderer.drawCMediaImage(api.theme().UI_PIXEL, 200, 300);
+                        spriteRenderer.drawCMediaImage(api.theme().pixel(), 200, 300);
                     }
                 }
             }
 
             spriteRenderer.setColor(1f, 1f, 1f, 1f);
 
-            spriteRenderer.drawCMediaImage(api.theme().UI_PIXEL, 400, 200, 10, 10);
+            spriteRenderer.drawCMediaImage(api.theme().pixel(), 400, 200, 10, 10);
 
 
             spriteRenderer.loadState();

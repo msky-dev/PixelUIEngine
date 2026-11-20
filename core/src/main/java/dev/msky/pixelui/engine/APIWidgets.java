@@ -122,9 +122,9 @@ public final class APIWidgets {
 
             int y_controls = pageAbleReadOnlyGridControlsY(y, height, placeButtonTop, doubleSized);
 
-            ImageButton backButton = api.component.button.imageButton.create(0, y_controls, 1, 1, uiEngineState.theme.UI_ICON_BACK);
+            ImageButton backButton = api.component.button.imageButton.create(0, y_controls, 1, 1, uiEngineState.theme.iconBack());
             Text pageText = api.component.text.create(x, y_controls, 2, "");
-            ImageButton forwardButton = api.component.button.imageButton.create(0, y_controls, 1, 1, uiEngineState.theme.UI_ICON_FORWARD);
+            ImageButton forwardButton = api.component.button.imageButton.create(0, y_controls, 1, 1, uiEngineState.theme.iconForward());
 
             PageAbleReadOnlyGrid pageGrid = new PageAbleReadOnlyGrid(grid, backButton, forwardButton, pageText, items, pages, x, y, width, height, doubleSized, placeButtonTop, displayPagesOf);
 
@@ -309,7 +309,7 @@ public final class APIWidgets {
 
             api.component.setPositionGrid(pageGrid.backButton, pageGrid.x, y_controls);
             api.component.setPositionGrid(pageGrid.text, pageGrid.x + 1, y_controls);
-            int textWidthTiles = MathUtils.ceil((mediaManager.fontTextWidth(api.config.ui.font, pageStringMax) + 1) / uiEngineState.theme.ts.TSF);
+            int textWidthTiles = MathUtils.ceil((mediaManager.fontTextWidth(api.config.ui.font, pageStringMax) + 1) / uiEngineState.theme.tileSizeFloat);
             api.component.setPositionGrid(pageGrid.forwardButton, (pageGrid.x + 1) + textWidthTiles, y_controls);
             api.component.text.setText(pageGrid.text, pageString);
             api.component.setWidth(pageGrid.text, textWidthTiles);
@@ -371,7 +371,7 @@ public final class APIWidgets {
                     api.component.list.setScrolled(list, 1f - scrolled);
                 }
             });
-            api.component.setPosition(scrollBarVertical, list.x + (uiEngineState.theme.ts.abs(list.width)), list.y);
+            api.component.setPosition(scrollBarVertical, list.x + (uiEngineState.theme.tilesToPixels(list.width)), list.y);
 
             api.component.addUpdateAction(scrollBarVertical, new UpdateAction() {
                 float scrolledLast = -1;
@@ -426,7 +426,7 @@ public final class APIWidgets {
             Array<Component> returnComponents = new Array<>();
             for (int i = 0; i < size; i++) {
                 int index = i == 0 ? 0 : i == (size - 1) ? 2 : 1;
-                Image image = api.component.image.create(x + i, y, uiEngineState.theme.UI_SEPARATOR_HORIZONTAL, index);
+                Image image = api.component.image.create(x + i, y, uiEngineState.theme.separatorHorizontal(), index);
                 returnComponents.add(image);
             }
             return returnComponents;
@@ -436,7 +436,7 @@ public final class APIWidgets {
             Array<Component> returnComponents = new Array<>();
             for (int i = 0; i < size; i++) {
                 int index = i == 0 ? 1 : i == (size - 1) ? 0 : 1;
-                Image image = api.component.image.create(x, y + i, uiEngineState.theme.UI_SEPARATOR_VERTICAL, index);
+                Image image = api.component.image.create(x, y + i, uiEngineState.theme.separatorVertical(), index);
                 returnComponents.add(image);
             }
             return returnComponents;
@@ -453,16 +453,16 @@ public final class APIWidgets {
 
             for (int ix = 0; ix < width; ix++) {
 
-                borders.add(api.component.image.create(x + ix, y, uiEngineState.theme.UI_BORDERS, 2));
+                borders.add(api.component.image.create(x + ix, y, uiEngineState.theme.borders(), 2));
 
                 if (ix >= gap) {
-                    borders.add(api.component.image.create(x + ix, y + (height - 1), uiEngineState.theme.UI_BORDERS, 3));
+                    borders.add(api.component.image.create(x + ix, y + (height - 1), uiEngineState.theme.borders(), 3));
                 }
             }
 
             for (int iy = 0; iy < height; iy++) {
-                borders.add(api.component.image.create(x, y + iy, uiEngineState.theme.UI_BORDERS, 0));
-                borders.add(api.component.image.create(x + (width - 1), y + iy, uiEngineState.theme.UI_BORDERS, 1));
+                borders.add(api.component.image.create(x, y + iy, uiEngineState.theme.borders(), 0));
+                borders.add(api.component.image.create(x + (width - 1), y + iy, uiEngineState.theme.borders(), 1));
             }
 
             return borders;
@@ -512,7 +512,7 @@ public final class APIWidgets {
             final ScrollbarVertical scrollBar =
                     api.component.scrollbar.scrollbarVertical.create(x + width - 1, y, height);
 
-            final int pixelWidth = uiEngineState.theme.ts.abs(width - 1);
+            final int pixelWidth = uiEngineState.theme.tilesToPixels(width - 1);
             final String[] wrappedLines = wrapText(text, pixelWidth);
             final String[] visibleLines = new String[height];
 
@@ -672,8 +672,8 @@ public final class APIWidgets {
                             api.input.mouse.state.yUI(),
                             api.component.absoluteX(hlText),
                             api.component.absoluteY(hlText),
-                            uiEngineState.theme.ts.abs(hlText.width),
-                            uiEngineState.theme.ts.abs(hlText.height)
+                            uiEngineState.theme.tilesToPixels(hlText.width),
+                            uiEngineState.theme.tilesToPixels(hlText.height)
                     )) {
                         api.component.text.setFontColor(hlText, fontColorHover);
                         api.component.text.setText(hlText, textHover);
@@ -780,7 +780,7 @@ public final class APIWidgets {
                 if (len > longest) longest = len;
             }
             Array<Component> componentsList = new Array<>();
-            final int WIDTH = Math.max(MathUtils.round(longest / uiEngineState.theme.ts.TSF) + 2, 12);
+            final int WIDTH = Math.max(MathUtils.round(longest / uiEngineState.theme.tileSizeFloat) + 2, 12);
             final int HEIGHT = 4 + lines.length;
             Window modal = api.window.create(0, 0, WIDTH, HEIGHT, caption);
 
@@ -804,13 +804,13 @@ public final class APIWidgets {
 
 
             Component[] componentsArr = componentsList.toArray(Component[]::new);
-            api.component.move(componentsArr, uiEngineState.theme.ts.TS_HALF, uiEngineState.theme.ts.TS_HALF);
+            api.component.move(componentsArr, uiEngineState.theme.halfTileSize, uiEngineState.theme.halfTileSize);
 
 
             api.window.setWindowAction(modal, new WindowAction() {
                 @Override
                 public CMediaSprite icon() {
-                    return uiEngineState.theme.UI_ICON_INFORMATION;
+                    return uiEngineState.theme.iconInformation();
                 }
             });
 
@@ -854,11 +854,11 @@ public final class APIWidgets {
             int buttonWidthMinSum = 0;
             int[] buttonWidths = new int[choices.length];
             for(int i=0;i<choices.length;i++){
-                buttonWidths[i] = MathUtils.floor(mediaManager.fontTextWidth(uiEngineConfig.ui.font, choices[i])/uiEngineState.theme.ts.TSF)+2;
+                buttonWidths[i] = MathUtils.floor(mediaManager.fontTextWidth(uiEngineConfig.ui.font, choices[i])/uiEngineState.theme.tileSizeFloat)+2;
                 buttonWidthMinSum += buttonWidths[i];
             }
 
-            int textWidthMin = Math.max(MathUtils.floor(mediaManager.fontTextWidth(uiEngineConfig.ui.font, text)/uiEngineState.theme.ts.TSF)+2,10);
+            int textWidthMin = Math.max(MathUtils.floor(mediaManager.fontTextWidth(uiEngineConfig.ui.font, text)/uiEngineState.theme.tileSizeFloat)+2,10);
 
             int width = Math.max(textWidthMin, buttonWidthMinSum);
 
@@ -909,14 +909,14 @@ public final class APIWidgets {
             // Offset components into window padding
             api.component.move(
                     components,
-                    uiEngineState.theme.ts.TS_HALF,
-                    uiEngineState.theme.ts.TS_HALF
+                    uiEngineState.theme.halfTileSize,
+                    uiEngineState.theme.halfTileSize
             );
 
             api.window.setWindowAction(modal, new WindowAction() {
                 @Override
                 public CMediaSprite icon() {
-                    return uiEngineState.theme.UI_ICON_QUESTION;
+                    return uiEngineState.theme.iconQuestion();
                 }
             });
 
@@ -935,7 +935,7 @@ public final class APIWidgets {
             originalText = Tools.Text.validString(originalText);
             windowMinWidth = Math.max(windowMinWidth, 11);
             int wnd_width = Math.clamp(
-                    MathUtils.round(mediaManager.fontTextWidth(uiEngineConfig.ui.font, text) / uiEngineState.theme.ts.TSF) + 2,
+                    MathUtils.round(mediaManager.fontTextWidth(uiEngineConfig.ui.font, text) / uiEngineState.theme.tileSizeFloat) + 2,
                     windowMinWidth, Integer.MAX_VALUE);
             int wnd_height = 5;
             if (showOKButton) wnd_height++;
@@ -956,12 +956,12 @@ public final class APIWidgets {
             Array<Component> componentsList = new Array<>();
 
             Text textC = api.component.text.create(0, showOKButton ? 3 : 2, 0, text);
-            api.component.move(textC, uiEngineState.theme.ts.TS_HALF, uiEngineState.theme.ts.TS_HALF);
+            api.component.move(textC, uiEngineState.theme.halfTileSize, uiEngineState.theme.halfTileSize);
             componentsList.add(textC);
 
             TextField inputTextField = api.component.textfield.create(0, showOKButton ? 2 : 1, wnd_width - 1, originalText, null, maxInputLength);
             componentsList.add(inputTextField);
-            api.component.move(inputTextField, uiEngineState.theme.ts.TS_HALF, 0);
+            api.component.move(inputTextField, uiEngineState.theme.halfTileSize, 0);
 
             Button okBtn = null;
             if (showOKButton) {
@@ -994,7 +994,7 @@ public final class APIWidgets {
                                 api.component.textfield.setMarkerPosition(inputTextField, inputTextField.content.length());
                             }
                         });
-                        api.component.move(charButtonLC, uiEngineState.theme.ts.TS_HALF, uiEngineState.theme.ts.TS_HALF);
+                        api.component.move(charButtonLC, uiEngineState.theme.halfTileSize, uiEngineState.theme.halfTileSize);
                         componentsList.add(charButtonLC);
                         lowerCaseButtonsList.add(charButtonLC);
                         TextButton charButtonUC = api.component.button.textButton.create(ix, iy, 2, 2, String.valueOf(cu), new ButtonAction() {
@@ -1004,7 +1004,7 @@ public final class APIWidgets {
                                 api.component.textfield.setMarkerPosition(inputTextField, inputTextField.content.length());
                             }
                         });
-                        api.component.move(charButtonUC, uiEngineState.theme.ts.TS_HALF, uiEngineState.theme.ts.TS_HALF);
+                        api.component.move(charButtonUC, uiEngineState.theme.halfTileSize, uiEngineState.theme.halfTileSize);
                         componentsList.add(charButtonUC);
                         api.component.setVisible(charButtonUC, false);
                         upperCaseButtonsList.add(charButtonUC);
@@ -1017,7 +1017,7 @@ public final class APIWidgets {
                 }
 
                 // Add Case Button
-                ImageButton caseButton = api.component.button.imageButton.create(ix, iy, 2, 2, uiEngineState.theme.UI_MOUSE_TEXT_INPUT_LOWERCASE, 0, null, BUTTON_MODE.TOGGLE);
+                ImageButton caseButton = api.component.button.imageButton.create(ix, iy, 2, 2, uiEngineState.theme.mouseTextInputLowercase(), 0, null, BUTTON_MODE.TOGGLE);
                 api.component.setColor2(caseButton, Color.BLACK);
                 api.component.button.setButtonAction(caseButton, new ButtonAction() {
 
@@ -1029,16 +1029,16 @@ public final class APIWidgets {
                             api.component.setVisible(upperCaseButtonsList.get(i2), value);
 
                         if (value) {
-                            api.component.button.imageButton.setImage(caseButton, uiEngineState.theme.UI_MOUSE_TEXT_INPUT_UPPERCASE);
+                            api.component.button.imageButton.setImage(caseButton, uiEngineState.theme.mouseTextInputUppercase());
                         } else {
-                            api.component.button.imageButton.setImage(caseButton, uiEngineState.theme.UI_MOUSE_TEXT_INPUT_LOWERCASE);
+                            api.component.button.imageButton.setImage(caseButton, uiEngineState.theme.mouseTextInputLowercase());
 
                         }
 
                         return true;
                     }
                 });
-                api.component.move(caseButton, uiEngineState.theme.ts.TS_HALF, uiEngineState.theme.ts.TS_HALF);
+                api.component.move(caseButton, uiEngineState.theme.halfTileSize, uiEngineState.theme.halfTileSize);
                 componentsList.add(caseButton);
                 ix += 2;
                 if (ix >= (wnd_width - 2)) {
@@ -1046,7 +1046,7 @@ public final class APIWidgets {
                     iy -= 2;
                 }
                 // Add Delete Button
-                ImageButton delButton = api.component.button.imageButton.create(ix, iy, 2, 2, uiEngineState.theme.UI_MOUSE_TEXT_INPUT_DELETE, 0,
+                ImageButton delButton = api.component.button.imageButton.create(ix, iy, 2, 2, uiEngineState.theme.mouseTextInputDelete(), 0,
                         new ButtonAction() {
                             @Override
                             public void onRelease() {
@@ -1057,7 +1057,7 @@ public final class APIWidgets {
                             }
                         }, BUTTON_MODE.DEFAULT);
                 api.component.setColor2(delButton, Color.BLACK);
-                api.component.move(delButton, uiEngineState.theme.ts.TS_HALF, uiEngineState.theme.ts.TS_HALF);
+                api.component.move(delButton, uiEngineState.theme.halfTileSize, uiEngineState.theme.halfTileSize);
                 componentsList.add(delButton);
 
 
@@ -1091,7 +1091,7 @@ public final class APIWidgets {
                     api.component.textfield.focus(inputTextField);
                 }
             });
-            api.component.move(okBtn, uiEngineState.theme.ts.TS_HALF, uiEngineState.theme.ts.TS_HALF);
+            api.component.move(okBtn, uiEngineState.theme.halfTileSize, uiEngineState.theme.halfTileSize);
 
 
             //
@@ -1264,7 +1264,7 @@ public final class APIWidgets {
         }
 
         public ImageButton createWindowCloseButton(Window window, Consumer<Window> closeFunction) {
-            ImageButton closeButton = api.component.button.imageButton.create(window.width - 1, window.height - 1, 1, 1, uiEngineState.theme.UI_ICON_CLOSE);
+            ImageButton closeButton = api.component.button.imageButton.create(window.width - 1, window.height - 1, 1, 1, uiEngineState.theme.iconClose());
             api.component.setName(closeButton, uiCommonUtils.WND_CLOSE_BUTTON);
             api.component.button.setButtonAction(closeButton, new ButtonAction() {
 
@@ -1465,7 +1465,7 @@ public final class APIWidgets {
 
             width = Math.max(width, 1);
             Tabbar tabBar = api.component.tabbar.create(x, y, width, tabs, selectedTab, tabBarAction, border, borderHeight, 2, bigIconMode);
-            ImageButton extendButton = api.component.button.imageButton.create(x, y, 2, bigIconMode ? 2 : 1, uiEngineState.theme.UI_ICON_EXTEND);
+            ImageButton extendButton = api.component.button.imageButton.create(x, y, 2, bigIconMode ? 2 : 1, uiEngineState.theme.iconExtend());
 
             updateExtendableTabBarButtonInternal(tabBar, extendButton);
 

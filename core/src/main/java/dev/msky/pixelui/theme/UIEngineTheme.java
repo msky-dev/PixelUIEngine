@@ -1,179 +1,198 @@
 package dev.msky.pixelui.theme;
 
-import dev.msky.pixelui.engine.constants.TileSize;
 import dev.msky.pixelui.media.*;
 
 public abstract class UIEngineTheme {
 
-    public final TileSize ts;
+    public final int tileSize;
+    public final int halfTileSize;
+    public final int oneAndHalfTileSize;
+    public final int twoTileSize;
+    public final int threeTileSize;
+    public final int fourTileSize;
+    public final float tileSizeFloat;
 
     public UIEngineTheme(int tileSize) {
-        this.ts = new TileSize(tileSize);
+        this.tileSize = tileSize;
+        this.halfTileSize = tileSize / 2;
+        this.oneAndHalfTileSize = tileSize + halfTileSize;
+        this.twoTileSize = tileSize * 2;
+        this.threeTileSize = tileSize * 3;
+        this.fourTileSize = tileSize * 4;
+        this.tileSizeFloat = tileSize;
     }
 
-    public CMediaArray UI_WINDOW;
-    public CMediaArray UI_BUTTON;
-    public CMediaArray UI_BUTTON_PRESSED;
-    public CMediaArray UI_SCROLLBAR_VERTICAL;
-    public CMediaArray UI_SCROLLBAR_HORIZONTAL;
-    public CMediaArray UI_SCROLLBAR_BUTTON_VERTICAL;
-    public CMediaArray UI_SCROLLBAR_BUTTON_HORIZONAL;
-    public CMediaImage UI_LIST;
-    public CMediaImage UI_LIST_CELL;
-    public CMediaImage UI_LIST_CELL_SELECTED;
-    public CMediaArray UI_LIST_DRAG;
-    public CMediaArray UI_COMBO_BOX;
-    public CMediaArray UI_COMBO_BOX_TOP;
-    public CMediaArray UI_COMBO_BOX_OPEN;
-    public CMediaArray UI_COMBO_BOX_LIST;
-    public CMediaArray UI_COMBO_BOX_CELL;
-    public CMediaArray UI_COMBO_BOX_LIST_CELL;
-    public CMediaArray UI_COMBO_BOX_LIST_CELL_SELECTED;
-    public CMediaArray UI_TAB_BORDERS;
-    public CMediaArray UI_BORDERS;
-    public CMediaArray UI_TAB;
-    public CMediaArray UI_TAB_SELECTED;
-    public CMediaImage UI_TAB_BIGICON;
-    public CMediaImage UI_TAB_BIGICON_SELECTED;
-    public CMediaImage UI_KNOB_BACKGROUND;
-    public CMediaArray UI_KNOB;
-    public CMediaArray UI_KNOB_ENDLESS;
-    public CMediaArray UI_SEPARATOR_HORIZONTAL;
-    public CMediaArray UI_SEPARATOR_VERTICAL;
-    public CMediaArray UI_TOOLTIP_CELL;
-    public CMediaArray UI_TOOLTIP;
-    public CMediaArray UI_TOOLTIP_TOP;
-    public CMediaArray UI_TOOLTIP_SEGMENT_BORDER;
-    public CMediaImage UI_TOOLTIP_LINE_HORIZONTAL;
-    public CMediaImage UI_TOOLTIP_LINE_VERTICAL;
-    public CMediaArray UI_CONTEXT_MENU;
-    public CMediaArray UI_CONTEXT_MENU_TOP;
-    public CMediaArray UI_CONTEXT_MENU_CELL;
-    public CMediaArray UI_CONTEXT_MENU_CELL_SELECTED;
-    public CMediaArray UI_TEXT_FIELD;
-    public CMediaArray UI_TEXT_FIELD_CELL_VALIDATION;
-    public CMediaArray UI_TEXT_FIELD_CELL;
-    public CMediaAnimation UI_TEXT_FIELD_CARET;
-    public CMediaArray UI_GRID;
-    public CMediaArray UI_GRID_DRAGGED;
-    public CMediaArray UI_GRID_CELL;
-    public CMediaArray UI_GRID_CELL_SELECTED;
-    public CMediaArray UI_GRID_X2;
-    public CMediaArray UI_GRID_DRAGGED_X2;
-    public CMediaArray UI_GRID_CELL_X2;
-    public CMediaArray UI_GRID_CELL_SELECTED_X2;
-    public CMediaArray UI_PROGRESSBAR;
-    public CMediaArray UI_PROGRESSBAR_BAR;
-    public CMediaImage UI_NOTIFICATION_BAR;
-    public CMediaArray UI_CHECKBOX_CHECKBOX;
-    public CMediaImage UI_CHECKBOX_CHECKBOX_CELL;
-    public CMediaArray UI_CHECKBOX_RADIO;
-    public CMediaImage UI_CHECKBOX_RADIO_CELL;
-    public CMediaArray UI_MOUSE_TEXT_INPUT_BUTTON;
-    public CMediaImage UI_MOUSE_TEXT_INPUT_CONFIRM;
-    public CMediaImage UI_MOUSE_TEXT_INPUT_DELETE;
-    public CMediaImage UI_MOUSE_TEXT_INPUT_LOWERCASE;
-    public CMediaImage UI_MOUSE_TEXT_INPUT_UPPERCASE;
-    public CMediaImage UI_MOUSE_TEXT_INPUT_SELECTED;
+    public int tilesToPixels(int tiles) {
+        return tiles * tileSize;
+    }
+
+    public float tilesToPixels(float tiles) {
+        return tiles * tileSize;
+    }
+
+    public abstract CMediaArray window();
+    public abstract CMediaArray button();
+    public abstract CMediaArray buttonPressed();
+    public abstract CMediaArray scrollBarVertical();
+    public abstract CMediaArray scrollBarHorizontal();
+    public abstract CMediaArray scrollBarButtonVertical();
+    public abstract CMediaArray scrollBarButtonHorizontal();
+    public abstract CMediaImage list();
+    public abstract CMediaImage listCell();
+    public abstract CMediaImage listCellSelected();
+    public abstract CMediaArray listDrag();
+    public abstract CMediaArray comboBox();
+    public abstract CMediaArray comboBoxTop();
+    public abstract CMediaArray comboBoxOpen();
+    public abstract CMediaArray comboBoxList();
+    public abstract CMediaArray comboBoxCell();
+    public abstract CMediaArray comboBoxListCell();
+    public abstract CMediaArray comboBoxListCellSelected();
+    public abstract CMediaArray tabBorders();
+    public abstract CMediaArray borders();
+    public abstract CMediaArray tab();
+    public abstract CMediaArray tabSelected();
+    public abstract CMediaImage tabBigIcon();
+    public abstract CMediaImage tabBigIconSelected();
+    public abstract CMediaImage knobBackground();
+    public abstract CMediaArray knob();
+    public abstract CMediaArray knobEndless();
+    public abstract CMediaArray separatorHorizontal();
+    public abstract CMediaArray separatorVertical();
+    public abstract CMediaArray tooltipCell();
+    public abstract CMediaArray tooltip();
+    public abstract CMediaArray tooltipTop();
+    public abstract CMediaArray tooltipSegmentBorder();
+    public abstract CMediaImage tooltipLineHorizontal();
+    public abstract CMediaImage tooltipLineVertical();
+    public abstract CMediaArray contextMenu();
+    public abstract CMediaArray contextMenuTop();
+    public abstract CMediaArray contextMenuCell();
+    public abstract CMediaArray contextMenuCellSelected();
+    public abstract CMediaArray textField();
+    public abstract CMediaArray textFieldCellValidation();
+    public abstract CMediaArray textFieldCell();
+    public abstract CMediaAnimation textFieldCaret();
+    public abstract CMediaArray grid();
+    public abstract CMediaArray gridDragged();
+    public abstract CMediaArray gridCell();
+    public abstract CMediaArray gridCellSelected();
+    public abstract CMediaArray gridX2();
+    public abstract CMediaArray gridDraggedX2();
+    public abstract CMediaArray gridCellX2();
+    public abstract CMediaArray gridCellSelectedX2();
+    public abstract CMediaArray progressBar();
+    public abstract CMediaArray progressBarBar();
+    public abstract CMediaImage notificationBar();
+    public abstract CMediaArray checkBoxCheckbox();
+    public abstract CMediaImage checkBoxCheckboxCell();
+    public abstract CMediaArray checkBoxRadio();
+    public abstract CMediaImage checkBoxRadioCell();
+    public abstract CMediaArray mouseTextInputButton();
+    public abstract CMediaImage mouseTextInputConfirm();
+    public abstract CMediaImage mouseTextInputDelete();
+    public abstract CMediaImage mouseTextInputLowercase();
+    public abstract CMediaImage mouseTextInputUppercase();
+    public abstract CMediaImage mouseTextInputSelected();
 
     // Cursors
-    public CMediaImage UI_CURSOR_ARROW;
+    public abstract CMediaImage cursorArrow();
 
     // Icons
-    public CMediaImage UI_ICON_CLOSE;
-    public CMediaImage UI_ICON_COLOR_PICKER;
-    public CMediaImage UI_ICON_INFORMATION;
-    public CMediaImage UI_ICON_QUESTION;
-    public CMediaImage UI_ICON_EXTEND;
-    public CMediaImage UI_ICON_BACK;
-    public CMediaImage UI_ICON_FORWARD;
-    public CMediaImage UI_ICON_KEY_DELETE;
-    public CMediaImage UI_ICON_KEY_CASE;
+    public abstract CMediaImage iconClose();
+    public abstract CMediaImage iconColorPicker();
+    public abstract CMediaImage iconInformation();
+    public abstract CMediaImage iconQuestion();
+    public abstract CMediaImage iconExtend();
+    public abstract CMediaImage iconBack();
+    public abstract CMediaImage iconForward();
+    public abstract CMediaImage iconKeyDelete();
+    public abstract CMediaImage iconKeyCase();
 
     // Fonts
-    public CMediaFont UI_FONT;
+    public abstract CMediaFont font();
 
     // Misc
-    public CMediaImage UI_PIXEL;
+    public abstract CMediaImage pixel();
 
     public CMedia[] cMedia() {
         return new CMedia[]{
-                UI_WINDOW,
-                UI_BUTTON,
-                UI_BUTTON_PRESSED,
-                UI_SCROLLBAR_VERTICAL,
-                UI_SCROLLBAR_HORIZONTAL,
-                UI_SCROLLBAR_BUTTON_VERTICAL,
-                UI_SCROLLBAR_BUTTON_HORIZONAL,
-                UI_LIST,
-                UI_LIST_CELL,
-                UI_LIST_CELL_SELECTED,
-                UI_LIST_DRAG,
-                UI_COMBO_BOX,
-                UI_COMBO_BOX_TOP,
-                UI_COMBO_BOX_OPEN,
-                UI_COMBO_BOX_LIST,
-                UI_COMBO_BOX_CELL,
-                UI_COMBO_BOX_LIST_CELL,
-                UI_COMBO_BOX_LIST_CELL_SELECTED,
-                UI_TAB_BORDERS,
-                UI_BORDERS,
-                UI_TAB,
-                UI_TAB_SELECTED,
-                UI_TAB_BIGICON,
-                UI_TAB_BIGICON_SELECTED,
-                UI_KNOB_BACKGROUND,
-                UI_KNOB,
-                UI_KNOB_ENDLESS,
-                UI_SEPARATOR_HORIZONTAL,
-                UI_SEPARATOR_VERTICAL,
-                UI_TOOLTIP_CELL,
-                UI_TOOLTIP,
-                UI_TOOLTIP_TOP,
-                UI_TOOLTIP_SEGMENT_BORDER,
-                UI_TOOLTIP_LINE_HORIZONTAL,
-                UI_TOOLTIP_LINE_VERTICAL,
-                UI_CONTEXT_MENU,
-                UI_CONTEXT_MENU_TOP,
-                UI_CONTEXT_MENU_CELL,
-                UI_CONTEXT_MENU_CELL_SELECTED,
-                UI_TEXT_FIELD,
-                UI_TEXT_FIELD_CELL_VALIDATION,
-                UI_TEXT_FIELD_CELL,
-                UI_TEXT_FIELD_CARET,
-                UI_GRID,
-                UI_GRID_DRAGGED,
-                UI_GRID_CELL,
-                UI_GRID_CELL_SELECTED,
-                UI_GRID_X2,
-                UI_GRID_DRAGGED_X2,
-                UI_GRID_CELL_X2,
-                UI_GRID_CELL_SELECTED_X2,
-                UI_PROGRESSBAR,
-                UI_PROGRESSBAR_BAR,
-                UI_NOTIFICATION_BAR,
-                UI_CHECKBOX_CHECKBOX,
-                UI_CHECKBOX_CHECKBOX_CELL,
-                UI_CHECKBOX_RADIO,
-                UI_CHECKBOX_RADIO_CELL,
-                UI_MOUSE_TEXT_INPUT_BUTTON,
-                UI_MOUSE_TEXT_INPUT_CONFIRM,
-                UI_MOUSE_TEXT_INPUT_DELETE,
-                UI_MOUSE_TEXT_INPUT_LOWERCASE,
-                UI_MOUSE_TEXT_INPUT_UPPERCASE,
-                UI_MOUSE_TEXT_INPUT_SELECTED,
-                UI_CURSOR_ARROW,
-                UI_ICON_CLOSE,
-                UI_ICON_COLOR_PICKER,
-                UI_ICON_INFORMATION,
-                UI_ICON_QUESTION,
-                UI_ICON_EXTEND,
-                UI_ICON_BACK,
-                UI_ICON_FORWARD,
-                UI_ICON_KEY_DELETE,
-                UI_ICON_KEY_CASE,
-                UI_FONT,
-                UI_PIXEL,
+                window(),
+                button(),
+                buttonPressed(),
+                scrollBarVertical(),
+                scrollBarHorizontal(),
+                scrollBarButtonVertical(),
+                scrollBarButtonHorizontal(),
+                list(),
+                listCell(),
+                listCellSelected(),
+                listDrag(),
+                comboBox(),
+                comboBoxTop(),
+                comboBoxOpen(),
+                comboBoxList(),
+                comboBoxCell(),
+                comboBoxListCell(),
+                comboBoxListCellSelected(),
+                tabBorders(),
+                borders(),
+                tab(),
+                tabSelected(),
+                tabBigIcon(),
+                tabBigIconSelected(),
+                knobBackground(),
+                knob(),
+                knobEndless(),
+                separatorHorizontal(),
+                separatorVertical(),
+                tooltipCell(),
+                tooltip(),
+                tooltipTop(),
+                tooltipSegmentBorder(),
+                tooltipLineHorizontal(),
+                tooltipLineVertical(),
+                contextMenu(),
+                contextMenuTop(),
+                contextMenuCell(),
+                contextMenuCellSelected(),
+                textField(),
+                textFieldCellValidation(),
+                textFieldCell(),
+                textFieldCaret(),
+                grid(),
+                gridDragged(),
+                gridCell(),
+                gridCellSelected(),
+                gridX2(),
+                gridDraggedX2(),
+                gridCellX2(),
+                gridCellSelectedX2(),
+                progressBar(),
+                progressBarBar(),
+                notificationBar(),
+                checkBoxCheckbox(),
+                checkBoxCheckboxCell(),
+                checkBoxRadio(),
+                checkBoxRadioCell(),
+                mouseTextInputButton(),
+                mouseTextInputConfirm(),
+                mouseTextInputDelete(),
+                mouseTextInputLowercase(),
+                mouseTextInputUppercase(),
+                mouseTextInputSelected(),
+                cursorArrow(),
+                iconClose(),
+                iconColorPicker(),
+                iconInformation(),
+                iconQuestion(),
+                iconExtend(),
+                iconBack(),
+                iconForward(),
+                iconKeyDelete(),
+                iconKeyCase(),
+                font(),
+                pixel(),
         };
     }
 

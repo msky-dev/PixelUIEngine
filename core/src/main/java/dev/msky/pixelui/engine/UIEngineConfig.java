@@ -93,9 +93,9 @@ public final class UIEngineConfig {
         public boolean foldWindowsOnDoubleClick;
 
         public UIConfig(UIEngineTheme theme) {
-            this.font = theme.UI_FONT;
+            this.font = theme.font();
             this.fontDefaultColor = DEFAULT_COLOR_FONT.cpy();
-            this.cursor = theme.UI_CURSOR_ARROW;
+            this.cursor = theme.cursorArrow();
             this.keyInteractionsDisabled = false;
             this.mouseInteractionsDisabled = false;
             this.foldWindowsOnDoubleClick = true;
