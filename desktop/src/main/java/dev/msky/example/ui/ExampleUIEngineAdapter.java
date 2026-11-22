@@ -133,8 +133,8 @@ public class ExampleUIEngineAdapter implements UIEngineAdapter {
 
 
 
-        this.spriteParticleSystem = new SpriteParticleSystem<>(ParticleDataInner.class,parallelExecutor, particleUpdater);
-        this.primitiveParticleSystem = new PrimitiveParticleSystem<>(ParticleDataInner.class,parallelExecutor, particleUpdater);
+        this.spriteParticleSystem = new SpriteParticleSystem<>(particleUpdater, Integer.MAX_VALUE, ParticleDataInner.class);
+        this.primitiveParticleSystem = new PrimitiveParticleSystem<>(particleUpdater, Integer.MAX_VALUE, ParticleDataInner.class,parallelExecutor);
     }
 
     @Override

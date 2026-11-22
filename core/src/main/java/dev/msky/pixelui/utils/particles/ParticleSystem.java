@@ -21,13 +21,13 @@ public sealed abstract class ParticleSystem<T> implements Disposable permits Pri
     protected final Array<Particle<T>> particles;
     private final ParallelExecutor parallelExecutor;
 
-    protected ParticleSystem(Class<T> dataClass, ParallelExecutor parallelExecutor, ParticleUpdater<T> particleUpdater, int maxParticles) {
+    protected ParticleSystem(ParticleUpdater<T> particleUpdater, int maxParticles, Class<T> dataClass, ParallelExecutor parallelExecutor) {
         this.dataClass = dataClass;
         this.numParticles = 0;
         this.maxParticles = Math.max(maxParticles, 0);
         this.particlePools = new ObjectMap<>();
         this.particles = new Array<>();
-        this.parallelExecutor = parallelExecutor;
+        this.parallelExecutor = parallelExecutor != null ? parallelExecutor : new ParallelExecutor();
         this.particleUpdater = particleUpdater != null ? particleUpdater : new ParticleUpdater<T>() {
         };
         this.parallelConsumer = particle -> {

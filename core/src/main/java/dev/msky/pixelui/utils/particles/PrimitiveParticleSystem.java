@@ -50,16 +50,25 @@ public final class PrimitiveParticleSystem<T> extends ParticleSystem<T> {
     private static final RenderHook DEFAULT_RENDER_HOOK = new RenderHook() {
     };
 
-    public PrimitiveParticleSystem(Class<T> dataClass, ParallelExecutor parallelExecutor, ParticleUpdater<T> particleUpdater) {
-        this(dataClass, parallelExecutor, particleUpdater, Integer.MAX_VALUE, DEFAULT_RENDER_HOOK);
+    public PrimitiveParticleSystem(ParticleUpdater<T> particleUpdater) {
+        this(particleUpdater, Integer.MAX_VALUE, null,null, DEFAULT_RENDER_HOOK);
     }
 
-    public PrimitiveParticleSystem(Class<T> dataClass, ParallelExecutor parallelExecutor, ParticleUpdater<T> particleUpdater, int maxParticles) {
-        this(dataClass,parallelExecutor, particleUpdater, maxParticles, DEFAULT_RENDER_HOOK);
+    public PrimitiveParticleSystem(ParticleUpdater<T> particleUpdater, int maxParticles) {
+        this(particleUpdater, maxParticles, null,null, DEFAULT_RENDER_HOOK);
     }
 
-    public PrimitiveParticleSystem(Class<T> dataClass, ParallelExecutor parallelExecutor, ParticleUpdater<T> particleUpdater, int maxParticles, RenderHook<T> renderHook) {
-        super(dataClass,parallelExecutor, particleUpdater, maxParticles);
+
+    public PrimitiveParticleSystem(ParticleUpdater<T> particleUpdater, int maxParticles, Class<T> dataClass) {
+        this(particleUpdater, maxParticles, dataClass,null, DEFAULT_RENDER_HOOK);
+    }
+
+    public PrimitiveParticleSystem(ParticleUpdater<T> particleUpdater, int maxParticles, Class<T> dataClass, ParallelExecutor parallelExecutor) {
+        this(particleUpdater, maxParticles, dataClass,parallelExecutor, DEFAULT_RENDER_HOOK);
+    }
+
+    public PrimitiveParticleSystem(ParticleUpdater<T> particleUpdater, int maxParticles, Class<T> dataClass, ParallelExecutor parallelExecutor, RenderHook<T> renderHook) {
+        super(particleUpdater, maxParticles, dataClass,parallelExecutor);
         this.renderHook = renderHook != null ? renderHook : DEFAULT_RENDER_HOOK;
     }
 
